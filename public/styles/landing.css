@@ -1,75 +1,89 @@
 @layer base {
   /* Landing Page Color Utilities - Al-Quran Theme */
-  
+
   /* Islamic Golden & Emerald Gradient */
   .bg-quran-gradient {
-    background: linear-gradient(135deg, #065f46 0%, #047857 25%, #0c4a6e 50%, #1e3a8a 75%, #1e293b 100%);
+    background: linear-gradient(
+      135deg,
+      #065f46 0%,
+      #047857 25%,
+      #0c4a6e 50%,
+      #1e3a8a 75%,
+      #1e293b 100%
+    );
   }
-  
+
   .dark .bg-quran-gradient {
-    background: linear-gradient(135deg, #064e3b 0%, #0f172a 25%, #1e1b4b 50%, #312e81 75%, #0f172a 100%);
+    background: linear-gradient(
+      135deg,
+      #064e3b 0%,
+      #0f172a 25%,
+      #1e1b4b 50%,
+      #312e81 75%,
+      #0f172a 100%
+    );
   }
-  
+
   /* Hero Section Backgrounds */
   .bg-hero-primary {
     background: linear-gradient(to bottom right, #0c4a6e, #1e3a8a, #312e81);
   }
-  
+
   .dark .bg-hero-primary {
     background: linear-gradient(to bottom right, #0f172a, #1e1b4b, #0f172a);
   }
-  
+
   /* Glass Effect Backgrounds */
   .bg-glass-light {
     background: rgba(255, 255, 255, 0.1);
   }
-  
+
   .dark .bg-glass-light {
     background: rgba(255, 255, 255, 0.05);
   }
-  
+
   .hover\:bg-glass-light:hover {
     background: rgba(255, 255, 255, 0.15);
   }
-  
+
   .dark .hover\:bg-glass-light:hover {
     background: rgba(255, 255, 255, 0.1);
   }
-  
+
   /* Emerald Glow */
   .bg-emerald-glow {
     background: #059669;
   }
-  
+
   .hover\:bg-emerald-glow:hover {
     background: #047857;
   }
-  
+
   .dark .bg-emerald-glow {
     background: #10b981;
   }
-  
+
   .dark .hover\:bg-emerald-glow:hover {
     background: #059669;
   }
-  
+
   /* Golden Accent */
   .bg-golden {
     background: #f59e0b;
   }
-  
+
   .hover\:bg-golden:hover {
     background: #d97706;
   }
-  
+
   .dark .bg-golden {
     background: #fbbf24;
   }
-  
+
   .dark .hover\:bg-golden:hover {
     background: #f59e0b;
   }
-  
+
   /* Text Gradient - Golden to Emerald */
   .text-quran-gradient {
     background: linear-gradient(135deg, #fbbf24, #34d399, #60a5fa);
@@ -77,169 +91,169 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  
+
   .dark .text-quran-gradient {
     background: linear-gradient(135deg, #fcd34d, #6ee7b7, #93c5fd);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-  
+
   /* Card Backgrounds */
   .bg-card-islamic {
     background: rgba(6, 95, 70, 0.1);
   }
-  
+
   .hover\:bg-card-islamic:hover {
     background: rgba(6, 95, 70, 0.15);
   }
-  
+
   .dark .bg-card-islamic {
     background: rgba(16, 185, 129, 0.05);
   }
-  
+
   .dark .hover\:bg-card-islamic:hover {
     background: rgba(16, 185, 129, 0.1);
   }
-  
+
   /* Border Colors */
   .border-emerald-glow {
     border-color: #059669;
   }
-  
+
   .hover\:border-emerald-glow:hover {
     border-color: #10b981;
   }
-  
+
   .dark .border-emerald-glow {
     border-color: #10b981;
   }
-  
+
   .dark .hover\:border-emerald-glow:hover {
     border-color: #34d399;
   }
-  
+
   .border-golden {
     border-color: #f59e0b;
   }
-  
+
   .hover\:border-golden:hover {
     border-color: #fbbf24;
   }
-  
+
   .dark .border-golden {
     border-color: #fbbf24;
   }
-  
+
   .dark .hover\:border-golden:hover {
     border-color: #fcd34d;
   }
-  
+
   /* Text Colors */
   .text-emerald-bright {
     color: #10b981;
   }
-  
+
   .hover\:text-emerald-bright:hover {
     color: #34d399;
   }
-  
+
   .dark .text-emerald-bright {
     color: #34d399;
   }
-  
+
   .dark .hover\:text-emerald-bright:hover {
     color: #6ee7b7;
   }
-  
+
   .text-golden-bright {
     color: #f59e0b;
   }
-  
+
   .hover\:text-golden-bright:hover {
     color: #fbbf24;
   }
-  
+
   .dark .text-golden-bright {
     color: #fbbf24;
   }
-  
+
   .dark .hover\:text-golden-bright:hover {
     color: #fcd34d;
   }
-  
+
   /* Shadow with Islamic Colors */
   .shadow-emerald {
     box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.3);
   }
-  
+
   .hover\:shadow-emerald:hover {
     box-shadow: 0 20px 40px -10px rgba(16, 185, 129, 0.4);
   }
-  
+
   .dark .shadow-emerald {
     box-shadow: 0 10px 30px -10px rgba(52, 211, 153, 0.2);
   }
-  
+
   .dark .hover\:shadow-emerald:hover {
     box-shadow: 0 20px 40px -10px rgba(52, 211, 153, 0.3);
   }
-  
+
   .shadow-golden {
     box-shadow: 0 10px 30px -10px rgba(245, 158, 11, 0.3);
   }
-  
+
   .hover\:shadow-golden:hover {
     box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.4);
   }
-  
+
   .dark .shadow-golden {
     box-shadow: 0 10px 30px -10px rgba(251, 191, 36, 0.2);
   }
-  
+
   .dark .hover\:shadow-golden:hover {
     box-shadow: 0 20px 40px -10px rgba(251, 191, 36, 0.3);
   }
-  
+
   /* Backdrop Blur Variants */
   .bg-backdrop-light {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.15);
   }
-  
+
   .dark .bg-backdrop-light {
     background: rgba(15, 23, 42, 0.8);
   }
-  
+
   /* Group Hover Effects */
   .group:hover .group-hover\:bg-glass-light {
     background: rgba(255, 255, 255, 0.15);
   }
-  
+
   .dark .group:hover .group-hover\:bg-glass-light {
     background: rgba(255, 255, 255, 0.1);
   }
-  
+
   .group:hover .group-hover\:text-emerald-bright {
     color: #34d399;
   }
-  
+
   .dark .group:hover .group-hover\:text-emerald-bright {
     color: #6ee7b7;
   }
-  
+
   .group:hover .group-hover\:text-golden-bright {
     color: #fbbf24;
   }
-  
+
   .dark .group:hover .group-hover\:text-golden-bright {
     color: #fcd34d;
   }
-  
+
   /* Overlay Backgrounds */
   .bg-overlay-dark {
     background: rgba(0, 0, 0, 0.6);
   }
-  
+
   .dark .bg-overlay-dark {
     background: rgba(0, 0, 0, 0.8);
   }
