@@ -52,7 +52,7 @@ export default function LandingPage() {
                 Stats
               </a>
               <Link
-                href="/quran"
+                href="/home"
                 className="bg-emerald-glow hover:bg-emerald-glow text-white px-6 py-2 rounded-lg font-medium transition-all shadow-emerald hover:shadow-emerald hover:scale-105"
               >
                 Start Reading
@@ -89,7 +89,7 @@ export default function LandingPage() {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
-                href="/quran"
+                href="/home"
                 className="bg-emerald-glow hover:bg-emerald-glow text-white px-8 py-4 rounded-xl font-semibold transition-all shadow-emerald hover:shadow-emerald hover:scale-105 w-full sm:w-auto text-center"
               >
                 Start Reading Now →
@@ -329,7 +329,7 @@ export default function LandingPage() {
             designed for modern Muslims.
           </p>
           <Link
-            href="/quran"
+            href="/home"
             className="inline-block bg-emerald-glow hover:bg-emerald-glow text-white px-10 py-5 rounded-xl font-bold text-lg transition-all shadow-emerald hover:shadow-emerald hover:scale-105"
           >
             Open Al-Quran →

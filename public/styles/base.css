@@ -18,9 +18,11 @@
     --hero-glow-color: rgba(249, 115, 22, 0.3);
   }
 
-  /* ใช้ tokens กับ body ผ่าน utilities ของ Tailwind */
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: var(--font-sans);
+    @apply bg-background text-foreground;
+  }
+
+  .font-kanit {
+    font-family: var(--font-kanit);
   }
 }

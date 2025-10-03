@@ -5,6 +5,7 @@
     sans-serif;
   --font-mono: "MiSans Thai", "MiSans Thai Variable", system-ui, -apple-system,
     monospace;
+  --font-kanit: var(--font-kanit), system-ui, sans-serif;
 
   /* Light defaults */
   --color-background: #ffffff;
