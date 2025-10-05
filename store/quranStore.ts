@@ -1,9 +1,16 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import { Surah, Reciter, Translation, AyahInBookmark } from '@/types/quran';
+import { AyahInBookmark, Reciter, Surah, Translation } from "@/types/quran";
+import localforage from "localforage";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
+
+// Initialize localforage instance
+localforage.config({
+  name: "al-quaran",
+  storeName: "quran",
+});
 
 // Types for store
-export type EditionType = 'quran' | 'translation' | 'audio';
+export type EditionType = "quran" | "translation" | "audio";
 
 export interface ActiveEditions {
   quran: string;
@@ -38,7 +45,7 @@ interface QuranState {
   bookmarks: AyahInBookmark[];
   addBookmark: (ayah: AyahInBookmark) => void;
   removeBookmark: (ayahNumber: number) => void;
-  
+
   lastRead: AyahInBookmark | null;
   setLastRead: (ayah: AyahInBookmark) => void;
 
@@ -61,9 +68,9 @@ export const useQuranStore = create<QuranState>()(
       // Initial state
       surahs: [],
       activeEditions: {
-        quran: 'ar.alafasy',
-        translation: 'en.sahih',
-        audio: 'ar.alafasy',
+        quran: "ar.alafasy",
+        translation: "en.sahih",
+        audio: "ar.alafasy",
       },
       availableTranslations: [],
       availableReciters: [],
@@ -71,7 +78,7 @@ export const useQuranStore = create<QuranState>()(
       lastRead: null,
       settings: {
         fontSize: 18,
-        fontFamily: 'Amiri',
+        fontFamily: "Amiri",
         showTajweed: false,
         showTranslation: true,
       },
@@ -92,15 +99,12 @@ export const useQuranStore = create<QuranState>()(
       setAvailableTranslations: (translations) =>
         set({ availableTranslations: translations }),
 
-      setAvailableReciters: (reciters) =>
-        set({ availableReciters: reciters }),
+      setAvailableReciters: (reciters) => set({ availableReciters: reciters }),
 
       addBookmark: (ayah) =>
         set((state) => {
           // Check if already bookmarked
-          const exists = state.bookmarks.find(
-            (b) => b.number === ayah.number
-          );
+          const exists = state.bookmarks.find((b) => b.number === ayah.number);
           if (exists) return state;
 
           return {
@@ -128,14 +132,8 @@ export const useQuranStore = create<QuranState>()(
       setInitialized: (init) => set({ initialized: init }),
     }),
     {
-      name: 'quran-storage',
-      storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({
-        activeEditions: state.activeEditions,
-        bookmarks: state.bookmarks,
-        lastRead: state.lastRead,
-        settings: state.settings,
-      }),
+      name: "quran-storage",
+      storage: createJSONStorage(() => localforage),
     }
   )
 );
