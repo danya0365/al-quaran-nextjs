@@ -14,11 +14,11 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import TajweedText from "./TajweedText";
-import { getSurahTheme, SurahOrnament } from "./surahThemes";
-import { thaiSummariesComplete as thaiSummaries } from "./surahSummaries.th";
-import thaiSummariesExtra from "./surahSummaries.extra.th";
 import SurahSkeletonView from "./SurahSkeletonView";
+import TajweedText from "./TajweedText";
+import thaiSummariesExtra from "./surahSummaries.extra.th";
+import { thaiSummariesComplete as thaiSummaries } from "./surahSummaries.th";
+import { getSurahTheme, SurahOrnament } from "./surahThemes";
 // Arabic fonts must be initialized at module scope
 const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"] });
 const lateef = Lateef({ subsets: ["arabic"], weight: ["400"] });
@@ -58,7 +58,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
     if (window.history.length > 1) {
       router.back();
     } else {
-      router.push('/home');
+      router.push("/home");
     }
   };
 
@@ -119,10 +119,19 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
 
   const surah = viewModel.arabicSurah;
   const theme = getSurahTheme(surah.number);
-  const summaries = { ...thaiSummaries, ...thaiSummariesExtra } as typeof thaiSummaries;
+  const summaries = {
+    ...thaiSummaries,
+    ...thaiSummariesExtra,
+  } as typeof thaiSummaries;
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: "linear-gradient(to bottom, rgba(16,185,129,0.06), #ffffff)" }}>
+    <div
+      className="min-h-screen pb-24"
+      style={{
+        background:
+          "linear-gradient(to bottom, rgba(16,185,129,0.06), #ffffff)",
+      }}
+    >
       {/* Header */}
       <div
         className="text-white px-6 pt-8 pb-6 shadow-lg sticky top-0 z-10"
@@ -182,7 +191,10 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
             </p>
           </div>
         </div>
-        <div className="absolute right-6 top-6 pointer-events-none select-none" aria-hidden>
+        <div
+          className="absolute right-6 top-6 pointer-events-none select-none"
+          aria-hidden
+        >
           <SurahOrnament color="#FFFFFF" opacity={0.18} />
         </div>
       </div>
@@ -209,55 +221,59 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
             </div>
 
             <div className="space-y-5">
-                {/* Overview */}
+              {/* Overview */}
+              <div>
+                <div className="text-sm text-gray-600 mb-1">ภาพรวม</div>
+                <p className="text-gray-800 leading-relaxed">
+                  {summaries[surah.number].overview}
+                </p>
+              </div>
+
+              {/* Themes */}
+              {summaries[surah.number].themes?.length ? (
                 <div>
-                  <div className="text-sm text-gray-600 mb-1">ภาพรวม</div>
+                  <div className="text-sm text-gray-600 mb-1">ประเด็นสำคัญ</div>
+                  <ul className="list-disc pl-6 text-gray-800 space-y-1">
+                    {summaries[surah.number].themes.map((t, idx) => (
+                      <li key={idx}>{t}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+
+              {/* Context */}
+              {summaries[surah.number].context ? (
+                <div>
+                  <div className="text-sm text-gray-600 mb-1">
+                    บริบทการประทาน
+                  </div>
                   <p className="text-gray-800 leading-relaxed">
-                    {summaries[surah.number].overview}
+                    {summaries[surah.number].context}
                   </p>
                 </div>
+              ) : null}
 
-                {/* Themes */}
-                {summaries[surah.number].themes?.length ? (
-                  <div>
-                    <div className="text-sm text-gray-600 mb-1">ประเด็นสำคัญ</div>
-                    <ul className="list-disc pl-6 text-gray-800 space-y-1">
-                      {summaries[surah.number].themes.map((t, idx) => (
-                        <li key={idx}>{t}</li>
-                      ))}
-                    </ul>
+              {/* Virtues */}
+              {summaries[surah.number].virtues ? (
+                <div>
+                  <div className="text-sm text-gray-600 mb-1">
+                    คุณความดี/คุณวิเศษ
                   </div>
-                ) : null}
-
-                {/* Context */}
-                {summaries[surah.number].context ? (
-                  <div>
-                    <div className="text-sm text-gray-600 mb-1">บริบทการประทาน</div>
-                    <p className="text-gray-800 leading-relaxed">
-                      {summaries[surah.number].context}
-                    </p>
-                  </div>
-                ) : null}
-
-                {/* Virtues */}
-                {summaries[surah.number].virtues ? (
-                  <div>
-                    <div className="text-sm text-gray-600 mb-1">คุณความดี/คุณวิเศษ</div>
-                    <p className="text-gray-800 leading-relaxed">
-                      {summaries[surah.number].virtues}
-                    </p>
-                  </div>
-                ) : null}
-
-                <div className="pt-2">
-                  <button
-                    onClick={() => setShowSummary(false)}
-                    className="w-full py-2 rounded-lg text-white"
-                    style={{ backgroundColor: theme.accent }}
-                  >
-                    ปิดหน้าต่าง
-                  </button>
+                  <p className="text-gray-800 leading-relaxed">
+                    {summaries[surah.number].virtues}
+                  </p>
                 </div>
+              ) : null}
+
+              <div className="pt-2">
+                <button
+                  onClick={() => setShowSummary(false)}
+                  className="w-full py-2 rounded-lg text-white"
+                  style={{ backgroundColor: theme.accent }}
+                >
+                  ปิดหน้าต่าง
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -416,7 +432,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
 
       {/* Bismillah */}
       {surah.number !== 1 && surah.number !== 9 && (
-        <div className="max-w-4xl mx-auto px-6 py-8">
+        <div className="max-w-4xl mx-auto p-6">
           <div className="text-center text-3xl text-gray-700" dir="rtl">
             بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
           </div>
@@ -424,7 +440,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
       )}
 
       {/* Ayahs */}
-      <div className="max-w-4xl mx-auto px-6 space-y-6">
+      <div className="max-w-4xl mx-auto flex flex-col gap-6 p-6">
         {surah.ayahs?.map((ayah) => {
           const translationAyah = viewModel.translationSurah?.ayahs?.find(
             (a) => a.numberInSurah === ayah.numberInSurah
@@ -439,7 +455,13 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
               className={`bg-white rounded-2xl shadow-sm p-6 border border-gray-100 ${
                 currentAyah === ayah.number ? "ring-2" : ""
               }`}
-              style={{ boxShadow: "0 1px 0 rgba(0,0,0,0.02)", borderColor: "#F3F4F6", ...(currentAyah === ayah.number ? { outlineColor: theme.accent, outlineStyle: "auto" } : {}) }}
+              style={{
+                boxShadow: "0 1px 0 rgba(0,0,0,0.02)",
+                borderColor: "#F3F4F6",
+                ...(currentAyah === ayah.number
+                  ? { outlineColor: theme.accent, outlineStyle: "auto" }
+                  : {}),
+              }}
             >
               {/* Arabic Text */}
               <div
@@ -458,7 +480,10 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                   )}
                   <span
                     className="inline-block w-10 h-10 rounded-full text-center leading-10 mr-2 font-bold text-sm"
-                    style={{ backgroundColor: theme.accentSoft, color: theme.accent }}
+                    style={{
+                      backgroundColor: theme.accentSoft,
+                      color: theme.accent,
+                    }}
                   >
                     {ayah.numberInSurah}
                   </span>
@@ -487,7 +512,10 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                       }
                     }}
                     className="px-4 py-2 rounded-lg transition-colors text-sm"
-                    style={{ backgroundColor: theme.accentSoft, color: theme.accent }}
+                    style={{
+                      backgroundColor: theme.accentSoft,
+                      color: theme.accent,
+                    }}
                   >
                     {currentAyah === ayah.number && isPlaying
                       ? "⏸️ หยุด"
@@ -501,7 +529,10 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                   className="px-4 py-2 rounded-lg transition-colors text-sm"
                   style={
                     isBookmarked(ayah.number)
-                      ? { backgroundColor: theme.accentSoft, color: theme.accent }
+                      ? {
+                          backgroundColor: theme.accentSoft,
+                          color: theme.accent,
+                        }
                       : { backgroundColor: "#F9FAFB", color: "#374151" }
                   }
                 >

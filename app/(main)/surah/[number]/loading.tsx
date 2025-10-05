@@ -1,4 +1,4 @@
-export default function SurahSkeletonView() {
+export default function SurahLoading() {
   return (
     <div
       className="min-h-screen pb-24"
@@ -30,6 +30,11 @@ export default function SurahSkeletonView() {
             <div className="h-4 w-56 bg-white/20 rounded mx-auto animate-pulse"></div>
           </div>
         </div>
+      </div>
+
+      {/* Bismillah Skeleton */}
+      <div className="max-w-4xl mx-auto flex flex-col gap-6 p-6">
+        <div className="h-8 w-80 bg-gray-200 rounded mx-auto animate-pulse"></div>
       </div>
 
       {/* Ayahs Skeleton */}
