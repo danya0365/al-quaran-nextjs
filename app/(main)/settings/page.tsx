@@ -1,7 +1,8 @@
 'use client';
 
 import { useQuranStore } from '@/store/quranStore';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { getAvailableReciters, getAvailableTranslations } from '@/api/api';
 
 export default function SettingsPage() {
   const {
@@ -11,12 +12,83 @@ export default function SettingsPage() {
     setActiveEdition,
     availableTranslations,
     availableReciters,
+    setAvailableTranslations,
+    setAvailableReciters,
     bookmarks,
     lastRead,
   } = useQuranStore();
 
   const [showTranslationPicker, setShowTranslationPicker] = useState(false);
   const [showReciterPicker, setShowReciterPicker] = useState(false);
+  const [translationQuery, setTranslationQuery] = useState('');
+  const [reciterQuery, setReciterQuery] = useState('');
+
+  // Refs for detecting outside clicks
+  const translationRef = useRef<HTMLDivElement | null>(null);
+  const reciterRef = useRef<HTMLDivElement | null>(null);
+
+  // Ensure options are loaded when navigating directly to Settings
+  useEffect(() => {
+    let cancelled = false;
+    const ensureOptions = async () => {
+      try {
+        if (availableTranslations.length === 0) {
+          const translations = await getAvailableTranslations();
+          if (!cancelled) setAvailableTranslations(translations);
+        }
+        if (availableReciters.length === 0) {
+          const reciters = await getAvailableReciters();
+          if (!cancelled) setAvailableReciters(reciters);
+        }
+      } catch (err) {
+        console.error('Failed to load settings options', err);
+      }
+    };
+    ensureOptions();
+    return () => {
+      cancelled = true;
+    };
+  }, [availableTranslations.length, availableReciters.length, setAvailableTranslations, setAvailableReciters]);
+
+  // Resolve active labels from identifiers for better readability
+  const activeTranslationLabel = (() => {
+    const t = availableTranslations.find(
+      (x) => x.identifier === activeEditions.translation
+    );
+    if (t) return `${t.englishName}${t.language ? ` • ${t.language}` : ''}`;
+    return activeEditions.translation;
+  })();
+
+  const activeReciterLabel = (() => {
+    const r = availableReciters.find(
+      (x) => x.identifier === activeEditions.audio
+    );
+    if (r) return `${r.englishName}${r.language ? ` • ${r.language}` : ''}`;
+    return activeEditions.audio;
+  })();
+
+  // Close dropdowns on outside click / Escape key
+  useEffect(() => {
+    const onMouseDown = (e: MouseEvent) => {
+      const target = e.target as Node;
+      const inTranslation = translationRef.current?.contains(target);
+      const inReciter = reciterRef.current?.contains(target);
+      if (!inTranslation) setShowTranslationPicker(false);
+      if (!inReciter) setShowReciterPicker(false);
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowTranslationPicker(false);
+        setShowReciterPicker(false);
+      }
+    };
+    document.addEventListener('mousedown', onMouseDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', onMouseDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white pb-20">
@@ -116,24 +188,48 @@ export default function SettingsPage() {
 
           <div className="space-y-4">
             {/* Translation */}
-            <div>
+            <div ref={translationRef}>
               <label className="block text-sm text-gray-600 mb-2 font-kanit">
                 คำแปล
               </label>
               <button
-                onClick={() => setShowTranslationPicker(!showTranslationPicker)}
+                onClick={() => {
+                  setShowTranslationPicker((v) => !v);
+                  setShowReciterPicker(false);
+                }}
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-left hover:bg-gray-100 transition-colors font-kanit"
               >
-                {activeEditions.translation}
+                {activeTranslationLabel}
               </button>
               {showTranslationPicker && availableTranslations.length > 0 && (
-                <div className="mt-2 max-h-60 overflow-y-auto border border-gray-200 rounded-lg">
-                  {availableTranslations.slice(0, 10).map((translation) => (
+                <div className="mt-2 border border-gray-200 rounded-lg">
+                  <div className="p-2 border-b border-gray-100 bg-white">
+                    <input
+                      value={translationQuery}
+                      onChange={(e) => setTranslationQuery(e.target.value)}
+                      placeholder="ค้นหาคำแปล..."
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                  </div>
+                  <div className="max-h-60 overflow-y-auto">
+                  {availableTranslations
+                    .filter((t) => {
+                      const q = translationQuery.trim().toLowerCase();
+                      if (!q) return true;
+                      return (
+                        t.englishName?.toLowerCase().includes(q) ||
+                        t.language?.toLowerCase().includes(q) ||
+                        t.identifier?.toLowerCase().includes(q)
+                      );
+                    })
+                    .slice(0, 50)
+                    .map((translation) => (
                     <button
                       key={translation.identifier}
                       onClick={() => {
                         setActiveEdition('translation', translation.identifier);
                         setShowTranslationPicker(false);
+                        setTranslationQuery('');
                       }}
                       className="w-full px-4 py-3 text-left hover:bg-emerald-50 transition-colors border-b border-gray-100 last:border-b-0"
                     >
@@ -145,29 +241,54 @@ export default function SettingsPage() {
                       </div>
                     </button>
                   ))}
+                  </div>
                 </div>
               )}
             </div>
 
             {/* Reciter */}
-            <div>
+            <div ref={reciterRef}>
               <label className="block text-sm text-gray-600 mb-2 font-kanit">
                 ผู้อ่าน
               </label>
               <button
-                onClick={() => setShowReciterPicker(!showReciterPicker)}
+                onClick={() => {
+                  setShowReciterPicker((v) => !v);
+                  setShowTranslationPicker(false);
+                }}
                 className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-left hover:bg-gray-100 transition-colors font-kanit"
               >
-                {activeEditions.audio}
+                {activeReciterLabel}
               </button>
               {showReciterPicker && availableReciters.length > 0 && (
-                <div className="mt-2 max-h-60 overflow-y-auto border border-gray-200 rounded-lg">
-                  {availableReciters.slice(0, 10).map((reciter) => (
+                <div className="mt-2 border border-gray-200 rounded-lg">
+                  <div className="p-2 border-b border-gray-100 bg-white">
+                    <input
+                      value={reciterQuery}
+                      onChange={(e) => setReciterQuery(e.target.value)}
+                      placeholder="ค้นหาผู้อ่าน..."
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                  </div>
+                  <div className="max-h-60 overflow-y-auto">
+                  {availableReciters
+                    .filter((r) => {
+                      const q = reciterQuery.trim().toLowerCase();
+                      if (!q) return true;
+                      return (
+                        r.englishName?.toLowerCase().includes(q) ||
+                        r.language?.toLowerCase().includes(q) ||
+                        r.identifier?.toLowerCase().includes(q)
+                      );
+                    })
+                    .slice(0, 50)
+                    .map((reciter) => (
                     <button
                       key={reciter.identifier}
                       onClick={() => {
                         setActiveEdition('audio', reciter.identifier);
                         setShowReciterPicker(false);
+                        setReciterQuery('');
                       }}
                       className="w-full px-4 py-3 text-left hover:bg-emerald-50 transition-colors border-b border-gray-100 last:border-b-0"
                     >
@@ -179,6 +300,7 @@ export default function SettingsPage() {
                       </div>
                     </button>
                   ))}
+                  </div>
                 </div>
               )}
             </div>
