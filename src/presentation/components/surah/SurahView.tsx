@@ -163,7 +163,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
     >
       {/* Header - Smooth Shrinking Sticky */}
       <div
-        className="text-white px-6 shadow-lg sticky top-0 z-10"
+        className="text-white px-3 sm:px-6 shadow-lg sticky top-0 z-10"
         style={{
           background: `linear-gradient(90deg, ${theme.from}, ${theme.to})`,
           color: theme.textOn,
@@ -184,8 +184,8 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
               className="bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors flex-shrink-0"
               aria-label="กลับ"
               style={{
-                width: `${buttonSize}rem`,
-                height: `${buttonSize}rem`,
+                width: `${buttonSize * 0.85}rem`,
+                height: `${buttonSize * 0.85}rem`,
                 transition: "width 0.1s ease-out, height 0.1s ease-out",
               }}
             >
@@ -195,8 +195,8 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                 stroke="currentColor"
                 viewBox="0 0 24 24"
                 style={{
-                  width: `${1.5 - scrollProgress * 0.375}rem`,
-                  height: `${1.5 - scrollProgress * 0.375}rem`,
+                  width: `${(1.5 - scrollProgress * 0.375) * 0.85}rem`,
+                  height: `${(1.5 - scrollProgress * 0.375) * 0.85}rem`,
                   transition: "width 0.1s ease-out, height 0.1s ease-out",
                 }}
               >
@@ -209,15 +209,15 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
               </svg>
             </button>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               {/* Read Summary - Hide when scrolled */}
               {summaryButtonOpacity > 0 && (
                 <button
                   onClick={() => setShowSummary(true)}
-                  className="px-3 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors overflow-hidden whitespace-nowrap"
+                  className="px-2 sm:px-3 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors overflow-hidden whitespace-nowrap"
                   style={{
-                    height: `${buttonSize}rem`,
-                    fontSize: `${0.875 - scrollProgress * 0.125}rem`,
+                    height: `${buttonSize * 0.85}rem`,
+                    fontSize: `${(0.875 - scrollProgress * 0.125) * 0.9}rem`,
                     opacity: summaryButtonOpacity,
                     maxWidth: `${summaryButtonOpacity * 10}rem`,
                     transition: "height 0.1s ease-out, font-size 0.1s ease-out, opacity 0.1s ease-out, max-width 0.1s ease-out",
@@ -231,9 +231,9 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                 onClick={() => setShowSettings(!showSettings)}
                 className="bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
                 style={{
-                  width: `${buttonSize}rem`,
-                  height: `${buttonSize}rem`,
-                  fontSize: `${1.25 - scrollProgress * 0.375}rem`,
+                  width: `${buttonSize * 0.85}rem`,
+                  height: `${buttonSize * 0.85}rem`,
+                  fontSize: `${(1.25 - scrollProgress * 0.375) * 0.9}rem`,
                   transition: "width 0.1s ease-out, height 0.1s ease-out, font-size 0.1s ease-out",
                 }}
               >
@@ -256,7 +256,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
             <h1
               className="font-bold"
               style={{
-                fontSize: `${titleSize}rem`,
+                fontSize: `${titleSize * 0.9}rem`,
                 marginBottom: scrollProgress > 0.5 ? "0" : "0.25rem",
                 transition: "font-size 0.1s ease-out, margin-bottom 0.2s ease-out",
               }}
@@ -266,7 +266,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
             <p
               dir="rtl"
               style={{
-                fontSize: `${arabicSize}rem`,
+                fontSize: `${arabicSize * 0.9}rem`,
                 marginBottom: "0",
                 transition: "font-size 0.1s ease-out",
               }}
@@ -275,7 +275,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
             </p>
             {descriptionHeight > 0 && (
               <p
-                className="text-sm"
+                className="text-xs sm:text-sm"
                 style={{
                   color: "rgba(255,255,255,0.8)",
                   opacity: descriptionOpacity,
@@ -293,7 +293,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
         </div>
         {ornamentOpacity > 0 && (
           <div
-            className="absolute right-6 pointer-events-none select-none"
+            className="absolute right-3 sm:right-6 pointer-events-none select-none"
             aria-hidden
             style={{
               top: `${1.5 - scrollProgress * 0.75}rem`,
@@ -310,29 +310,29 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
       {/* Summary Modal */}
       {showSummary && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 sm:p-4"
           onClick={() => setShowSummary(false)}
         >
           <div
-            className="w-full max-w-2xl rounded-xl bg-white p-5 shadow-xl"
+            className="w-full max-w-2xl rounded-lg sm:rounded-xl bg-white p-4 sm:p-5 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-start justify-between mb-4">
-              <h3 className="font-semibold text-gray-800">สรุปซูเราะห์</h3>
+            <div className="flex items-start justify-between mb-3 sm:mb-4">
+              <h3 className="font-semibold text-sm sm:text-base text-gray-800">สรุปซูเราะห์</h3>
               <button
                 onClick={() => setShowSummary(false)}
-                className="w-9 h-9 bg-gray-100 rounded-lg hover:bg-gray-200"
+                className="w-8 h-8 sm:w-9 sm:h-9 bg-gray-100 rounded-lg hover:bg-gray-200 text-sm sm:text-base"
                 aria-label="close"
               >
                 ✕
               </button>
             </div>
 
-            <div className="space-y-5">
+            <div className="space-y-3 sm:space-y-5">
               {/* Overview */}
               <div>
-                <div className="text-sm text-gray-600 mb-1">ภาพรวม</div>
-                <p className="text-gray-800 leading-relaxed">
+                <div className="text-xs sm:text-sm text-gray-600 mb-1">ภาพรวม</div>
+                <p className="text-sm sm:text-base text-gray-800 leading-relaxed">
                   {summaries[surah.number].overview}
                 </p>
               </div>
@@ -340,8 +340,8 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
               {/* Themes */}
               {summaries[surah.number].themes?.length ? (
                 <div>
-                  <div className="text-sm text-gray-600 mb-1">ประเด็นสำคัญ</div>
-                  <ul className="list-disc pl-6 text-gray-800 space-y-1">
+                  <div className="text-xs sm:text-sm text-gray-600 mb-1">ประเด็นสำคัญ</div>
+                  <ul className="list-disc pl-5 sm:pl-6 text-sm sm:text-base text-gray-800 space-y-1">
                     {summaries[surah.number].themes.map((t, idx) => (
                       <li key={idx}>{t}</li>
                     ))}
@@ -352,10 +352,10 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
               {/* Context */}
               {summaries[surah.number].context ? (
                 <div>
-                  <div className="text-sm text-gray-600 mb-1">
+                  <div className="text-xs sm:text-sm text-gray-600 mb-1">
                     บริบทการประทาน
                   </div>
-                  <p className="text-gray-800 leading-relaxed">
+                  <p className="text-sm sm:text-base text-gray-800 leading-relaxed">
                     {summaries[surah.number].context}
                   </p>
                 </div>
@@ -364,10 +364,10 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
               {/* Virtues */}
               {summaries[surah.number].virtues ? (
                 <div>
-                  <div className="text-sm text-gray-600 mb-1">
+                  <div className="text-xs sm:text-sm text-gray-600 mb-1">
                     คุณความดี/คุณวิเศษ
                   </div>
-                  <p className="text-gray-800 leading-relaxed">
+                  <p className="text-sm sm:text-base text-gray-800 leading-relaxed">
                     {summaries[surah.number].virtues}
                   </p>
                 </div>
@@ -376,7 +376,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
               <div className="pt-2">
                 <button
                   onClick={() => setShowSummary(false)}
-                  className="w-full py-2 rounded-lg text-white"
+                  className="w-full py-2 rounded-lg text-white text-sm sm:text-base"
                   style={{ backgroundColor: theme.accent }}
                 >
                   ปิดหน้าต่าง
@@ -390,40 +390,40 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
       {/* Settings Modal */}
       {showSettings && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3 sm:p-4"
           onClick={() => setShowSettings(false)}
         >
           <div
-            className="w-full max-w-xl rounded-xl bg-white p-5 shadow-xl"
+            className="w-full max-w-xl rounded-lg sm:rounded-xl bg-white p-4 sm:p-5 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-start justify-between mb-4">
-              <h3 className="font-semibold text-gray-800">การตั้งค่า</h3>
+            <div className="flex items-start justify-between mb-3 sm:mb-4">
+              <h3 className="font-semibold text-sm sm:text-base text-gray-800">การตั้งค่า</h3>
               <button
                 onClick={() => setShowSettings(false)}
-                className="w-9 h-9 bg-gray-100 rounded-lg hover:bg-gray-200"
+                className="w-8 h-8 sm:w-9 sm:h-9 bg-gray-100 rounded-lg hover:bg-gray-200 text-sm sm:text-base"
                 aria-label="close"
               >
                 ✕
               </button>
             </div>
 
-            <div className="space-y-5">
+            <div className="space-y-3 sm:space-y-5">
               {/* Font Size */}
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">ขนาดตัวอักษร</span>
-                <div className="flex items-center gap-2">
+                <span className="text-xs sm:text-sm text-gray-600">ขนาดตัวอักษร</span>
+                <div className="flex items-center gap-1.5 sm:gap-2">
                   <button
                     onClick={() =>
                       updateSettings({
                         fontSize: Math.max(14, settings.fontSize - 2),
                       })
                     }
-                    className="w-8 h-8 bg-gray-100 rounded-lg hover:bg-gray-200"
+                    className="w-7 h-7 sm:w-8 sm:h-8 bg-gray-100 rounded-lg hover:bg-gray-200 text-sm"
                   >
                     −
                   </button>
-                  <span className="w-12 text-center text-sm">
+                  <span className="w-10 sm:w-12 text-center text-xs sm:text-sm">
                     {settings.fontSize}
                   </span>
                   <button
@@ -432,7 +432,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                         fontSize: Math.min(72, settings.fontSize + 2),
                       })
                     }
-                    className="w-8 h-8 bg-gray-100 rounded-lg hover:bg-gray-200"
+                    className="w-7 h-7 sm:w-8 sm:h-8 bg-gray-100 rounded-lg hover:bg-gray-200 text-sm"
                   >
                     +
                   </button>
@@ -441,10 +441,10 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
 
               {/* Arabic Font Family */}
               <div>
-                <div className="text-sm text-gray-600 mb-2">
+                <div className="text-xs sm:text-sm text-gray-600 mb-2">
                   ฟอนต์ภาษาอาหรับ
                 </div>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
                   {[
                     {
                       key: "Amiri",
@@ -480,7 +480,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                     <button
                       key={f.key}
                       onClick={() => updateSettings({ fontFamily: f.key })}
-                      className={`p-3 rounded-lg border text-center ${
+                      className={`p-2 sm:p-3 rounded-lg border text-center text-sm sm:text-base ${
                         settings.fontFamily === f.key
                           ? "border-emerald-500 bg-emerald-50"
                           : "border-gray-200 bg-gray-50 hover:bg-gray-100"
@@ -494,7 +494,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
 
               {/* Show Translation */}
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">แสดงคำแปล</span>
+                <span className="text-xs sm:text-sm text-gray-600">แสดงคำแปล</span>
                 <button
                   onClick={() =>
                     updateSettings({
@@ -517,7 +517,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
 
               {/* Show Tajweed */}
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">แสดงทัจญ์วีด</span>
+                <span className="text-xs sm:text-sm text-gray-600">แสดงทัจญ์วีด</span>
                 <button
                   onClick={() =>
                     updateSettings({ showTajweed: !settings.showTajweed })
@@ -540,15 +540,15 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
 
       {/* Bismillah */}
       {surah.number !== 1 && surah.number !== 9 && (
-        <div className="max-w-4xl mx-auto p-6">
-          <div className="text-center text-3xl text-gray-700" dir="rtl">
+        <div className="max-w-4xl mx-auto p-3 sm:p-6">
+          <div className="text-center text-2xl sm:text-3xl text-gray-700" dir="rtl">
             بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
           </div>
         </div>
       )}
 
       {/* Ayahs */}
-      <div className="max-w-4xl mx-auto flex flex-col gap-6 p-6">
+      <div className="max-w-4xl mx-auto flex flex-col gap-3 sm:gap-6 p-3 sm:p-6">
         {surah.ayahs?.map((ayah) => {
           const translationAyah = viewModel.translationSurah?.ayahs?.find(
             (a) => a.numberInSurah === ayah.numberInSurah
@@ -560,7 +560,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
           return (
             <div
               key={ayah.number}
-              className={`bg-white rounded-2xl shadow-sm p-6 border border-gray-100 ${
+              className={`bg-white rounded-xl sm:rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100 ${
                 currentAyah === ayah.number ? "ring-2" : ""
               }`}
               style={{
@@ -573,7 +573,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
             >
               {/* Arabic Text */}
               <div
-                className={`text-right mb-4 leading-loose ${arabicFontClass}`}
+                className={`text-right mb-3 sm:mb-4 leading-loose ${arabicFontClass}`}
                 dir="rtl"
                 style={{ fontSize: `${settings.fontSize}px` }}
               >
@@ -587,7 +587,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                     ayah.text
                   )}
                   <span
-                    className="inline-block w-10 h-10 rounded-full text-center leading-10 mr-2 font-bold text-sm"
+                    className="inline-block w-8 h-8 sm:w-10 sm:h-10 rounded-full text-center leading-8 sm:leading-10 mr-2 font-bold text-xs sm:text-sm"
                     style={{
                       backgroundColor: theme.accentSoft,
                       color: theme.accent,
@@ -600,13 +600,13 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
 
               {/* Translation */}
               {settings.showTranslation && translationAyah && (
-                <div className="text-gray-600 mb-4 leading-relaxed">
+                <div className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4 leading-relaxed">
                   {translationAyah.text}
                 </div>
               )}
 
               {/* Actions */}
-              <div className="flex items-center gap-2 pt-4 border-t border-gray-100">
+              <div className="flex items-center gap-1.5 sm:gap-2 pt-3 sm:pt-4 border-t border-gray-100">
                 {/* Play Audio */}
                 {audioAyah?.audio && (
                   <button
@@ -619,7 +619,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                         setCurrentAyah(ayah.number);
                       }
                     }}
-                    className="px-4 py-2 rounded-lg transition-colors text-sm"
+                    className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg transition-colors text-xs sm:text-sm"
                     style={{
                       backgroundColor: theme.accentSoft,
                       color: theme.accent,
@@ -634,7 +634,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                 {/* Bookmark */}
                 <button
                   onClick={() => toggleBookmark(ayah.number)}
-                  className="px-4 py-2 rounded-lg transition-colors text-sm"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg transition-colors text-xs sm:text-sm"
                   style={
                     isBookmarked(ayah.number)
                       ? {
@@ -648,7 +648,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                 </button>
 
                 {/* Ayah Number */}
-                <div className="ml-auto text-sm text-gray-500">
+                <div className="ml-auto text-xs sm:text-sm text-gray-500">
                   {surah.number}:{ayah.numberInSurah}
                 </div>
               </div>

@@ -69,10 +69,10 @@ export function SettingsView() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white pb-20">
       {/* Header */}
-      <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white px-6 pt-8 pb-6 shadow-lg">
+      <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white px-3 sm:px-6 pt-6 sm:pt-8 pb-4 sm:pb-6 shadow-lg">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold">การตั้งค่า</h1>
-          <p className="text-emerald-100 text-sm mt-1">
+          <h1 className="text-2xl sm:text-3xl font-bold">การตั้งค่า</h1>
+          <p className="text-emerald-100 text-xs sm:text-sm mt-1">
             ปรับแต่งการอ่านอัลกุรอาน
           </p>
         </div>
@@ -80,34 +80,34 @@ export function SettingsView() {
 
       {/* Error message */}
       {error && (
-        <div className="max-w-4xl mx-auto px-6 pt-4">
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+        <div className="max-w-4xl mx-auto px-3 sm:px-6 pt-3 sm:pt-4">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg text-sm sm:text-base">
             {error}
           </div>
         </div>
       )}
 
-      <div className="max-w-4xl mx-auto px-6 py-6 space-y-6">
+      <div className="max-w-4xl mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
         {/* Reading Settings */}
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">การอ่าน</h2>
+        <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">การอ่าน</h2>
 
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {/* Font Size */}
             <div className="flex items-center justify-between">
-              <span className="text-gray-700">ขนาดตัวอักษร</span>
-              <div className="flex items-center gap-2">
+              <span className="text-sm sm:text-base text-gray-700">ขนาดตัวอักษร</span>
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <button
                   onClick={() =>
                     updateSettings({
                       fontSize: Math.max(14, viewModel.settings.fontSize - 2),
                     })
                   }
-                  className="w-10 h-10 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors font-bold"
+                  className="w-9 h-9 sm:w-10 sm:h-10 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors font-bold text-sm sm:text-base"
                 >
                   −
                 </button>
-                <span className="w-12 text-center">
+                <span className="w-10 sm:w-12 text-center text-sm sm:text-base">
                   {viewModel.settings.fontSize}
                 </span>
                 <button
@@ -116,7 +116,7 @@ export function SettingsView() {
                       fontSize: Math.min(32, viewModel.settings.fontSize + 2),
                     })
                   }
-                  className="w-10 h-10 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors font-bold"
+                  className="w-9 h-9 sm:w-10 sm:h-10 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors font-bold text-sm sm:text-base"
                 >
                   +
                 </button>
@@ -125,7 +125,7 @@ export function SettingsView() {
 
             {/* Show Translation */}
             <div className="flex items-center justify-between">
-              <span className="text-gray-700">แสดงคำแปล</span>
+              <span className="text-sm sm:text-base text-gray-700">แสดงคำแปล</span>
               <button
                 onClick={() =>
                   updateSettings({
@@ -150,7 +150,7 @@ export function SettingsView() {
 
             {/* Show Tajweed */}
             <div className="flex items-center justify-between">
-              <span className="text-gray-700">แสดงทัจญ์วีด</span>
+              <span className="text-sm sm:text-base text-gray-700">แสดงทัจญ์วีด</span>
               <button
                 onClick={() =>
                   updateSettings({ showTajweed: !viewModel.settings.showTajweed })
@@ -172,21 +172,21 @@ export function SettingsView() {
         </div>
 
         {/* Editions */}
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">
+        <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">
             ฉบับที่ใช้
           </h2>
 
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {/* Translation */}
             <div ref={translationRef}>
-              <label className="block text-sm text-gray-600 mb-2">คำแปล</label>
+              <label className="block text-xs sm:text-sm text-gray-600 mb-1.5 sm:mb-2">คำแปล</label>
               <button
                 onClick={() => {
                   setShowTranslationPicker((v) => !v);
                   setShowReciterPicker(false);
                 }}
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-left hover:bg-gray-100 transition-colors"
+                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-50 border border-gray-200 rounded-lg text-left text-sm sm:text-base hover:bg-gray-100 transition-colors"
               >
                 {viewModel.activeTranslationLabel}
               </button>
@@ -198,10 +198,10 @@ export function SettingsView() {
                         value={translationQuery}
                         onChange={(e) => setTranslationQuery(e.target.value)}
                         placeholder="ค้นหาคำแปล..."
-                        className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        className="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
                       />
                     </div>
-                    <div className="max-h-60 overflow-y-auto">
+                    <div className="max-h-48 sm:max-h-60 overflow-y-auto">
                       {filterTranslations(translationQuery)
                         .slice(0, 50)
                         .map((translation) => (
@@ -215,12 +215,12 @@ export function SettingsView() {
                               setShowTranslationPicker(false);
                               setTranslationQuery("");
                             }}
-                            className="w-full px-4 py-3 text-left hover:bg-emerald-50 transition-colors border-b border-gray-100 last:border-b-0"
+                            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-left hover:bg-emerald-50 transition-colors border-b border-gray-100 last:border-b-0"
                           >
-                            <div className="font-medium">
+                            <div className="font-medium text-sm sm:text-base">
                               {translation.englishName}
                             </div>
-                            <div className="text-sm text-gray-600">
+                            <div className="text-xs sm:text-sm text-gray-600">
                               {translation.language}
                             </div>
                           </button>
@@ -232,7 +232,7 @@ export function SettingsView() {
 
             {/* Reciter */}
             <div ref={reciterRef}>
-              <label className="block text-sm text-gray-600 mb-2">
+              <label className="block text-xs sm:text-sm text-gray-600 mb-1.5 sm:mb-2">
                 ผู้อ่าน
               </label>
               <button
@@ -240,7 +240,7 @@ export function SettingsView() {
                   setShowReciterPicker((v) => !v);
                   setShowTranslationPicker(false);
                 }}
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-left hover:bg-gray-100 transition-colors"
+                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-50 border border-gray-200 rounded-lg text-left text-sm sm:text-base hover:bg-gray-100 transition-colors"
               >
                 {viewModel.activeReciterLabel}
               </button>
@@ -251,10 +251,10 @@ export function SettingsView() {
                       value={reciterQuery}
                       onChange={(e) => setReciterQuery(e.target.value)}
                       placeholder="ค้นหาผู้อ่าน..."
-                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      className="w-full px-2.5 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
                     />
                   </div>
-                  <div className="max-h-60 overflow-y-auto">
+                  <div className="max-h-48 sm:max-h-60 overflow-y-auto">
                     {filterReciters(reciterQuery)
                       .slice(0, 50)
                       .map((reciter) => (
@@ -265,12 +265,12 @@ export function SettingsView() {
                             setShowReciterPicker(false);
                             setReciterQuery("");
                           }}
-                          className="w-full px-4 py-3 text-left hover:bg-emerald-50 transition-colors border-b border-gray-100 last:border-b-0"
+                          className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-left hover:bg-emerald-50 transition-colors border-b border-gray-100 last:border-b-0"
                         >
-                          <div className="font-medium">
+                          <div className="font-medium text-sm sm:text-base">
                             {reciter.englishName}
                           </div>
-                          <div className="text-sm text-gray-600">
+                          <div className="text-xs sm:text-sm text-gray-600">
                             {reciter.language}
                           </div>
                         </button>
@@ -283,31 +283,31 @@ export function SettingsView() {
         </div>
 
         {/* Stats */}
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">สถิติ</h2>
+        <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">สถิติ</h2>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-emerald-50 rounded-lg p-4 text-center">
-              <div className="text-3xl font-bold text-emerald-600">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            <div className="bg-emerald-50 rounded-lg p-3 sm:p-4 text-center">
+              <div className="text-2xl sm:text-3xl font-bold text-emerald-600">
                 {viewModel.bookmarksCount}
               </div>
-              <div className="text-sm text-gray-600 mt-1">บุ๊คมาร์ค</div>
+              <div className="text-xs sm:text-sm text-gray-600 mt-0.5 sm:mt-1">บุ๊คมาร์ค</div>
             </div>
-            <div className="bg-amber-50 rounded-lg p-4 text-center">
-              <div className="text-3xl font-bold text-amber-600">
+            <div className="bg-amber-50 rounded-lg p-3 sm:p-4 text-center">
+              <div className="text-2xl sm:text-3xl font-bold text-amber-600">
                 {viewModel.hasLastRead ? "1" : "0"}
               </div>
-              <div className="text-sm text-gray-600 mt-1">อ่านล่าสุด</div>
+              <div className="text-xs sm:text-sm text-gray-600 mt-0.5 sm:mt-1">อ่านล่าสุด</div>
             </div>
           </div>
         </div>
 
         {/* About */}
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">
+        <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">
             เกี่ยวกับ
           </h2>
-          <div className="space-y-2 text-sm text-gray-600">
+          <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-600">
             <p>แอปพลิเคชันอ่านอัลกุรอาน</p>
             <p>เวอร์ชัน 1.0.0</p>
             <p>ข้อมูลจาก AlQuran Cloud API</p>
