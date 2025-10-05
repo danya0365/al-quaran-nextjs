@@ -24,6 +24,8 @@ export interface QuranSettings {
   fontFamily: string;
   showTajweed: boolean;
   showTranslation: boolean;
+  autoPlay: boolean;
+  autoScroll: boolean;
 }
 
 interface QuranState {
@@ -90,8 +92,10 @@ export const useQuranStore = create<QuranState>()(
       settings: {
         fontSize: 18,
         fontFamily: "Amiri",
-        showTajweed: false,
+        showTajweed: true,
         showTranslation: true,
+        autoPlay: true,
+        autoScroll: true,
       },
       isLoading: false,
       initialized: false,
