@@ -1,8 +1,8 @@
+import { SurahViewModel } from "@/src/presentation/presenters/surah/SurahPresenter";
 import { AyahInBookmark, Reciter, Surah, Translation } from "@/types/quran";
 import localforage from "localforage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { SurahViewModel } from "@/src/presentation/presenters/surah/SurahPresenter";
 
 // Initialize localforage instance
 localforage.config({
@@ -34,7 +34,11 @@ interface QuranState {
   // Surah cache (for detail pages)
   surahCache: Record<string, SurahViewModel>;
   setSurahCache: (key: string, data: SurahViewModel) => void;
-  getSurahFromCache: (surahNumber: number, translationId: string, audioId: string) => SurahViewModel | null;
+  getSurahFromCache: (
+    surahNumber: number,
+    translationId: string,
+    audioId: string
+  ) => SurahViewModel | null;
 
   // Active editions
   activeEditions: ActiveEditions;
@@ -76,7 +80,7 @@ export const useQuranStore = create<QuranState>()(
       surahCache: {},
       activeEditions: {
         quran: "ar.alafasy",
-        translation: "en.sahih",
+        translation: "th.thai",
         audio: "ar.alafasy",
       },
       availableTranslations: [],
