@@ -42,7 +42,9 @@ export function useSurahPresenter(
     bookmarks, 
     addBookmark, 
     removeBookmark,
-    setLastRead 
+    setLastRead,
+    getSurahFromCache,
+    setSurahCache
   } = useQuranStore();
 
   /**
@@ -59,6 +61,10 @@ export function useSurahPresenter(
         activeEditions.audio
       );
       setViewModel(data);
+
+      // Cache the data
+      const cacheKey = `${surahNumber}-${activeEditions.translation}-${activeEditions.audio}`;
+      setSurahCache(cacheKey, data);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
@@ -66,7 +72,7 @@ export function useSurahPresenter(
     } finally {
       setLoading(false);
     }
-  }, [surahNumber, activeEditions]);
+  }, [surahNumber, activeEditions, setSurahCache]);
 
   /**
    * Refresh data
@@ -118,12 +124,35 @@ export function useSurahPresenter(
 
   // Load data on mount or when dependencies change
   useEffect(() => {
-    if (!initialViewModel || 
-        activeEditions.translation !== 'en.sahih' || 
-        activeEditions.audio !== 'ar.alafasy') {
-      loadData();
+    // Priority 1: Check cache first
+    const cachedData = getSurahFromCache(
+      surahNumber,
+      activeEditions.translation,
+      activeEditions.audio
+    );
+
+    if (cachedData) {
+      setViewModel(cachedData);
+      setLoading(false);
+      return;
     }
-  }, [initialViewModel, loadData, activeEditions]);
+
+    // Priority 2: Use initialViewModel if provided and matches current editions
+    if (initialViewModel && 
+        activeEditions.translation === 'en.sahih' && 
+        activeEditions.audio === 'ar.alafasy') {
+      setViewModel(initialViewModel);
+      
+      // Cache it for future use
+      const cacheKey = `${surahNumber}-${activeEditions.translation}-${activeEditions.audio}`;
+      setSurahCache(cacheKey, initialViewModel);
+      setLoading(false);
+      return;
+    }
+
+    // Priority 3: Fetch fresh data
+    loadData();
+  }, [surahNumber, activeEditions, initialViewModel, getSurahFromCache, setSurahCache, loadData]);
 
   // Set last read when component mounts
   useEffect(() => {

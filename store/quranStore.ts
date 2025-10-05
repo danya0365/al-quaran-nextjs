@@ -2,6 +2,7 @@ import { AyahInBookmark, Reciter, Surah, Translation } from "@/types/quran";
 import localforage from "localforage";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { SurahViewModel } from "@/src/presentation/presenters/surah/SurahPresenter";
 
 // Initialize localforage instance
 localforage.config({
@@ -29,6 +30,11 @@ interface QuranState {
   // Surahs data
   surahs: Surah[];
   setSurahs: (surahs: Surah[]) => void;
+
+  // Surah cache (for detail pages)
+  surahCache: Record<string, SurahViewModel>;
+  setSurahCache: (key: string, data: SurahViewModel) => void;
+  getSurahFromCache: (surahNumber: number, translationId: string, audioId: string) => SurahViewModel | null;
 
   // Active editions
   activeEditions: ActiveEditions;
@@ -64,9 +70,10 @@ interface QuranState {
 
 export const useQuranStore = create<QuranState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       // Initial state
       surahs: [],
+      surahCache: {},
       activeEditions: {
         quran: "ar.alafasy",
         translation: "en.sahih",
@@ -87,6 +94,19 @@ export const useQuranStore = create<QuranState>()(
 
       // Actions
       setSurahs: (surahs) => set({ surahs }),
+
+      setSurahCache: (key, data) =>
+        set((state) => ({
+          surahCache: {
+            ...state.surahCache,
+            [key]: data,
+          },
+        })),
+
+      getSurahFromCache: (surahNumber, translationId, audioId) => {
+        const key = `${surahNumber}-${translationId}-${audioId}`;
+        return get().surahCache[key] || null;
+      },
 
       setActiveEdition: (type, identifier) =>
         set((state) => ({

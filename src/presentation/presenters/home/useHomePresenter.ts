@@ -27,6 +27,10 @@ export function useHomePresenter(
   const [searchQuery, setSearchQuery] = useState('');
 
   const { 
+    surahs: storedSurahs,
+    availableTranslations: storedTranslations,
+    availableReciters: storedReciters,
+    initialized,
     setSurahs, 
     setAvailableTranslations, 
     setAvailableReciters,
@@ -65,17 +69,32 @@ export function useHomePresenter(
     await loadData();
   }, [loadData]);
 
-  // Load data on mount if no initial data
+  // Load data on mount
   useEffect(() => {
-    if (!initialViewModel) {
-      loadData();
-    } else {
-      // If we have initial data, still store it in Zustand
+    // Priority 1: Use data from Zustand if initialized
+    if (initialized && storedSurahs.length > 0) {
+      setViewModel({
+        surahs: storedSurahs,
+        translations: storedTranslations,
+        reciters: storedReciters,
+      });
+      setLoading(false);
+      return;
+    }
+
+    // Priority 2: Use initialViewModel if provided
+    if (initialViewModel) {
+      setViewModel(initialViewModel);
       setSurahs(initialViewModel.surahs);
       setAvailableTranslations(initialViewModel.translations);
       setAvailableReciters(initialViewModel.reciters);
       setInitialized(true);
+      setLoading(false);
+      return;
     }
+
+    // Priority 3: Fetch fresh data
+    refreshData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
