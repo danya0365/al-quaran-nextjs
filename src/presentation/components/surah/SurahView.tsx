@@ -12,6 +12,7 @@ import {
   Tajawal,
 } from "next/font/google";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import TajweedText from "./TajweedText";
 import { getSurahTheme, SurahOrnament } from "./surahThemes";
@@ -35,6 +36,7 @@ interface SurahViewProps {
 }
 
 export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
+  const router = useRouter();
   const {
     viewModel,
     loading,
@@ -51,6 +53,14 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
   const [showSettings, setShowSettings] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      router.back();
+    } else {
+      router.push('/home');
+    }
+  };
 
   const arabicFontClass =
     settings.fontFamily === "Lateef"
@@ -123,9 +133,10 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
       >
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-4">
-            <Link
-              href="/home"
+            <button
+              onClick={handleBack}
               className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
+              aria-label="กลับ"
             >
               <svg
                 className="w-6 h-6"
@@ -140,7 +151,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                   d="M15 19l-7-7 7-7"
                 />
               </svg>
-            </Link>
+            </button>
 
             <div className="flex items-center gap-2">
               {/* Read Summary */}

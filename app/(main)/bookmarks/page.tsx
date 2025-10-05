@@ -61,7 +61,7 @@ export default function BookmarksPage() {
                 บันทึกอายะห์ที่คุณชอบเพื่อกลับมาอ่านภายหลัง
               </p>
               <Link
-                href="/"
+                href="/home"
                 className="inline-block mt-4 bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 transition-colors"
               >
                 เริ่มอ่านอัลกุรอาน
