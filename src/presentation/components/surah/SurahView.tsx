@@ -54,6 +54,35 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
   const [showSummary, setShowSummary] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
+  // Smooth scroll animation for header
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      const maxScroll = 80; // Distance to complete animation
+      const progress = Math.min(scrollPosition / maxScroll, 1);
+      setScrollProgress(progress);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Calculate dynamic values based on scroll progress
+  const headerPadding = {
+    paddingTop: `${2 - scrollProgress * 1.25}rem`,
+    paddingBottom: `${1.5 - scrollProgress * 1}rem`,
+  };
+
+  const titleSize = 1.5 - scrollProgress * 0.5; // 1.5rem -> 1rem
+  const arabicSize = 1.875 - scrollProgress * 0.875; // 1.875rem -> 1rem
+  const descriptionOpacity = Math.max(1 - scrollProgress * 2, 0); // fade out faster
+  const descriptionHeight = Math.max(1 - scrollProgress * 2, 0); // collapse faster
+  const buttonSize = 2.5 - scrollProgress * 0.625; // 2.5rem -> 1.875rem
+  const summaryButtonOpacity = Math.max(1 - scrollProgress * 1.5, 0); // fade out summary button
+  const ornamentOpacity = Math.max(0.18 - scrollProgress * 0.18, 0); // fade out ornament
+
   const handleBack = () => {
     if (window.history.length > 1) {
       router.back();
@@ -132,26 +161,44 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
           "linear-gradient(to bottom, rgba(16,185,129,0.06), #ffffff)",
       }}
     >
-      {/* Header */}
+      {/* Header - Smooth Shrinking Sticky */}
       <div
-        className="text-white px-6 pt-8 pb-6 shadow-lg sticky top-0 z-10"
+        className="text-white px-6 shadow-lg sticky top-0 z-10"
         style={{
           background: `linear-gradient(90deg, ${theme.from}, ${theme.to})`,
           color: theme.textOn,
+          ...headerPadding,
+          transition: "padding 0.1s ease-out",
         }}
       >
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-4">
+          <div
+            className="flex items-center justify-between"
+            style={{
+              marginBottom: `${Math.max(1 - scrollProgress * 1, 0.25)}rem`,
+              transition: "margin 0.1s ease-out",
+            }}
+          >
             <button
               onClick={handleBack}
-              className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
+              className="bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors flex-shrink-0"
               aria-label="กลับ"
+              style={{
+                width: `${buttonSize}rem`,
+                height: `${buttonSize}rem`,
+                transition: "width 0.1s ease-out, height 0.1s ease-out",
+              }}
             >
               <svg
                 className="w-6 h-6"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
+                style={{
+                  width: `${1.5 - scrollProgress * 0.375}rem`,
+                  height: `${1.5 - scrollProgress * 0.375}rem`,
+                  transition: "width 0.1s ease-out, height 0.1s ease-out",
+                }}
               >
                 <path
                   strokeLinecap="round"
@@ -163,40 +210,101 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
             </button>
 
             <div className="flex items-center gap-2">
-              {/* Read Summary */}
-              <button
-                onClick={() => setShowSummary(true)}
-                className="px-3 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors text-sm"
-              >
-                📘 อ่านสรุป
-              </button>
+              {/* Read Summary - Hide when scrolled */}
+              {summaryButtonOpacity > 0 && (
+                <button
+                  onClick={() => setShowSummary(true)}
+                  className="px-3 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors overflow-hidden whitespace-nowrap"
+                  style={{
+                    height: `${buttonSize}rem`,
+                    fontSize: `${0.875 - scrollProgress * 0.125}rem`,
+                    opacity: summaryButtonOpacity,
+                    maxWidth: `${summaryButtonOpacity * 10}rem`,
+                    transition: "height 0.1s ease-out, font-size 0.1s ease-out, opacity 0.1s ease-out, max-width 0.1s ease-out",
+                  }}
+                >
+                  📘 อ่านสรุป
+                </button>
+              )}
               {/* Settings */}
               <button
                 onClick={() => setShowSettings(!showSettings)}
-                className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
+                className="bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
+                style={{
+                  width: `${buttonSize}rem`,
+                  height: `${buttonSize}rem`,
+                  fontSize: `${1.25 - scrollProgress * 0.375}rem`,
+                  transition: "width 0.1s ease-out, height 0.1s ease-out, font-size 0.1s ease-out",
+                }}
               >
                 ⚙️
               </button>
             </div>
           </div>
 
-          <div className="text-center">
-            <h1 className="text-2xl font-bold mb-1">{surah.englishName}</h1>
-            <p className="text-3xl mb-2" dir="rtl">
+          <div
+            className="text-center"
+            style={{
+              display: "flex",
+              flexDirection: scrollProgress > 0.5 ? "row" : "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: scrollProgress > 0.5 ? "0.75rem" : "0",
+              transition: "gap 0.2s ease-out",
+            }}
+          >
+            <h1
+              className="font-bold"
+              style={{
+                fontSize: `${titleSize}rem`,
+                marginBottom: scrollProgress > 0.5 ? "0" : "0.25rem",
+                transition: "font-size 0.1s ease-out, margin-bottom 0.2s ease-out",
+              }}
+            >
+              {surah.englishName}
+            </h1>
+            <p
+              dir="rtl"
+              style={{
+                fontSize: `${arabicSize}rem`,
+                marginBottom: "0",
+                transition: "font-size 0.1s ease-out",
+              }}
+            >
               {surah.name}
             </p>
-            <p className="text-sm" style={{ color: "rgba(255,255,255,0.8)" }}>
-              {surah.englishNameTranslation} • {surah.ayahs?.length || 0} อายะห์
-              •{surah.revelationType === "Meccan" ? " มักกะห์" : " มะดีนะห์"}
-            </p>
+            {descriptionHeight > 0 && (
+              <p
+                className="text-sm"
+                style={{
+                  color: "rgba(255,255,255,0.8)",
+                  opacity: descriptionOpacity,
+                  maxHeight: `${descriptionHeight * 1.5}rem`,
+                  overflow: "hidden",
+                  marginTop: scrollProgress > 0.5 ? "0" : "0.25rem",
+                  transition: "opacity 0.1s ease-out, max-height 0.1s ease-out, margin-top 0.1s ease-out",
+                }}
+              >
+                {surah.englishNameTranslation} • {surah.ayahs?.length || 0} อายะห์
+                •{surah.revelationType === "Meccan" ? " มักกะห์" : " มะดีนะห์"}
+              </p>
+            )}
           </div>
         </div>
-        <div
-          className="absolute right-6 top-6 pointer-events-none select-none"
-          aria-hidden
-        >
-          <SurahOrnament color="#FFFFFF" opacity={0.18} />
-        </div>
+        {ornamentOpacity > 0 && (
+          <div
+            className="absolute right-6 pointer-events-none select-none"
+            aria-hidden
+            style={{
+              top: `${1.5 - scrollProgress * 0.75}rem`,
+              opacity: ornamentOpacity,
+              transform: `scale(${1 - scrollProgress * 0.3})`,
+              transition: "top 0.1s ease-out, opacity 0.1s ease-out, transform 0.1s ease-out",
+            }}
+          >
+            <SurahOrnament color="#FFFFFF" opacity={0.18} />
+          </div>
+        )}
       </div>
 
       {/* Summary Modal */}

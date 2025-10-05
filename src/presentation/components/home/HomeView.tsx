@@ -3,7 +3,7 @@
 import { HomeViewModel } from "@/src/presentation/presenters/home/HomePresenter";
 import { useHomePresenter } from "@/src/presentation/presenters/home/useHomePresenter";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getSurahTheme, SurahOrnament } from "../surah/surahThemes";
 import HomeSkeletonView from "./HomeSkeletonView";
 
@@ -14,6 +14,30 @@ interface HomeViewProps {
 export function HomeView({ initialViewModel }: HomeViewProps) {
   const { viewModel, loading, error, searchQuery, setSearchQuery } =
     useHomePresenter(initialViewModel);
+
+  // Smooth scroll animation for header
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      const maxScroll = 100; // Distance to complete animation
+      const progress = Math.min(scrollPosition / maxScroll, 1);
+      setScrollProgress(progress);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Calculate dynamic values based on scroll progress
+  const headerPadding = {
+    paddingTop: `${2 - scrollProgress * 1}rem`,
+    paddingBottom: `${1.5 - scrollProgress * 1}rem`,
+  };
+
+  const statsOpacity = Math.max(1 - scrollProgress * 1.5, 0); // fade out stats
+  const statsHeight = Math.max(1 - scrollProgress * 1.5, 0); // collapse stats
 
   // Filter surahs based on search - memoized for performance
   const filteredSurahs = useMemo(() => {
@@ -56,11 +80,17 @@ export function HomeView({ initialViewModel }: HomeViewProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white pb-20">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white px-6 pt-8 pb-6 shadow-lg">
+      {/* Header - Smooth Shrinking Sticky */}
+      <div
+        className="sticky top-0 z-50 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-lg px-6"
+        style={{
+          ...headerPadding,
+          transition: "padding 0.1s ease-out",
+        }}
+      >
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-6">
-            <div>
+            <div className="flex items-center gap-3">
               <h1 className="text-3xl font-bold">อัลกุรอาน</h1>
               <p className="text-emerald-100 text-sm mt-1">
                 Al-Quran Al-Kareem
@@ -72,7 +102,7 @@ export function HomeView({ initialViewModel }: HomeViewProps) {
           </div>
 
           {/* Search Bar */}
-          <div className="relative">
+          <div className="relative mb-4">
             <input
               type="text"
               placeholder="ค้นหาซูเราะห์..."
@@ -84,26 +114,33 @@ export function HomeView({ initialViewModel }: HomeViewProps) {
               🔍
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Stats */}
-      <div className="max-w-4xl mx-auto px-6 -mt-4 mb-6">
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div>
-              <div className="text-3xl font-bold text-emerald-600">114</div>
-              <div className="text-sm text-gray-600 mt-1">ซูเราะห์</div>
+          {/* Stats - Inside Header */}
+          {statsOpacity > 0 && (
+            <div
+              style={{
+                opacity: statsOpacity,
+                maxHeight: `${statsHeight * 6}rem`,
+                overflow: "hidden",
+                transition: "opacity 0.1s ease-out, max-height 0.1s ease-out",
+              }}
+            >
+              <div className="grid grid-cols-3 gap-4 text-center bg-white/10 backdrop-blur-sm rounded-xl p-4">
+                <div>
+                  <div className="text-2xl font-bold">114</div>
+                  <div className="text-xs text-emerald-100 mt-1">ซูเราะห์</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold">6,236</div>
+                  <div className="text-xs text-emerald-100 mt-1">อายะห์</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold">30</div>
+                  <div className="text-xs text-emerald-100 mt-1">ญุซอ์</div>
+                </div>
+              </div>
             </div>
-            <div>
-              <div className="text-3xl font-bold text-emerald-600">6,236</div>
-              <div className="text-sm text-gray-600 mt-1">อายะห์</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-emerald-600">30</div>
-              <div className="text-sm text-gray-600 mt-1">ญุซอ์</div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
