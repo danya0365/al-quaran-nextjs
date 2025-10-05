@@ -16,6 +16,7 @@ import { useEffect, useRef, useState } from "react";
 import TajweedText from "./TajweedText";
 import { getSurahTheme, SurahOrnament } from "./surahThemes";
 import { thaiSummariesComplete as thaiSummaries } from "./surahSummaries.th";
+import thaiSummariesExtra from "./surahSummaries.extra.th";
 // Arabic fonts must be initialized at module scope
 const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"] });
 const lateef = Lateef({ subsets: ["arabic"], weight: ["400"] });
@@ -114,6 +115,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
 
   const surah = viewModel.arabicSurah;
   const theme = getSurahTheme(surah.number);
+  const summaries = { ...thaiSummaries, ...thaiSummariesExtra } as typeof thaiSummaries;
 
   return (
     <div className="min-h-screen pb-24" style={{ background: "linear-gradient(to bottom, rgba(16,185,129,0.06), #ffffff)" }}>
@@ -206,16 +208,16 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                 <div>
                   <div className="text-sm text-gray-600 mb-1">ภาพรวม</div>
                   <p className="text-gray-800 leading-relaxed">
-                    {thaiSummaries[surah.number].overview}
+                    {summaries[surah.number].overview}
                   </p>
                 </div>
 
                 {/* Themes */}
-                {thaiSummaries[surah.number].themes?.length ? (
+                {summaries[surah.number].themes?.length ? (
                   <div>
                     <div className="text-sm text-gray-600 mb-1">ประเด็นสำคัญ</div>
                     <ul className="list-disc pl-6 text-gray-800 space-y-1">
-                      {thaiSummaries[surah.number].themes.map((t, idx) => (
+                      {summaries[surah.number].themes.map((t, idx) => (
                         <li key={idx}>{t}</li>
                       ))}
                     </ul>
@@ -223,21 +225,21 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                 ) : null}
 
                 {/* Context */}
-                {thaiSummaries[surah.number].context ? (
+                {summaries[surah.number].context ? (
                   <div>
                     <div className="text-sm text-gray-600 mb-1">บริบทการประทาน</div>
                     <p className="text-gray-800 leading-relaxed">
-                      {thaiSummaries[surah.number].context}
+                      {summaries[surah.number].context}
                     </p>
                   </div>
                 ) : null}
 
                 {/* Virtues */}
-                {thaiSummaries[surah.number].virtues ? (
+                {summaries[surah.number].virtues ? (
                   <div>
                     <div className="text-sm text-gray-600 mb-1">คุณความดี/คุณวิเศษ</div>
                     <p className="text-gray-800 leading-relaxed">
-                      {thaiSummaries[surah.number].virtues}
+                      {summaries[surah.number].virtues}
                     </p>
                   </div>
                 ) : null}
