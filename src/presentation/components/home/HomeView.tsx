@@ -3,6 +3,7 @@
 import { HomeViewModel } from "@/src/presentation/presenters/home/HomePresenter";
 import { useHomePresenter } from "@/src/presentation/presenters/home/useHomePresenter";
 import Link from "next/link";
+import { useMemo } from "react";
 import { getSurahTheme, SurahOrnament } from "../surah/surahThemes";
 
 interface HomeViewProps {
@@ -13,16 +14,22 @@ export function HomeView({ initialViewModel }: HomeViewProps) {
   const { viewModel, loading, error, searchQuery, setSearchQuery } =
     useHomePresenter(initialViewModel);
 
-  // Filter surahs based on search
-  const filteredSurahs = viewModel?.surahs.filter((surah) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      surah.englishName.toLowerCase().includes(query) ||
-      surah.englishNameTranslation.toLowerCase().includes(query) ||
-      surah.name.includes(query) ||
-      surah.number.toString().includes(query)
-    );
-  });
+  // Filter surahs based on search - memoized for performance
+  const filteredSurahs = useMemo(() => {
+    if (!viewModel?.surahs) return [];
+    
+    const query = searchQuery.toLowerCase().trim();
+    if (!query) return viewModel.surahs;
+    
+    return viewModel.surahs.filter((surah) => {
+      return (
+        surah.englishName.toLowerCase().includes(query) ||
+        surah.englishNameTranslation.toLowerCase().includes(query) ||
+        surah.name.includes(query) ||
+        surah.number.toString().includes(query)
+      );
+    });
+  }, [viewModel?.surahs, searchQuery]);
 
   if (loading && !viewModel) {
     return (

@@ -69,8 +69,15 @@ export function useHomePresenter(
   useEffect(() => {
     if (!initialViewModel) {
       loadData();
+    } else {
+      // If we have initial data, still store it in Zustand
+      setSurahs(initialViewModel.surahs);
+      setAvailableTranslations(initialViewModel.translations);
+      setAvailableReciters(initialViewModel.reciters);
+      setInitialized(true);
     }
-  }, [initialViewModel, loadData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     viewModel,
