@@ -5,6 +5,11 @@ import { useSurahPresenter } from "@/src/presentation/presenters/surah/useSurahP
 import { useQuranStore } from "@/store/quranStore";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { Amiri, Lateef, Scheherazade_New } from "next/font/google";
+// Arabic fonts must be initialized at module scope
+const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"] });
+const lateef = Lateef({ subsets: ["arabic"], weight: ["400"] });
+const scheherazade = Scheherazade_New({ subsets: ["arabic"], weight: ["400", "700"] });
 import TajweedText from "./TajweedText";
 
 interface SurahViewProps {
@@ -28,6 +33,13 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
   const { settings, updateSettings } = useQuranStore();
   const [showSettings, setShowSettings] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  const arabicFontClass =
+    settings.fontFamily === "Lateef"
+      ? lateef.className
+      : settings.fontFamily === "ScheherazadeNew"
+      ? scheherazade.className
+      : amiri.className;
 
   // Play audio when currentAyah changes
   useEffect(() => {
@@ -128,28 +140,37 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
         </div>
       </div>
 
-      {/* Settings Panel */}
+      {/* Settings Modal */}
       {showSettings && (
-        <div className="bg-white border-b border-gray-200 shadow-sm">
-          <div className="max-w-4xl mx-auto px-6 py-4">
-            <h3 className="font-semibold text-gray-800 mb-3 font-kanit">
-              การตั้งค่า
-            </h3>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          onClick={() => setShowSettings(false)}
+        >
+          <div
+            className="w-full max-w-xl rounded-xl bg-white p-5 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between mb-4">
+              <h3 className="font-semibold text-gray-800 font-kanit">การตั้งค่า</h3>
+              <button
+                onClick={() => setShowSettings(false)}
+                className="w-9 h-9 bg-gray-100 rounded-lg hover:bg-gray-200"
+                aria-label="close"
+              >
+                ✕
+              </button>
+            </div>
 
-            <div className="space-y-3">
+            <div className="space-y-5">
               {/* Font Size */}
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 font-kanit">
-                  ขนาดตัวอักษร
-                </span>
+                <span className="text-sm text-gray-600 font-kanit">ขนาดตัวอักษร</span>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() =>
-                      updateSettings({
-                        fontSize: Math.max(14, settings.fontSize - 2),
-                      })
+                      updateSettings({ fontSize: Math.max(14, settings.fontSize - 2) })
                     }
-                    className="w-8 h-8 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                    className="w-8 h-8 bg-gray-100 rounded-lg hover:bg-gray-200"
                   >
                     −
                   </button>
@@ -158,37 +179,51 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                   </span>
                   <button
                     onClick={() =>
-                      updateSettings({
-                        fontSize: Math.min(32, settings.fontSize + 2),
-                      })
+                      updateSettings({ fontSize: Math.min(32, settings.fontSize + 2) })
                     }
-                    className="w-8 h-8 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                    className="w-8 h-8 bg-gray-100 rounded-lg hover:bg-gray-200"
                   >
                     +
                   </button>
                 </div>
               </div>
 
+              {/* Arabic Font Family */}
+              <div>
+                <div className="text-sm text-gray-600 mb-2 font-kanit">ฟอนต์ภาษาอาหรับ</div>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { key: "Amiri", label: "Amiri", className: amiri.className },
+                    { key: "Lateef", label: "Lateef", className: lateef.className },
+                    { key: "ScheherazadeNew", label: "Scheherazade", className: scheherazade.className },
+                  ].map((f) => (
+                    <button
+                      key={f.key}
+                      onClick={() => updateSettings({ fontFamily: f.key })}
+                      className={`p-3 rounded-lg border text-center ${
+                        settings.fontFamily === f.key
+                          ? "border-emerald-500 bg-emerald-50"
+                          : "border-gray-200 bg-gray-50 hover:bg-gray-100"
+                      } ${f.className}`}
+                    >
+                      بِسْمِ اللَّهِ
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Show Translation */}
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 font-kanit">
-                  แสดงคำแปล
-                </span>
+                <span className="text-sm text-gray-600 font-kanit">แสดงคำแปล</span>
                 <button
-                  onClick={() =>
-                    updateSettings({
-                      showTranslation: !settings.showTranslation,
-                    })
-                  }
+                  onClick={() => updateSettings({ showTranslation: !settings.showTranslation })}
                   className={`w-12 h-6 rounded-full transition-colors ${
                     settings.showTranslation ? "bg-emerald-600" : "bg-gray-300"
                   }`}
                 >
                   <div
                     className={`w-5 h-5 bg-white rounded-full transition-transform ${
-                      settings.showTranslation
-                        ? "translate-x-6"
-                        : "translate-x-1"
+                      settings.showTranslation ? "translate-x-6" : "translate-x-1"
                     }`}
                   />
                 </button>
@@ -196,13 +231,9 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
 
               {/* Show Tajweed */}
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600 font-kanit">
-                  แสดงทัจญ์วีด
-                </span>
+                <span className="text-sm text-gray-600 font-kanit">แสดงทัจญ์วีด</span>
                 <button
-                  onClick={() =>
-                    updateSettings({ showTajweed: !settings.showTajweed })
-                  }
+                  onClick={() => updateSettings({ showTajweed: !settings.showTajweed })}
                   className={`w-12 h-6 rounded-full transition-colors ${
                     settings.showTajweed ? "bg-emerald-600" : "bg-gray-300"
                   }`}
@@ -247,7 +278,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
             >
               {/* Arabic Text */}
               <div
-                className="text-right mb-4 leading-loose"
+                className={`text-right mb-4 leading-loose ${arabicFontClass}`}
                 dir="rtl"
                 style={{ fontSize: `${settings.fontSize}px` }}
               >
