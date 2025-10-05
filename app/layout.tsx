@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Kanit, Amiri, Lateef, Scheherazade_New } from 'next/font/google';
+import { Kanit, Amiri, Lateef, Scheherazade_New, Tajawal, Reem_Kufi, Markazi_Text } from 'next/font/google';
 import "../public/styles/index.css";
 
 const kanit = Kanit({ 
@@ -27,6 +27,25 @@ const scheherazade = Scheherazade_New({
   variable: '--font-scheherazade',
 });
 
+// Extra Arabic fonts
+const tajawal = Tajawal({
+  weight: ['400', '700'],
+  subsets: ['arabic'],
+  variable: '--font-tajawal',
+});
+
+const reemKufi = Reem_Kufi({
+  weight: ['400', '700'],
+  subsets: ['arabic'],
+  variable: '--font-reemkufi',
+});
+
+const markazi = Markazi_Text({
+  weight: ['400', '700'],
+  subsets: ['arabic'],
+  variable: '--font-markazi',
+});
+
 export const metadata: Metadata = {
   title: "Al-Quran",
   description: "Al-Quran App - อ่านอัลกุรอานออนไลน์",
@@ -39,7 +58,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="th">
-      <body className={`${kanit.variable} ${amiri.variable} ${lateef.variable} ${scheherazade.variable} antialiased`}>
+      <body className={`${kanit.variable} ${amiri.variable} ${lateef.variable} ${scheherazade.variable} ${tajawal.variable} ${reemKufi.variable} ${markazi.variable} antialiased`}>
         {children}
       </body>
     </html>

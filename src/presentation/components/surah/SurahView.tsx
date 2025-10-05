@@ -5,11 +5,14 @@ import { useSurahPresenter } from "@/src/presentation/presenters/surah/useSurahP
 import { useQuranStore } from "@/store/quranStore";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { Amiri, Lateef, Scheherazade_New } from "next/font/google";
+import { Amiri, Lateef, Scheherazade_New, Tajawal, Reem_Kufi, Markazi_Text } from "next/font/google";
 // Arabic fonts must be initialized at module scope
 const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"] });
 const lateef = Lateef({ subsets: ["arabic"], weight: ["400"] });
 const scheherazade = Scheherazade_New({ subsets: ["arabic"], weight: ["400", "700"] });
+const tajawal = Tajawal({ subsets: ["arabic"], weight: ["400", "700"] });
+const reemKufi = Reem_Kufi({ subsets: ["arabic"], weight: ["400", "700"] });
+const markazi = Markazi_Text({ subsets: ["arabic"], weight: ["400", "700"] });
 import TajweedText from "./TajweedText";
 
 interface SurahViewProps {
@@ -39,6 +42,12 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
       ? lateef.className
       : settings.fontFamily === "ScheherazadeNew"
       ? scheherazade.className
+      : settings.fontFamily === "Tajawal"
+      ? tajawal.className
+      : settings.fontFamily === "ReemKufi"
+      ? reemKufi.className
+      : settings.fontFamily === "MarkaziText"
+      ? markazi.className
       : amiri.className;
 
   // Play audio when currentAyah changes
@@ -196,6 +205,9 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                     { key: "Amiri", label: "Amiri", className: amiri.className },
                     { key: "Lateef", label: "Lateef", className: lateef.className },
                     { key: "ScheherazadeNew", label: "Scheherazade", className: scheherazade.className },
+                    { key: "Tajawal", label: "Tajawal", className: tajawal.className },
+                    { key: "ReemKufi", label: "Reem Kufi", className: reemKufi.className },
+                    { key: "MarkaziText", label: "Markazi Text", className: markazi.className },
                   ].map((f) => (
                     <button
                       key={f.key}
