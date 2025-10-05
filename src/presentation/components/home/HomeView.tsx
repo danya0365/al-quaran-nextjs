@@ -3,8 +3,9 @@
 import { HomeViewModel } from "@/src/presentation/presenters/home/HomePresenter";
 import { useHomePresenter } from "@/src/presentation/presenters/home/useHomePresenter";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getSurahTheme, SurahOrnament } from "../surah/surahThemes";
+import HomeSkeletonView from "./HomeSkeletonView";
 
 interface HomeViewProps {
   initialViewModel?: HomeViewModel;
@@ -13,6 +14,30 @@ interface HomeViewProps {
 export function HomeView({ initialViewModel }: HomeViewProps) {
   const { viewModel, loading, error, searchQuery, setSearchQuery } =
     useHomePresenter(initialViewModel);
+
+  // Smooth scroll animation for header
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      const maxScroll = 100; // Distance to complete animation
+      const progress = Math.min(scrollPosition / maxScroll, 1);
+      setScrollProgress(progress);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Calculate dynamic values based on scroll progress
+  const headerPadding = {
+    paddingTop: `${2 - scrollProgress * 1}rem`,
+    paddingBottom: `${1.5 - scrollProgress * 1}rem`,
+  };
+
+  const statsOpacity = Math.max(1 - scrollProgress * 1.5, 0); // fade out stats
+  const statsHeight = Math.max(1 - scrollProgress * 1.5, 0); // collapse stats
 
   // Filter surahs based on search - memoized for performance
   const filteredSurahs = useMemo(() => {
@@ -32,14 +57,7 @@ export function HomeView({ initialViewModel }: HomeViewProps) {
   }, [viewModel?.surahs, searchQuery]);
 
   if (loading && !viewModel) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-emerald-50 to-white">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-emerald-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">กำลังโหลดข้อมูล...</p>
-        </div>
-      </div>
-    );
+    return <HomeSkeletonView />;
   }
 
   if (error && !viewModel) {
@@ -62,106 +80,127 @@ export function HomeView({ initialViewModel }: HomeViewProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white pb-20">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white px-6 pt-8 pb-6 shadow-lg">
+      {/* Header - Smooth Shrinking Sticky */}
+      <div
+        className="sticky top-0 z-50 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-lg px-3 sm:px-6"
+        style={{
+          ...headerPadding,
+          transition: "padding 0.1s ease-out",
+        }}
+      >
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-3xl font-bold">อัลกุรอาน</h1>
-              <p className="text-emerald-100 text-sm mt-1">
+          <div className="flex items-center justify-between mb-3 sm:mb-6">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <h1 className="text-2xl sm:text-3xl font-bold">อัลกุรอาน</h1>
+              <p className="text-emerald-100 text-xs sm:text-sm mt-1">
                 Al-Quran Al-Kareem
               </p>
             </div>
-            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-              <span className="text-2xl">📖</span>
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-full flex items-center justify-center">
+              <span className="text-xl sm:text-2xl">📖</span>
             </div>
           </div>
 
           {/* Search Bar */}
-          <div className="relative">
+          <div className="relative mb-3 sm:mb-4">
             <input
               type="text"
               placeholder="ค้นหาซูเราะห์..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-3 pr-12 rounded-xl bg-white/90 backdrop-blur-sm text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-300"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 pr-10 sm:pr-12 rounded-lg sm:rounded-xl bg-white/90 backdrop-blur-sm text-sm sm:text-base text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-300"
             />
             <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
               🔍
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Stats */}
-      <div className="max-w-4xl mx-auto px-6 -mt-4 mb-6">
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div>
-              <div className="text-3xl font-bold text-emerald-600">114</div>
-              <div className="text-sm text-gray-600 mt-1">ซูเราะห์</div>
+          {/* Stats - Inside Header */}
+          {statsOpacity > 0 && (
+            <div
+              style={{
+                opacity: statsOpacity,
+                maxHeight: `${statsHeight * 6}rem`,
+                overflow: "hidden",
+                transition: "opacity 0.1s ease-out, max-height 0.1s ease-out",
+              }}
+            >
+              <div className="grid grid-cols-3 gap-2 sm:gap-4 text-center bg-white/10 backdrop-blur-sm rounded-lg sm:rounded-xl p-2.5 sm:p-4">
+                <div>
+                  <div className="text-xl sm:text-2xl font-bold">114</div>
+                  <div className="text-xs text-emerald-100 mt-0.5 sm:mt-1">
+                    ซูเราะห์
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xl sm:text-2xl font-bold">6,236</div>
+                  <div className="text-xs text-emerald-100 mt-0.5 sm:mt-1">
+                    อายะห์
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xl sm:text-2xl font-bold">30</div>
+                  <div className="text-xs text-emerald-100 mt-0.5 sm:mt-1">
+                    ญุซอ์
+                  </div>
+                </div>
+              </div>
             </div>
-            <div>
-              <div className="text-3xl font-bold text-emerald-600">6,236</div>
-              <div className="text-sm text-gray-600 mt-1">อายะห์</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-emerald-600">30</div>
-              <div className="text-sm text-gray-600 mt-1">ญุซอ์</div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
       {/* Surah List */}
-      <div className="max-w-4xl mx-auto px-6">
-        <div className="mb-4">
+      <div className="max-w-4xl mx-auto p-3 sm:p-6">
+        <div className="mb-3 sm:mb-4">
           <h2 className="text-lg font-semibold text-gray-800">
             รายการซูเราะห์ ({filteredSurahs?.length || 0})
           </h2>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-2 sm:space-y-3">
           {filteredSurahs?.map((surah) => {
             const theme = getSurahTheme(surah.number);
             return (
               <Link
                 key={surah.number}
                 href={`/surah/${surah.number}`}
-                className="relative overflow-hidden block bg-white rounded-xl shadow-sm hover:shadow-md transition-all p-4 border"
+                className="relative overflow-hidden block bg-white rounded-lg sm:rounded-xl shadow-sm hover:shadow-md transition-all p-2.5 sm:p-4 border"
                 style={{ borderColor: "#F3F4F6" }}
               >
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2.5 sm:gap-4">
                   {/* Number Badge */}
                   <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm"
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm"
                     style={{
                       background: `linear-gradient(135deg, ${theme.from}, ${theme.to})`,
                     }}
                   >
-                    <span className="text-white font-bold">{surah.number}</span>
+                    <span className="text-white font-bold text-sm sm:text-base">
+                      {surah.number}
+                    </span>
                   </div>
 
                   {/* Surah Info */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2">
-                      <h3 className="font-semibold text-gray-800 truncate">
+                    <div className="flex items-center justify-between gap-1.5 sm:gap-2">
+                      <h3 className="font-semibold text-sm sm:text-base text-gray-800 truncate">
                         {surah.englishName}
                       </h3>
                       <span
-                        className="text-xl text-gray-700 flex-shrink-0"
+                        className="text-lg sm:text-xl text-gray-700 flex-shrink-0"
                         dir="rtl"
                       >
                         {surah.name}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
+                    <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5 sm:mt-1 text-xs sm:text-sm text-gray-500">
                       <span>{surah.englishNameTranslation}</span>
                       <span>•</span>
                       <span>{surah.ayahs?.length || 0} อายะห์</span>
                       <span>•</span>
                       <span
-                        className="px-2 py-0.5 rounded-full"
+                        className="px-1.5 sm:px-2 py-0.5 rounded-full text-xs"
                         style={{
                           backgroundColor: theme.accentSoft,
                           color: theme.accent,
@@ -180,7 +219,7 @@ export function HomeView({ initialViewModel }: HomeViewProps) {
                     style={{ color: theme.accent }}
                   >
                     <svg
-                      className="w-5 h-5"
+                      className="w-4 h-4 sm:w-5 sm:h-5"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"

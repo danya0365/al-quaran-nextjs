@@ -61,10 +61,7 @@ export default async function SurahPage({ params }: SurahPageProps) {
   }
 
   try {
-    // Get view model from presenter
-    const viewModel = await presenter.getViewModel(surahNumber);
-
-    return <SurahView surahNumber={surahNumber} initialViewModel={viewModel} />;
+    return <SurahView surahNumber={surahNumber} />;
   } catch (error) {
     console.error("Error fetching surah data:", error);
 

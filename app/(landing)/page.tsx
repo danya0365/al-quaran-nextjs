@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
+// Tell Next.js this is a dynamic page
+export const dynamic = "force-dynamic";
+
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
 

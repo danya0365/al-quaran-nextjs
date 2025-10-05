@@ -1,9 +1,17 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import { Surah, Reciter, Translation, AyahInBookmark } from '@/types/quran';
+import { SurahViewModel } from "@/src/presentation/presenters/surah/SurahPresenter";
+import { AyahInBookmark, Reciter, Surah, Translation } from "@/types/quran";
+import localforage from "localforage";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
+
+// Initialize localforage instance
+localforage.config({
+  name: "al-quaran",
+  storeName: "quran",
+});
 
 // Types for store
-export type EditionType = 'quran' | 'translation' | 'audio';
+export type EditionType = "quran" | "translation" | "audio";
 
 export interface ActiveEditions {
   quran: string;
@@ -23,6 +31,15 @@ interface QuranState {
   surahs: Surah[];
   setSurahs: (surahs: Surah[]) => void;
 
+  // Surah cache (for detail pages)
+  surahCache: Record<string, SurahViewModel>;
+  setSurahCache: (key: string, data: SurahViewModel) => void;
+  getSurahFromCache: (
+    surahNumber: number,
+    translationId: string,
+    audioId: string
+  ) => SurahViewModel | null;
+
   // Active editions
   activeEditions: ActiveEditions;
   setActiveEdition: (type: EditionType, identifier: string) => void;
@@ -38,7 +55,7 @@ interface QuranState {
   bookmarks: AyahInBookmark[];
   addBookmark: (ayah: AyahInBookmark) => void;
   removeBookmark: (ayahNumber: number) => void;
-  
+
   lastRead: AyahInBookmark | null;
   setLastRead: (ayah: AyahInBookmark) => void;
 
@@ -57,13 +74,14 @@ interface QuranState {
 
 export const useQuranStore = create<QuranState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       // Initial state
       surahs: [],
+      surahCache: {},
       activeEditions: {
-        quran: 'ar.alafasy',
-        translation: 'en.sahih',
-        audio: 'ar.alafasy',
+        quran: "ar.alafasy",
+        translation: "th.thai",
+        audio: "ar.alafasy",
       },
       availableTranslations: [],
       availableReciters: [],
@@ -71,7 +89,7 @@ export const useQuranStore = create<QuranState>()(
       lastRead: null,
       settings: {
         fontSize: 18,
-        fontFamily: 'Amiri',
+        fontFamily: "Amiri",
         showTajweed: false,
         showTranslation: true,
       },
@@ -80,6 +98,19 @@ export const useQuranStore = create<QuranState>()(
 
       // Actions
       setSurahs: (surahs) => set({ surahs }),
+
+      setSurahCache: (key, data) =>
+        set((state) => ({
+          surahCache: {
+            ...state.surahCache,
+            [key]: data,
+          },
+        })),
+
+      getSurahFromCache: (surahNumber, translationId, audioId) => {
+        const key = `${surahNumber}-${translationId}-${audioId}`;
+        return get().surahCache[key] || null;
+      },
 
       setActiveEdition: (type, identifier) =>
         set((state) => ({
@@ -92,15 +123,12 @@ export const useQuranStore = create<QuranState>()(
       setAvailableTranslations: (translations) =>
         set({ availableTranslations: translations }),
 
-      setAvailableReciters: (reciters) =>
-        set({ availableReciters: reciters }),
+      setAvailableReciters: (reciters) => set({ availableReciters: reciters }),
 
       addBookmark: (ayah) =>
         set((state) => {
           // Check if already bookmarked
-          const exists = state.bookmarks.find(
-            (b) => b.number === ayah.number
-          );
+          const exists = state.bookmarks.find((b) => b.number === ayah.number);
           if (exists) return state;
 
           return {
@@ -128,14 +156,8 @@ export const useQuranStore = create<QuranState>()(
       setInitialized: (init) => set({ initialized: init }),
     }),
     {
-      name: 'quran-storage',
-      storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({
-        activeEditions: state.activeEditions,
-        bookmarks: state.bookmarks,
-        lastRead: state.lastRead,
-        settings: state.settings,
-      }),
+      name: "quran-storage",
+      storage: createJSONStorage(() => localforage),
     }
   )
 );
