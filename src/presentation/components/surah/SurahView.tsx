@@ -53,6 +53,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
   const [showSettings, setShowSettings] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const ayahRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
   // Smooth scroll animation for header
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -114,9 +115,17 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
         audioRef.current.src = ayah.audio;
         audioRef.current.play();
         setIsPlaying(true);
+
+        // Auto-scroll to current ayah if enabled
+        if (settings.autoScroll && ayahRefs.current[currentAyah]) {
+          ayahRefs.current[currentAyah]?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        }
       }
     }
-  }, [currentAyah, viewModel, setIsPlaying]);
+  }, [currentAyah, viewModel, setIsPlaying, settings.autoScroll]);
 
   if (loading && !viewModel) {
     return <SurahSkeletonView />;
@@ -533,6 +542,44 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                   />
                 </button>
               </div>
+
+              {/* Auto Play */}
+              <div className="flex items-center justify-between">
+                <span className="text-xs sm:text-sm text-gray-600">เล่นอัตโนมัติ</span>
+                <button
+                  onClick={() =>
+                    updateSettings({ autoPlay: !settings.autoPlay })
+                  }
+                  className={`w-12 h-6 rounded-full transition-colors ${
+                    settings.autoPlay ? "bg-emerald-600" : "bg-gray-300"
+                  }`}
+                >
+                  <div
+                    className={`w-5 h-5 bg-white rounded-full transition-transform ${
+                      settings.autoPlay ? "translate-x-6" : "translate-x-1"
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {/* Auto Scroll */}
+              <div className="flex items-center justify-between">
+                <span className="text-xs sm:text-sm text-gray-600">เลื่อนอัตโนมัติ</span>
+                <button
+                  onClick={() =>
+                    updateSettings({ autoScroll: !settings.autoScroll })
+                  }
+                  className={`w-12 h-6 rounded-full transition-colors ${
+                    settings.autoScroll ? "bg-emerald-600" : "bg-gray-300"
+                  }`}
+                >
+                  <div
+                    className={`w-5 h-5 bg-white rounded-full transition-transform ${
+                      settings.autoScroll ? "translate-x-6" : "translate-x-1"
+                    }`}
+                  />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -560,6 +607,9 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
           return (
             <div
               key={ayah.number}
+              ref={(el) => {
+                ayahRefs.current[ayah.number] = el;
+              }}
               className={`bg-white rounded-xl sm:rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100 ${
                 currentAyah === ayah.number ? "ring-2" : ""
               }`}
@@ -662,6 +712,21 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
         ref={audioRef}
         onEnded={() => {
           setIsPlaying(false);
+          
+          // Auto-play next ayah if enabled
+          if (settings.autoPlay && currentAyah && viewModel?.audioSurah) {
+            const currentIndex = viewModel.audioSurah.ayahs?.findIndex(
+              (a) => a.number === currentAyah
+            );
+            if (currentIndex !== undefined && currentIndex !== -1) {
+              const nextAyah = viewModel.audioSurah.ayahs?.[currentIndex + 1];
+              if (nextAyah?.audio) {
+                setCurrentAyah(nextAyah.number);
+                return;
+              }
+            }
+          }
+          
           setCurrentAyah(null);
         }}
         onPause={() => setIsPlaying(false)}
