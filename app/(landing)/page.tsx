@@ -37,25 +37,25 @@ export default function LandingPage() {
                 href="#features"
                 className="text-white/80 hover:text-white transition-colors"
               >
-                Features
+                ฟีเจอร์
               </a>
               <a
                 href="#about"
                 className="text-white/80 hover:text-white transition-colors"
               >
-                About
+                เกี่ยวกับ
               </a>
               <a
                 href="#stats"
                 className="text-white/80 hover:text-white transition-colors"
               >
-                Stats
+                สถิติ
               </a>
               <Link
                 href="/home"
                 className="bg-emerald-glow hover:bg-emerald-glow text-white px-6 py-2 rounded-lg font-medium transition-all shadow-emerald hover:shadow-emerald hover:scale-105"
               >
-                Start Reading
+                เริ่มอ่าน
               </Link>
             </div>
           </div>
@@ -70,20 +70,19 @@ export default function LandingPage() {
             <div className="inline-flex items-center space-x-2 bg-glass-light border border-white/20 rounded-full px-6 py-3 mb-8 backdrop-blur-xl">
               <span className="text-golden-bright text-2xl">✨</span>
               <span className="text-white/90 text-sm font-medium">
-                Modern Quran Reading Experience
+                ประสบการณ์อ่านอัลกุรอานสมัยใหม่
               </span>
             </div>
 
             {/* Main Heading */}
             <h2 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-              Read & Understand
+              อ่านและเข้าใจ
               <br />
-              <span className="text-quran-gradient">The Noble Quran</span>
+              <span className="text-quran-gradient">อัลกุรอานอันทรงเกียรติ</span>
             </h2>
 
             <p className="text-xl text-white/70 mb-12 max-w-2xl mx-auto">
-              Experience the divine words with beautiful Arabic script,
-              translations, audio recitations, and powerful study tools.
+              สัมผัสพระดำรัสด้วยอักษรอาหรับที่งดงาม คำแปล เสียงตะลาเวฮ์ และเครื่องมือศึกษาที่ทรงพลัง
             </p>
 
             {/* CTA Buttons */}
@@ -92,13 +91,13 @@ export default function LandingPage() {
                 href="/home"
                 className="bg-emerald-glow hover:bg-emerald-glow text-white px-8 py-4 rounded-xl font-semibold transition-all shadow-emerald hover:shadow-emerald hover:scale-105 w-full sm:w-auto text-center"
               >
-                Start Reading Now →
+                เริ่มอ่านตอนนี้ →
               </Link>
               <a
                 href="#features"
                 className="bg-glass-light hover:bg-glass-light text-white px-8 py-4 rounded-xl font-semibold transition-all border border-white/20 backdrop-blur-xl w-full sm:w-auto text-center"
               >
-                Explore Features
+                สำรวจฟีเจอร์
               </a>
             </div>
 
@@ -109,10 +108,10 @@ export default function LandingPage() {
                   <span className="text-2xl">📚</span>
                 </div>
                 <h3 className="text-white font-semibold text-lg mb-2">
-                  114 Surahs
+                  114 ซูเราะฮ์
                 </h3>
                 <p className="text-white/60 text-sm">
-                  Complete Quran with all chapters
+                  อัลกุรอานครบทุกบท
                 </p>
               </div>
 
@@ -121,10 +120,10 @@ export default function LandingPage() {
                   <span className="text-2xl">🎧</span>
                 </div>
                 <h3 className="text-white font-semibold text-lg mb-2">
-                  Audio Recitations
+                  เสียงตะลาเวฮ์
                 </h3>
                 <p className="text-white/60 text-sm">
-                  Listen from multiple reciters
+                  ฟังจากกอรีหลายท่าน
                 </p>
               </div>
 
@@ -133,10 +132,10 @@ export default function LandingPage() {
                   <span className="text-2xl">🌐</span>
                 </div>
                 <h3 className="text-white font-semibold text-lg mb-2">
-                  Multiple Translations
+                  คำแปลหลายภาษา
                 </h3>
                 <p className="text-white/60 text-sm">
-                  Read in various languages
+                  อ่านได้หลายภาษา
                 </p>
               </div>
             </div>
@@ -153,10 +152,10 @@ export default function LandingPage() {
         <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Powerful Features
+              ฟีเจอร์ทรงพลัง
             </h2>
             <p className="text-white/70 text-lg max-w-2xl mx-auto">
-              Everything you need for a meaningful Quran reading experience
+              ทุกสิ่งที่คุณต้องการเพื่อประสบการณ์อ่านอัลกุรอานที่ลึกซึ้งและมีความหมาย
             </p>
           </div>
 
@@ -167,11 +166,10 @@ export default function LandingPage() {
                 <span className="text-3xl">📖</span>
               </div>
               <h3 className="text-white font-bold text-xl mb-3">
-                Beautiful Typography
+                ตัวอักษรงดงาม
               </h3>
               <p className="text-white/60">
-                Read with stunning Arabic fonts, customizable text size, and
-                Tajweed highlighting for proper pronunciation.
+                อ่านด้วยฟอนต์อาหรับที่สวยงาม ปรับขนาดตัวอักษรได้ พร้อมไฮไลต์ตัจวีดเพื่อการออกเสียงที่ถูกต้อง
               </p>
             </div>
 
@@ -181,11 +179,10 @@ export default function LandingPage() {
                 <span className="text-3xl">🎵</span>
               </div>
               <h3 className="text-white font-bold text-xl mb-3">
-                Audio Recitations
+                เสียงตะลาเวฮ์
               </h3>
               <p className="text-white/60">
-                Listen to beautiful recitations from renowned Qaris. Download
-                for offline listening anytime, anywhere.
+                ฟังการตะลาเวฮ์อันไพเราะจากกอรีชื่อดัง ดาวน์โหลดไว้ฟังแบบออฟไลน์ได้ทุกที่ทุกเวลา
               </p>
             </div>
 
@@ -195,11 +192,10 @@ export default function LandingPage() {
                 <span className="text-3xl">🌍</span>
               </div>
               <h3 className="text-white font-bold text-xl mb-3">
-                Multi-Language Support
+                รองรับหลายภาษา
               </h3>
               <p className="text-white/60">
-                Access translations in multiple languages to understand the
-                meanings of verses clearly.
+                เข้าถึงคำแปลได้หลายภาษาเพื่อความเข้าใจความหมายของอายะห์อย่างชัดเจน
               </p>
             </div>
 
@@ -209,11 +205,10 @@ export default function LandingPage() {
                 <span className="text-3xl">💾</span>
               </div>
               <h3 className="text-white font-bold text-xl mb-3">
-                Offline Reading
+                อ่านออฟไลน์
               </h3>
               <p className="text-white/60">
-                Download surahs and read without internet. Perfect for travel
-                and areas with limited connectivity.
+                ดาวน์โหลดซูเราะฮ์และอ่านโดยไม่ใช้อินเทอร์เน็ต เหมาะสำหรับการเดินทางและพื้นที่ที่อินเทอร์เน็ตจำกัด
               </p>
             </div>
 
@@ -223,11 +218,10 @@ export default function LandingPage() {
                 <span className="text-3xl">🔖</span>
               </div>
               <h3 className="text-white font-bold text-xl mb-3">
-                Smart Bookmarks
+                ที่คั่นอัจฉริยะ
               </h3>
               <p className="text-white/60">
-                Save your reading progress and create bookmarks to quickly
-                return to your favorite verses.
+                บันทึกความคืบหน้าและสร้างที่คั่น เพื่อกลับไปยังอายะห์ที่ชื่นชอบได้อย่างรวดเร็ว
               </p>
             </div>
 
@@ -237,11 +231,10 @@ export default function LandingPage() {
                 <span className="text-3xl">🌙</span>
               </div>
               <h3 className="text-white font-bold text-xl mb-3">
-                Dark Mode
+                โหมดมืด
               </h3>
               <p className="text-white/60">
-                Comfortable reading in any lighting with automatic dark mode
-                that&apos;s easy on the eyes.
+                อ่านสบายตาในทุกสภาพแสงด้วยโหมดมืดอัตโนมัติที่อ่อนโยนต่อสายตา
               </p>
             </div>
           </div>
@@ -257,25 +250,25 @@ export default function LandingPage() {
                 <div className="text-4xl md:text-5xl font-bold text-quran-gradient mb-2">
                   114
                 </div>
-                <div className="text-white/60 font-medium">Surahs</div>
+                <div className="text-white/60 font-medium">ซูเราะฮ์</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl md:text-5xl font-bold text-quran-gradient mb-2">
                   6,236
                 </div>
-                <div className="text-white/60 font-medium">Verses</div>
+                <div className="text-white/60 font-medium">อายะห์</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl md:text-5xl font-bold text-quran-gradient mb-2">
                   30
                 </div>
-                <div className="text-white/60 font-medium">Juz</div>
+                <div className="text-white/60 font-medium">ญุซ</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl md:text-5xl font-bold text-quran-gradient mb-2">
                   ∞
                 </div>
-                <div className="text-white/60 font-medium">Blessings</div>
+                <div className="text-white/60 font-medium">พรอันประเสริฐ</div>
               </div>
             </div>
           </div>
@@ -291,27 +284,20 @@ export default function LandingPage() {
                 <span className="text-4xl">☪️</span>
               </div>
               <h2 className="text-4xl font-bold text-white mb-4">
-                About Al-Quran
+                เกี่ยวกับอัลกุรอาน
               </h2>
             </div>
             <div className="space-y-4 text-white/70 leading-relaxed">
               <p>
-                The Noble Quran is the central religious text of Islam, believed
-                to be a revelation from Allah (God) to Prophet Muhammad (peace
-                be upon him). It consists of 114 chapters (Surahs) containing
-                6,236 verses (Ayahs).
+                อัลกุรอานอันทรงเกียรติคือคัมภีร์หลักของศาสนาอิสลาม เชื่อกันว่าเป็นโองการจากอัลลอฮ์ (พระเจ้า) ที่ประทานแก่ท่านนบีมุฮัมมัด ﷺ ประกอบด้วย 114 ซูเราะฮ์ รวมทั้งหมด 6,236 อายะห์
               </p>
               <p>
-                This application provides a modern, accessible way to read,
-                listen to, and understand the Quran. Whether you&apos;re a student of
-                knowledge, seeking spiritual guidance, or simply exploring,
-                we&apos;ve designed this platform to make your journey meaningful and
-                enriching.
+                แอปนี้มอบวิธีการอ่าน ฟัง และทำความเข้าใจอัลกุรอานในรูปแบบสมัยใหม่และเข้าถึงง่าย ไม่ว่าคุณจะเป็นผู้ศึกษาหาความรู้ ผู้แสวงหาคำแนะนำทางจิตวิญญาณ หรือผู้เริ่มต้น เราออกแบบแพลตฟอร์มนี้เพื่อให้การเดินทางของคุณมีความหมายและเกื้อกูล
               </p>
               <p className="text-emerald-bright font-semibold text-center text-lg pt-4">
-                &quot;Indeed, this Quran guides to that which is most suitable.&quot;
+                &quot;แท้จริงแล้ว อัลกุรอานนี้ชี้นำไปสู่สิ่งที่เที่ยงตรงที่สุด&quot;
                 <br />
-                <span className="text-white/60 text-sm">(Quran 17:9)</span>
+                <span className="text-white/60 text-sm">(อัลอิสรออ์ 17:9)</span>
               </p>
             </div>
           </div>
@@ -322,17 +308,16 @@ export default function LandingPage() {
       <section className="py-20 px-6 relative">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Begin Your Journey Today
+            เริ่มต้นการเดินทางของคุณวันนี้
           </h2>
           <p className="text-xl text-white/70 mb-10 max-w-2xl mx-auto">
-            Start reading the Quran with our beautiful, feature-rich platform
-            designed for modern Muslims.
+            เริ่มอ่านอัลกุรอานด้วยแพลตฟอร์มที่สวยงามและอัดแน่นด้วยฟีเจอร์ ออกแบบมาสำหรับมุสลิมยุคใหม่
           </p>
           <Link
             href="/home"
             className="inline-block bg-emerald-glow hover:bg-emerald-glow text-white px-10 py-5 rounded-xl font-bold text-lg transition-all shadow-emerald hover:shadow-emerald hover:scale-105"
           >
-            Open Al-Quran →
+            เปิดอัลกุรอาน →
           </Link>
         </div>
       </section>
@@ -340,10 +325,8 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t border-white/10 py-8 px-6">
         <div className="container mx-auto text-center text-white/50 text-sm">
-          <p>© 2025 Al-Quran App. Made with ❤️ for the Muslim Ummah.</p>
-          <p className="mt-2">
-            May Allah accept this effort and make it beneficial for all.
-          </p>
+          <p>© 2025 Al-Quran App. สร้างด้วย ❤️ เพื่อประชาชาติของมุสลิม</p>
+          <p className="mt-2">ขออัลลอฮ์ทรงตอบรับและให้เกิดประโยชน์แก่ทุกคน</p>
         </div>
       </footer>
     </div>
