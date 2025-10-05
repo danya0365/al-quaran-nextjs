@@ -5,6 +5,7 @@ import { useSurahPresenter } from "@/src/presentation/presenters/surah/useSurahP
 import { useQuranStore } from "@/store/quranStore";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import TajweedText from "./TajweedText";
 
 interface SurahViewProps {
   surahNumber: number;
@@ -251,7 +252,11 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                 style={{ fontSize: `${settings.fontSize}px` }}
               >
                 <span className="text-gray-800">
-                  {ayah.text}
+                  {settings.showTajweed ? (
+                    <TajweedText text={ayah.text || ''} fontSizePx={settings.fontSize} />
+                  ) : (
+                    ayah.text
+                  )}
                   <span className="inline-block w-10 h-10 bg-emerald-100 rounded-full text-center leading-10 mr-2 text-emerald-700 font-bold text-sm">
                     {ayah.numberInSurah}
                   </span>
