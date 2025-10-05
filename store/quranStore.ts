@@ -92,10 +92,10 @@ export const useQuranStore = create<QuranState>()(
       settings: {
         fontSize: 18,
         fontFamily: "Amiri",
-        showTajweed: false,
+        showTajweed: true,
         showTranslation: true,
-        autoPlay: false,
-        autoScroll: false,
+        autoPlay: true,
+        autoScroll: true,
       },
       isLoading: false,
       initialized: false,
