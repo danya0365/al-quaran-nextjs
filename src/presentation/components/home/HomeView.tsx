@@ -17,10 +17,10 @@ export function HomeView({ initialViewModel }: HomeViewProps) {
   // Filter surahs based on search - memoized for performance
   const filteredSurahs = useMemo(() => {
     if (!viewModel?.surahs) return [];
-    
+
     const query = searchQuery.toLowerCase().trim();
     if (!query) return viewModel.surahs;
-    
+
     return viewModel.surahs.filter((surah) => {
       return (
         surah.englishName.toLowerCase().includes(query) ||
@@ -162,15 +162,23 @@ export function HomeView({ initialViewModel }: HomeViewProps) {
                       <span>•</span>
                       <span
                         className="px-2 py-0.5 rounded-full"
-                        style={{ backgroundColor: theme.accentSoft, color: theme.accent }}
+                        style={{
+                          backgroundColor: theme.accentSoft,
+                          color: theme.accent,
+                        }}
                       >
-                        {surah.revelationType === "Meccan" ? "มักกะห์" : "มะดีนะห์"}
+                        {surah.revelationType === "Meccan"
+                          ? "มักกะห์"
+                          : "มะดีนะห์"}
                       </span>
                     </div>
                   </div>
 
                   {/* Arrow */}
-                  <div className="flex-shrink-0" style={{ color: theme.accent }}>
+                  <div
+                    className="flex-shrink-0"
+                    style={{ color: theme.accent }}
+                  >
                     <svg
                       className="w-5 h-5"
                       fill="none"
@@ -189,7 +197,11 @@ export function HomeView({ initialViewModel }: HomeViewProps) {
                 {/* Mini Ornament */}
                 <div
                   className="pointer-events-none select-none absolute top-2 right-2"
-                  style={{ transform: "scale(0.22)", transformOrigin: "top right", opacity: 0.12 }}
+                  style={{
+                    transform: "scale(0.22)",
+                    transformOrigin: "top right",
+                    opacity: 0.12,
+                  }}
                   aria-hidden
                 >
                   <SurahOrnament color={theme.accent} opacity={0.2} />

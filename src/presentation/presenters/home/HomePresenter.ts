@@ -1,38 +1,15 @@
-import { getAllSurahsFromApi, getAvailableTranslations, getAvailableReciters } from '@/api/api';
-import { Surah, Translation, Reciter } from '@/types/quran';
-import { unstable_cache } from 'next/cache';
+import {
+  getAllSurahsFromApi,
+  getAvailableReciters,
+  getAvailableTranslations,
+} from "@/api/api";
+import { Reciter, Surah, Translation } from "@/types/quran";
 
 export interface HomeViewModel {
   surahs: Surah[];
   translations: Translation[];
   reciters: Reciter[];
 }
-
-/**
- * Cached function to get translations
- * (Small data, safe to cache)
- */
-const getCachedTranslations = unstable_cache(
-  async () => getAvailableTranslations(),
-  ['translations-list'],
-  { 
-    revalidate: 86400, // Revalidate every 24 hours
-    tags: ['translations'] 
-  }
-);
-
-/**
- * Cached function to get reciters
- * (Small data, safe to cache)
- */
-const getCachedReciters = unstable_cache(
-  async () => getAvailableReciters(),
-  ['reciters-list'],
-  { 
-    revalidate: 86400, // Revalidate every 24 hours
-    tags: ['reciters'] 
-  }
-);
 
 /**
  * Presenter for Home page
@@ -48,9 +25,9 @@ export class HomePresenter {
       // Note: Surahs data is too large for unstable_cache (>2MB)
       // Rely on ISR (revalidate in page.tsx) and fetch cache instead
       const [surahs, translations, reciters] = await Promise.all([
-        getAllSurahsFromApi('ar.alafasy'),
-        getCachedTranslations(),
-        getCachedReciters(),
+        getAllSurahsFromApi("ar.alafasy"),
+        getAvailableTranslations(),
+        getAvailableReciters(),
       ]);
 
       return {
@@ -59,7 +36,7 @@ export class HomePresenter {
         reciters,
       };
     } catch (error) {
-      console.error('Error fetching home data:', error);
+      console.error("Error fetching home data:", error);
       throw error;
     }
   }
@@ -69,8 +46,8 @@ export class HomePresenter {
    */
   async generateMetadata() {
     return {
-      title: 'Al-Quran - รายการซูเราะห์',
-      description: 'อ่านอัลกุรอานทั้ง 114 ซูเราะห์ พร้อมคำแปล และเสียงอ่าน',
+      title: "Al-Quran - รายการซูเราะห์",
+      description: "อ่านอัลกุรอานทั้ง 114 ซูเราะห์ พร้อมคำแปล และเสียงอ่าน",
     };
   }
 }

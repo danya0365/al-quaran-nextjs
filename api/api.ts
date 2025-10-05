@@ -30,13 +30,7 @@ export const getAllSurahsFromApi = async (
 ): Promise<Surah[]> => {
   try {
     const response = await axios.get<ApiResponse<{ surahs: Surah[] }>>(
-      `${API_BASE_URL}/quran/${editionIdentifier}`,
-      {
-        // Cache for 1 hour
-        headers: {
-          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400'
-        }
-      }
+      `${API_BASE_URL}/quran/${editionIdentifier}`
     );
     return response.data.data.surahs;
   } catch (error) {
@@ -104,13 +98,7 @@ export const getTranslationForSurahFromApi = async (
 export const getAvailableTranslations = async (): Promise<Translation[]> => {
   try {
     const response = await axios.get<ApiResponse<Translation[]>>(
-      `${API_BASE_URL}/edition/type/translation`,
-      {
-        // Cache for 24 hours (this data rarely changes)
-        headers: {
-          'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800'
-        }
-      }
+      `${API_BASE_URL}/edition/type/translation`
     );
     return response.data.data;
   } catch (error) {
@@ -123,13 +111,7 @@ export const getAvailableTranslations = async (): Promise<Translation[]> => {
 export const getAvailableReciters = async (): Promise<Reciter[]> => {
   try {
     const response = await axios.get<ApiResponse<Reciter[]>>(
-      `${API_BASE_URL}/edition/format/audio`,
-      {
-        // Cache for 24 hours (this data rarely changes)
-        headers: {
-          'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800'
-        }
-      }
+      `${API_BASE_URL}/edition/format/audio`
     );
     return response.data.data;
   } catch (error) {
