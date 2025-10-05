@@ -1,29 +1,29 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export function BottomNavigation() {
   const pathname = usePathname();
 
   const navItems = [
     {
-      name: 'หน้าแรก',
-      icon: '📚',
-      href: '/home',
-      active: pathname === '/home' || pathname === '/',
+      name: "หน้าแรก",
+      icon: "📚",
+      href: "/home",
+      active: pathname === "/home" || pathname === "/",
     },
     {
-      name: 'บุ๊คมาร์ค',
-      icon: '🔖',
-      href: '/bookmarks',
-      active: pathname === '/bookmarks',
+      name: "บุ๊คมาร์ค",
+      icon: "🔖",
+      href: "/bookmarks",
+      active: pathname === "/bookmarks",
     },
     {
-      name: 'ตั้งค่า',
-      icon: '⚙️',
-      href: '/settings',
-      active: pathname === '/settings',
+      name: "ตั้งค่า",
+      icon: "⚙️",
+      href: "/settings",
+      active: pathname === "/settings",
     },
   ];
 
@@ -37,12 +37,12 @@ export function BottomNavigation() {
               href={item.href}
               className={`flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-colors ${
                 item.active
-                  ? 'bg-emerald-50 text-emerald-600'
-                  : 'text-gray-600 hover:bg-gray-50'
+                  ? "bg-emerald-50 text-emerald-600"
+                  : "text-gray-600 hover:bg-gray-50"
               }`}
             >
               <span className="text-2xl mb-1">{item.icon}</span>
-              <span className="text-xs font-medium font-kanit">{item.name}</span>
+              <span className="text-xs font-medium">{item.name}</span>
             </Link>
           ))}
         </div>

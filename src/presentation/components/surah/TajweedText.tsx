@@ -125,10 +125,10 @@ export const TajweedText: React.FC<TajweedTextProps> = ({
                 ●
               </div>
               <div>
-                <div className="font-semibold text-gray-800 font-kanit">
+                <div className="font-semibold text-gray-800">
                   {modal.rule.name}
                 </div>
-                <div className="mt-1 text-sm text-gray-600 leading-relaxed font-kanit">
+                <div className="mt-1 text-sm text-gray-600 leading-relaxed">
                   {modal.rule.description}
                 </div>
               </div>
@@ -136,9 +136,7 @@ export const TajweedText: React.FC<TajweedTextProps> = ({
 
             {modal.sample && (
               <div className="mt-4">
-                <div className="text-xs text-gray-500 mb-1 font-kanit">
-                  ตัวอย่าง:
-                </div>
+                <div className="text-xs text-gray-500 mb-1">ตัวอย่าง:</div>
                 <div
                   className="text-right"
                   dir="rtl"
@@ -153,7 +151,7 @@ export const TajweedText: React.FC<TajweedTextProps> = ({
 
             <div className="mt-5 flex justify-end">
               <button
-                className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors text-sm font-kanit"
+                className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors text-sm"
                 onClick={() => setModal({ open: false })}
               >
                 ปิด

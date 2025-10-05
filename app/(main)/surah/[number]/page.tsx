@@ -1,10 +1,10 @@
-import { SurahView } from '@/src/presentation/components/surah/SurahView';
-import { SurahPresenterFactory } from '@/src/presentation/presenters/surah/SurahPresenter';
-import type { Metadata } from 'next';
-import Link from 'next/link';
+import { SurahView } from "@/src/presentation/components/surah/SurahView";
+import { SurahPresenterFactory } from "@/src/presentation/presenters/surah/SurahPresenter";
+import type { Metadata } from "next";
+import Link from "next/link";
 
-export const dynamic = 'force-dynamic';
-export const fetchCache = 'force-no-store';
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 
 interface SurahPageProps {
   params: Promise<{ number: string }>;
@@ -23,11 +23,11 @@ export async function generateMetadata({
   try {
     return presenter.generateMetadata(surahNumber);
   } catch (error) {
-    console.error('Error generating metadata:', error);
+    console.error("Error generating metadata:", error);
 
     return {
-      title: 'Al-Quran',
-      description: 'อ่านอัลกุรอาน',
+      title: "Al-Quran",
+      description: "อ่านอัลกุรอาน",
     };
   }
 }
@@ -45,15 +45,13 @@ export default async function SurahPage({ params }: SurahPageProps) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white flex items-center justify-center">
         <div className="text-center px-4">
-          <h1 className="text-2xl font-bold text-gray-800 mb-2 font-kanit">
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">
             ไม่พบซูเราะห์
           </h1>
-          <p className="text-gray-600 mb-4 font-kanit">
-            หมายเลขซูเราะห์ไม่ถูกต้อง
-          </p>
+          <p className="text-gray-600 mb-4">หมายเลขซูเราะห์ไม่ถูกต้อง</p>
           <Link
             href="/"
-            className="inline-block bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 transition-colors font-kanit"
+            className="inline-block bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 transition-colors"
           >
             กลับหน้าแรก
           </Link>
@@ -66,11 +64,9 @@ export default async function SurahPage({ params }: SurahPageProps) {
     // Get view model from presenter
     const viewModel = await presenter.getViewModel(surahNumber);
 
-    return (
-      <SurahView surahNumber={surahNumber} initialViewModel={viewModel} />
-    );
+    return <SurahView surahNumber={surahNumber} initialViewModel={viewModel} />;
   } catch (error) {
-    console.error('Error fetching surah data:', error);
+    console.error("Error fetching surah data:", error);
 
     // Fallback: render without initial data, let client fetch
     return <SurahView surahNumber={surahNumber} />;

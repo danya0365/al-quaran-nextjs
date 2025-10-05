@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useQuranStore } from '@/store/quranStore';
-import Link from 'next/link';
+import { useQuranStore } from "@/store/quranStore";
+import Link from "next/link";
 
 export default function BookmarksPage() {
   const { bookmarks, lastRead, removeBookmark } = useQuranStore();
@@ -11,10 +11,8 @@ export default function BookmarksPage() {
       {/* Header */}
       <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white px-6 pt-8 pb-6 shadow-lg">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold font-kanit">บุ๊คมาร์ค</h1>
-          <p className="text-emerald-100 text-sm mt-1 font-kanit">
-            อายะห์ที่บันทึกไว้
-          </p>
+          <h1 className="text-3xl font-bold">บุ๊คมาร์ค</h1>
+          <p className="text-emerald-100 text-sm mt-1">อายะห์ที่บันทึกไว้</p>
         </div>
       </div>
 
@@ -22,7 +20,7 @@ export default function BookmarksPage() {
         {/* Last Read */}
         {lastRead && (
           <div className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-3 font-kanit">
+            <h2 className="text-lg font-semibold text-gray-800 mb-3">
               อ่านล่าสุด
             </h2>
             <Link
@@ -34,10 +32,10 @@ export default function BookmarksPage() {
                   📖
                 </div>
                 <div className="flex-1">
-                  <div className="font-semibold text-gray-800 mb-1 font-kanit">
+                  <div className="font-semibold text-gray-800 mb-1">
                     {lastRead.surah.englishName}
                   </div>
-                  <div className="text-sm text-gray-600 font-kanit">
+                  <div className="text-sm text-gray-600">
                     อายะห์ที่ {lastRead.numberInSurah}
                   </div>
                   <div className="text-gray-700 mt-2 leading-relaxed" dir="rtl">
@@ -51,20 +49,20 @@ export default function BookmarksPage() {
 
         {/* Bookmarks */}
         <div>
-          <h2 className="text-lg font-semibold text-gray-800 mb-3 font-kanit">
+          <h2 className="text-lg font-semibold text-gray-800 mb-3">
             บุ๊คมาร์ค ({bookmarks.length})
           </h2>
 
           {bookmarks.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-6xl mb-4">🔖</div>
-              <p className="text-gray-600 mb-2 font-kanit">ยังไม่มีบุ๊คมาร์ค</p>
-              <p className="text-gray-500 text-sm font-kanit">
+              <p className="text-gray-600 mb-2">ยังไม่มีบุ๊คมาร์ค</p>
+              <p className="text-gray-500 text-sm">
                 บันทึกอายะห์ที่คุณชอบเพื่อกลับมาอ่านภายหลัง
               </p>
               <Link
                 href="/"
-                className="inline-block mt-4 bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 transition-colors font-kanit"
+                className="inline-block mt-4 bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 transition-colors"
               >
                 เริ่มอ่านอัลกุรอาน
               </Link>
@@ -82,10 +80,11 @@ export default function BookmarksPage() {
                         href={`/surah/${bookmark.surah.number}`}
                         className="block hover:text-emerald-600 transition-colors"
                       >
-                        <div className="font-semibold text-gray-800 mb-1 font-kanit">
-                          {bookmark.surah.englishName} - อายะห์ที่ {bookmark.numberInSurah}
+                        <div className="font-semibold text-gray-800 mb-1">
+                          {bookmark.surah.englishName} - อายะห์ที่{" "}
+                          {bookmark.numberInSurah}
                         </div>
-                        <div className="text-sm text-gray-600 mb-2 font-kanit">
+                        <div className="text-sm text-gray-600 mb-2">
                           {bookmark.surah.englishNameTranslation}
                         </div>
                         <div

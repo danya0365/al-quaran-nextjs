@@ -20,9 +20,11 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
   }
 
   .font-kanit {
-    font-family: var(--font-kanit);
+    /* Redirect Kanit utility to default sans (MiSans Thai) */
+    font-family: var(--font-sans);
   }
 }
