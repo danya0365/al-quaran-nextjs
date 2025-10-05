@@ -15,6 +15,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import TajweedText from "./TajweedText";
 import { getSurahTheme, SurahOrnament } from "./surahThemes";
+import thaiSummaries from "./surahSummaries.th";
 // Arabic fonts must be initialized at module scope
 const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"] });
 const lateef = Lateef({ subsets: ["arabic"], weight: ["400"] });
@@ -46,6 +47,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
 
   const { settings, updateSettings } = useQuranStore();
   const [showSettings, setShowSettings] = useState(false);
+  const [showSummary, setShowSummary] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const arabicFontClass =
@@ -144,12 +146,22 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
               </svg>
             </Link>
 
-            <button
-              onClick={() => setShowSettings(!showSettings)}
-              className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
-            >
-              ⚙️
-            </button>
+            <div className="flex items-center gap-2">
+              {/* Read Summary */}
+              <button
+                onClick={() => setShowSummary(true)}
+                className="px-3 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors text-sm"
+              >
+                📘 อ่านสรุป
+              </button>
+              {/* Settings */}
+              <button
+                onClick={() => setShowSettings(!showSettings)}
+                className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
+              >
+                ⚙️
+              </button>
+            </div>
           </div>
 
           <div className="text-center">
@@ -167,6 +179,88 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
           <SurahOrnament color="#FFFFFF" opacity={0.18} />
         </div>
       </div>
+
+      {/* Summary Modal */}
+      {showSummary && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          onClick={() => setShowSummary(false)}
+        >
+          <div
+            className="w-full max-w-2xl rounded-xl bg-white p-5 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between mb-4">
+              <h3 className="font-semibold text-gray-800">สรุปซูเราะห์</h3>
+              <button
+                onClick={() => setShowSummary(false)}
+                className="w-9 h-9 bg-gray-100 rounded-lg hover:bg-gray-200"
+                aria-label="close"
+              >
+                ✕
+              </button>
+            </div>
+
+            {thaiSummaries[surah.number] ? (
+              <div className="space-y-5">
+                {/* Overview */}
+                <div>
+                  <div className="text-sm text-gray-600 mb-1">ภาพรวม</div>
+                  <p className="text-gray-800 leading-relaxed">
+                    {thaiSummaries[surah.number].overview}
+                  </p>
+                </div>
+
+                {/* Themes */}
+                {thaiSummaries[surah.number].themes?.length ? (
+                  <div>
+                    <div className="text-sm text-gray-600 mb-1">ประเด็นสำคัญ</div>
+                    <ul className="list-disc pl-6 text-gray-800 space-y-1">
+                      {thaiSummaries[surah.number].themes.map((t, idx) => (
+                        <li key={idx}>{t}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+
+                {/* Context */}
+                {thaiSummaries[surah.number].context ? (
+                  <div>
+                    <div className="text-sm text-gray-600 mb-1">บริบทการประทาน</div>
+                    <p className="text-gray-800 leading-relaxed">
+                      {thaiSummaries[surah.number].context}
+                    </p>
+                  </div>
+                ) : null}
+
+                {/* Virtues */}
+                {thaiSummaries[surah.number].virtues ? (
+                  <div>
+                    <div className="text-sm text-gray-600 mb-1">คุณความดี/คุณวิเศษ</div>
+                    <p className="text-gray-800 leading-relaxed">
+                      {thaiSummaries[surah.number].virtues}
+                    </p>
+                  </div>
+                ) : null}
+
+                <div className="pt-2">
+                  <button
+                    onClick={() => setShowSummary(false)}
+                    className="w-full py-2 rounded-lg text-white"
+                    style={{ backgroundColor: theme.accent }}
+                  >
+                    ปิดหน้าต่าง
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center text-gray-600">
+                ยังไม่มีสรุปสำหรับซูเราะห์นี้
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Settings Modal */}
       {showSettings && (

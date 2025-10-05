@@ -3,6 +3,7 @@
 import { HomeViewModel } from "@/src/presentation/presenters/home/HomePresenter";
 import { useHomePresenter } from "@/src/presentation/presenters/home/useHomePresenter";
 import Link from "next/link";
+import { getSurahTheme, SurahOrnament } from "../surah/surahThemes";
 
 interface HomeViewProps {
   initialViewModel?: HomeViewModel;
@@ -114,63 +115,81 @@ export function HomeView({ initialViewModel }: HomeViewProps) {
         </div>
 
         <div className="space-y-3">
-          {filteredSurahs?.map((surah) => (
-            <Link
-              key={surah.number}
-              href={`/surah/${surah.number}`}
-              className="block bg-white rounded-xl shadow-sm hover:shadow-md transition-all p-4 border border-gray-100 hover:border-emerald-200"
-            >
-              <div className="flex items-center gap-4">
-                {/* Number Badge */}
-                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
-                  <span className="text-white font-bold">{surah.number}</span>
-                </div>
-
-                {/* Surah Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2">
-                    <h3 className="font-semibold text-gray-800 truncate">
-                      {surah.englishName}
-                    </h3>
-                    <span
-                      className="text-xl text-gray-700 flex-shrink-0"
-                      dir="rtl"
-                    >
-                      {surah.name}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
-                    <span>{surah.englishNameTranslation}</span>
-                    <span>•</span>
-                    <span>{surah.ayahs?.length || 0} อายะห์</span>
-                    <span>•</span>
-                    <span>
-                      {surah.revelationType === "Meccan"
-                        ? "มักกะห์"
-                        : "มะดีนะห์"}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Arrow */}
-                <div className="text-gray-400 flex-shrink-0">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+          {filteredSurahs?.map((surah) => {
+            const theme = getSurahTheme(surah.number);
+            return (
+              <Link
+                key={surah.number}
+                href={`/surah/${surah.number}`}
+                className="relative overflow-hidden block bg-white rounded-xl shadow-sm hover:shadow-md transition-all p-4 border"
+                style={{ borderColor: "#F3F4F6" }}
+              >
+                <div className="flex items-center gap-4">
+                  {/* Number Badge */}
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm"
+                    style={{
+                      background: `linear-gradient(135deg, ${theme.from}, ${theme.to})`,
+                    }}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
+                    <span className="text-white font-bold">{surah.number}</span>
+                  </div>
+
+                  {/* Surah Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="font-semibold text-gray-800 truncate">
+                        {surah.englishName}
+                      </h3>
+                      <span
+                        className="text-xl text-gray-700 flex-shrink-0"
+                        dir="rtl"
+                      >
+                        {surah.name}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
+                      <span>{surah.englishNameTranslation}</span>
+                      <span>•</span>
+                      <span>{surah.ayahs?.length || 0} อายะห์</span>
+                      <span>•</span>
+                      <span
+                        className="px-2 py-0.5 rounded-full"
+                        style={{ backgroundColor: theme.accentSoft, color: theme.accent }}
+                      >
+                        {surah.revelationType === "Meccan" ? "มักกะห์" : "มะดีนะห์"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Arrow */}
+                  <div className="flex-shrink-0" style={{ color: theme.accent }}>
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+                {/* Mini Ornament */}
+                <div
+                  className="pointer-events-none select-none absolute top-2 right-2"
+                  style={{ transform: "scale(0.22)", transformOrigin: "top right", opacity: 0.12 }}
+                  aria-hidden
+                >
+                  <SurahOrnament color={theme.accent} opacity={0.2} />
+                </div>
+              </Link>
+            );
+          })}
         </div>
 
         {filteredSurahs?.length === 0 && (
