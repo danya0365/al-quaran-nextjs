@@ -1,54 +1,134 @@
 import type { Metadata } from "next";
-import { Kanit, Amiri, Lateef, Scheherazade_New, Tajawal, Reem_Kufi, Markazi_Text } from 'next/font/google';
+import {
+  Kanit,
+  Amiri,
+  Lateef,
+  Scheherazade_New,
+  Tajawal,
+  Reem_Kufi,
+  Markazi_Text,
+} from "next/font/google";
 import "../public/styles/index.css";
 
-const kanit = Kanit({ 
-  weight: ['300', '400', '500', '600', '700'],
-  subsets: ['latin', 'thai'],
-  variable: '--font-kanit',
+const kanit = Kanit({
+  weight: ["300", "400", "500", "600", "700"],
+  subsets: ["latin", "thai"],
+  variable: "--font-kanit",
 });
 
 // Arabic fonts (expose as CSS variables for global usage)
 const amiri = Amiri({
-  weight: ['400', '700'],
-  subsets: ['arabic'],
-  variable: '--font-amiri',
+  weight: ["400", "700"],
+  subsets: ["arabic"],
+  variable: "--font-amiri",
 });
 
 const lateef = Lateef({
-  weight: ['400'],
-  subsets: ['arabic'],
-  variable: '--font-lateef',
+  weight: ["400"],
+  subsets: ["arabic"],
+  variable: "--font-lateef",
 });
 
 const scheherazade = Scheherazade_New({
-  weight: ['400', '700'],
-  subsets: ['arabic'],
-  variable: '--font-scheherazade',
+  weight: ["400", "700"],
+  subsets: ["arabic"],
+  variable: "--font-scheherazade",
 });
 
 // Extra Arabic fonts
 const tajawal = Tajawal({
-  weight: ['400', '700'],
-  subsets: ['arabic'],
-  variable: '--font-tajawal',
+  weight: ["400", "700"],
+  subsets: ["arabic"],
+  variable: "--font-tajawal",
 });
 
 const reemKufi = Reem_Kufi({
-  weight: ['400', '700'],
-  subsets: ['arabic'],
-  variable: '--font-reemkufi',
+  weight: ["400", "700"],
+  subsets: ["arabic"],
+  variable: "--font-reemkufi",
 });
 
 const markazi = Markazi_Text({
-  weight: ['400', '700'],
-  subsets: ['arabic'],
-  variable: '--font-markazi',
+  weight: ["400", "700"],
+  subsets: ["arabic"],
+  variable: "--font-markazi",
 });
 
 export const metadata: Metadata = {
-  title: "Al-Quran",
-  description: "Al-Quran App - อ่านอัลกุรอานออนไลน์",
+  title: "Al-Quran - อ่านอัลกุรอาน แปลไทยและอังกฤษ พร้อมตัจวีด",
+  description:
+    "แอปอ่านอัลกุรอาน (Al-Quran) รองรับหลายฟอนต์อาหรับ แสดงตัจวีด บุ๊คมาร์ค และแปลไทย/อังกฤษ มุ่งเน้นประสิทธิภาพและ SEO ด้วย Next.js",
+  keywords: [
+    "quran",
+    "al quran",
+    "al-quran",
+    "mushaf",
+    "tajweed",
+    "tafseer",
+    "translation",
+    "แปลคัมภีร์",
+    "อัลกุรอาน",
+    "ตัจวีด",
+    "กุรอาน",
+  ],
+  authors: [{ name: "Marosdee Uma" }],
+  creator: "Marosdee Uma",
+  publisher: "Marosdee Uma",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL("http://localhost:3000"),
+  alternates: {
+    canonical: "/",
+  },
+  icons: {
+    icon: [
+      { url: "/favicon/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon/favicon.ico" },
+    ],
+    shortcut: ["/favicon/favicon.ico"],
+    apple: ["/favicon/apple-touch-icon.png"],
+    other: [
+      { rel: "manifest", url: "/favicon/site.webmanifest" },
+    ],
+  },
+  openGraph: {
+    title: "Al-Quran - อ่านอัลกุรอานพร้อมตัจวีดและคำแปล",
+    description:
+      "อ่านอัลกุรอานพร้อมตัจวีด เปลี่ยนฟอนต์อาหรับ ค้นหา บุ๊คมาร์ค และแปลไทย/อังกฤษ",
+    url: "/",
+    siteName: "Al-Quran",
+    images: [
+      {
+        url: "/favicon/android-chrome-512x512.png",
+        width: 512,
+        height: 512,
+        alt: "Al-Quran Logo",
+      },
+    ],
+    locale: "th_TH",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Al-Quran - อ่านอัลกุรอานพร้อมตัจวีดและคำแปล",
+    description:
+      "อ่านอัลกุรอานพร้อมตัจวีด เปลี่ยนฟอนต์ ค้นหา และบุ๊คมาร์ค แปลไทย/อังกฤษ",
+    images: ["/favicon/android-chrome-512x512.png"],
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Al-Quran",
+  },
+  verification: {
+    // Add your verification codes here if needed
+    // google: 'your-google-verification-code',
+    // yandex: 'your-yandex-verification-code',
+  },
 };
 
 export default function RootLayout({
@@ -58,7 +138,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="th">
-      <body className={`${kanit.variable} ${amiri.variable} ${lateef.variable} ${scheherazade.variable} ${tajawal.variable} ${reemKufi.variable} ${markazi.variable} antialiased`}>
+      <body
+        className={`${kanit.variable} ${amiri.variable} ${lateef.variable} ${scheherazade.variable} ${tajawal.variable} ${reemKufi.variable} ${markazi.variable} antialiased`}
+      >
         {children}
       </body>
     </html>
