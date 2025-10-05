@@ -202,4 +202,21 @@ const thaiSummaries: Record<number, SurahSummary> = {
   },
 };
 
+// สร้างข้อมูลให้ครบ 114 ซูเราะห์ โดยใส่ placeholder ให้รายการที่ยังไม่ได้เขียนสรุป
+const MAX_SURAHS = 114;
+const placeholder: SurahSummary = {
+  overview: "ยังไม่มีสรุปสำหรับซูเราะห์นี้ จะมีการเพิ่มในภายหลัง",
+  themes: [],
+};
+
+export const thaiSummariesComplete: Record<number, SurahSummary> = Object.fromEntries(
+  Array.from({ length: MAX_SURAHS }, (_, i) => {
+    const id = i + 1;
+    return [id, thaiSummaries[id] ?? placeholder];
+  })
+);
+
+// Helper เพื่อดึงสรุป (ถ้ามี) โดยตรง
+export const getThaiSummary = (id: number): SurahSummary | null => thaiSummaries[id] ?? null;
+
 export default thaiSummaries;

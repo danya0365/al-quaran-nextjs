@@ -15,7 +15,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import TajweedText from "./TajweedText";
 import { getSurahTheme, SurahOrnament } from "./surahThemes";
-import thaiSummaries from "./surahSummaries.th";
+import { thaiSummariesComplete as thaiSummaries } from "./surahSummaries.th";
 // Arabic fonts must be initialized at module scope
 const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"] });
 const lateef = Lateef({ subsets: ["arabic"], weight: ["400"] });
@@ -201,8 +201,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
               </button>
             </div>
 
-            {thaiSummaries[surah.number] ? (
-              <div className="space-y-5">
+            <div className="space-y-5">
                 {/* Overview */}
                 <div>
                   <div className="text-sm text-gray-600 mb-1">ภาพรวม</div>
@@ -252,12 +251,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                     ปิดหน้าต่าง
                   </button>
                 </div>
-              </div>
-            ) : (
-              <div className="text-center text-gray-600">
-                ยังไม่มีสรุปสำหรับซูเราะห์นี้
-              </div>
-            )}
+            </div>
           </div>
         </div>
       )}
