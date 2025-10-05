@@ -14,6 +14,7 @@ import {
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import TajweedText from "./TajweedText";
+import { getSurahTheme, SurahOrnament } from "./surahThemes";
 // Arabic fonts must be initialized at module scope
 const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"] });
 const lateef = Lateef({ subsets: ["arabic"], weight: ["400"] });
@@ -110,11 +111,18 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
   }
 
   const surah = viewModel.arabicSurah;
+  const theme = getSurahTheme(surah.number);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white pb-24">
+    <div className="min-h-screen pb-24" style={{ background: "linear-gradient(to bottom, rgba(16,185,129,0.06), #ffffff)" }}>
       {/* Header */}
-      <div className="bg-gradient-to-r from-emerald-600 to-emerald-700 text-white px-6 pt-8 pb-6 shadow-lg sticky top-0 z-10">
+      <div
+        className="text-white px-6 pt-8 pb-6 shadow-lg sticky top-0 z-10"
+        style={{
+          background: `linear-gradient(90deg, ${theme.from}, ${theme.to})`,
+          color: theme.textOn,
+        }}
+      >
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-4">
             <Link
@@ -149,11 +157,14 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
             <p className="text-3xl mb-2" dir="rtl">
               {surah.name}
             </p>
-            <p className="text-emerald-100 text-sm">
+            <p className="text-sm" style={{ color: "rgba(255,255,255,0.8)" }}>
               {surah.englishNameTranslation} • {surah.ayahs?.length || 0} อายะห์
               •{surah.revelationType === "Meccan" ? " มักกะห์" : " มะดีนะห์"}
             </p>
           </div>
+        </div>
+        <div className="absolute right-6 top-6 pointer-events-none select-none" aria-hidden>
+          <SurahOrnament color="#FFFFFF" opacity={0.18} />
         </div>
       </div>
 
@@ -331,8 +342,9 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
             <div
               key={ayah.number}
               className={`bg-white rounded-2xl shadow-sm p-6 border border-gray-100 ${
-                currentAyah === ayah.number ? "ring-2 ring-emerald-500" : ""
+                currentAyah === ayah.number ? "ring-2" : ""
               }`}
+              style={{ boxShadow: "0 1px 0 rgba(0,0,0,0.02)", borderColor: "#F3F4F6", ...(currentAyah === ayah.number ? { outlineColor: theme.accent, outlineStyle: "auto" } : {}) }}
             >
               {/* Arabic Text */}
               <div
@@ -349,7 +361,10 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                   ) : (
                     ayah.text
                   )}
-                  <span className="inline-block w-10 h-10 bg-emerald-100 rounded-full text-center leading-10 mr-2 text-emerald-700 font-bold text-sm">
+                  <span
+                    className="inline-block w-10 h-10 rounded-full text-center leading-10 mr-2 font-bold text-sm"
+                    style={{ backgroundColor: theme.accentSoft, color: theme.accent }}
+                  >
                     {ayah.numberInSurah}
                   </span>
                 </span>
@@ -376,7 +391,8 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                         setCurrentAyah(ayah.number);
                       }
                     }}
-                    className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition-colors text-sm"
+                    className="px-4 py-2 rounded-lg transition-colors text-sm"
+                    style={{ backgroundColor: theme.accentSoft, color: theme.accent }}
                   >
                     {currentAyah === ayah.number && isPlaying
                       ? "⏸️ หยุด"
@@ -387,11 +403,12 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                 {/* Bookmark */}
                 <button
                   onClick={() => toggleBookmark(ayah.number)}
-                  className={`px-4 py-2 rounded-lg transition-colors text-sm ${
+                  className="px-4 py-2 rounded-lg transition-colors text-sm"
+                  style={
                     isBookmarked(ayah.number)
-                      ? "bg-amber-50 text-amber-700 hover:bg-amber-100"
-                      : "bg-gray-50 text-gray-700 hover:bg-gray-100"
-                  }`}
+                      ? { backgroundColor: theme.accentSoft, color: theme.accent }
+                      : { backgroundColor: "#F9FAFB", color: "#374151" }
+                  }
                 >
                   {isBookmarked(ayah.number) ? "🔖 บันทึกแล้ว" : "🔖 บันทึก"}
                 </button>
