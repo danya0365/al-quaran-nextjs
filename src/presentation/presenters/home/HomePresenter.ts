@@ -9,19 +9,8 @@ export interface HomeViewModel {
 }
 
 /**
- * Cached function to get surahs
- */
-const getCachedSurahs = unstable_cache(
-  async () => getAllSurahsFromApi('ar.alafasy'),
-  ['surahs-list'],
-  { 
-    revalidate: 3600, // Revalidate every 1 hour
-    tags: ['surahs'] 
-  }
-);
-
-/**
  * Cached function to get translations
+ * (Small data, safe to cache)
  */
 const getCachedTranslations = unstable_cache(
   async () => getAvailableTranslations(),
@@ -34,6 +23,7 @@ const getCachedTranslations = unstable_cache(
 
 /**
  * Cached function to get reciters
+ * (Small data, safe to cache)
  */
 const getCachedReciters = unstable_cache(
   async () => getAvailableReciters(),
@@ -54,9 +44,11 @@ export class HomePresenter {
    */
   async getViewModel(): Promise<HomeViewModel> {
     try {
-      // Fetch all data in parallel with caching
+      // Fetch all data in parallel
+      // Note: Surahs data is too large for unstable_cache (>2MB)
+      // Rely on ISR (revalidate in page.tsx) and fetch cache instead
       const [surahs, translations, reciters] = await Promise.all([
-        getCachedSurahs(),
+        getAllSurahsFromApi('ar.alafasy'),
         getCachedTranslations(),
         getCachedReciters(),
       ]);
