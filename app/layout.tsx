@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import {
-  Kanit,
   Amiri,
+  Kanit,
   Lateef,
+  Markazi_Text,
+  Reem_Kufi,
   Scheherazade_New,
   Tajawal,
-  Reem_Kufi,
-  Markazi_Text,
 } from "next/font/google";
 import "../public/styles/index.css";
 
@@ -58,28 +58,30 @@ export const metadata: Metadata = {
   title: "Al-Quran - อ่านอัลกุรอาน แปลไทยและอังกฤษ พร้อมตัจวีด",
   description:
     "แอปอ่านอัลกุรอาน (Al-Quran) รองรับหลายฟอนต์อาหรับ แสดงตัจวีด บุ๊คมาร์ค และแปลไทย/อังกฤษ มุ่งเน้นประสิทธิภาพและ SEO ด้วย Next.js",
-  keywords: [
-    "quran",
-    "al quran",
-    "al-quran",
-    "mushaf",
-    "tajweed",
-    "tafseer",
-    "translation",
-    "แปลคัมภีร์",
-    "อัลกุรอาน",
-    "ตัจวีด",
-    "กุรอาน",
-  ],
+  keywords:
+    "quran, al quran, al-quran, mushaf, tajweed, tafseer, translation, แปลคัมภีร์, อัลกุรอาน, ตัจวีด, กุรอาน, อ่านอัลกุรอาน, คัมภีร์อัลกุรอาน, อิสลาม",
   authors: [{ name: "Marosdee Uma" }],
   creator: "Marosdee Uma",
   publisher: "Marosdee Uma",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("http://localhost:3000"),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+  ),
   alternates: {
     canonical: "/",
   },
@@ -91,10 +93,8 @@ export const metadata: Metadata = {
     ],
     shortcut: ["/favicon/favicon.ico"],
     apple: ["/favicon/apple-touch-icon.png"],
-    other: [
-      { rel: "manifest", url: "/favicon/site.webmanifest" },
-    ],
   },
+  manifest: "/favicon/site.webmanifest",
   openGraph: {
     title: "Al-Quran - อ่านอัลกุรอานพร้อมตัจวีดและคำแปล",
     description:
@@ -123,11 +123,6 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "default",
     title: "Al-Quran",
-  },
-  verification: {
-    // Add your verification codes here if needed
-    // google: 'your-google-verification-code',
-    // yandex: 'your-yandex-verification-code',
   },
 };
 
