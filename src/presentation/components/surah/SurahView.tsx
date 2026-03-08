@@ -273,6 +273,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
               {surah.englishName}
             </h1>
             <p
+              className={amiri.className}
               dir="rtl"
               style={{
                 fontSize: `${arabicSize * 0.9}rem`,
@@ -588,7 +589,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
       {/* Bismillah */}
       {surah.number !== 1 && surah.number !== 9 && (
         <div className="max-w-4xl mx-auto p-3 sm:p-6">
-          <div className="text-center text-2xl sm:text-3xl text-gray-700" dir="rtl">
+          <div className={`${amiri.className} text-center text-2xl sm:text-3xl text-gray-700`} dir="rtl">
             بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
           </div>
         </div>
