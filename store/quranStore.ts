@@ -10,6 +10,19 @@ localforage.config({
   storeName: "quran",
 });
 
+const localForageStorage = {
+  getItem: async (name: string) => {
+    const value = await localforage.getItem(name);
+    return value ? JSON.parse(value as string) : null;
+  },
+  setItem: async (name: string, value: any) => {
+    await localforage.setItem(name, JSON.stringify(value));
+  },
+  removeItem: async (name: string) => {
+    await localforage.removeItem(name);
+  },
+};
+
 // Types for store
 export type EditionType = "quran" | "translation" | "audio";
 
@@ -161,7 +174,7 @@ export const useQuranStore = create<QuranState>()(
     }),
     {
       name: "quran-storage",
-      storage: createJSONStorage(() => localforage),
+      storage: createJSONStorage(() => localForageStorage),
     }
   )
 );
