@@ -311,6 +311,17 @@ export function SettingsView() {
             <p>แอปพลิเคชันอ่านอัลกุรอาน</p>
             <p>เวอร์ชัน 1.0.0</p>
             <p>ข้อมูลจาก AlQuran Cloud API</p>
+            <p className="pt-2 mt-2 border-t border-gray-100 flex flex-wrap items-center gap-1">
+              พัฒนาโดยทีมงานจาก
+              <a 
+                href="https://cleancode1986-portfolio.vercel.app/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-emerald-600 hover:text-emerald-700 font-medium hover:underline transition-colors"
+              >
+                CleanCode1986
+              </a>
+            </p>
           </div>
         </div>
       </div>
