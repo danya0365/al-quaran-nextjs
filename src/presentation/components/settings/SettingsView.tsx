@@ -1,5 +1,6 @@
 "use client";
 
+import { useAppVersion } from "@/src/presentation/hooks/useAppVersion";
 import { useSettingsPresenter } from "@/src/presentation/presenters/settings/useSettingsPresenter";
 import { useEffect, useRef, useState } from "react";
 
@@ -8,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
  * Displays app settings with customizable options
  */
 export function SettingsView() {
+  const { displayVersion } = useAppVersion();
   const {
     viewModel,
     loading,
@@ -309,8 +311,19 @@ export function SettingsView() {
           </h2>
           <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-600">
             <p>แอปพลิเคชันอ่านอัลกุรอาน</p>
-            <p>เวอร์ชัน 1.0.0</p>
+            <p>เวอร์ชัน {displayVersion}</p>
             <p>ข้อมูลจาก AlQuran Cloud API</p>
+            <p className="pt-2 mt-2 border-t border-gray-100 flex flex-wrap items-center gap-1">
+              พัฒนาโดยทีมงานจาก
+              <a 
+                href="https://cleancode1986-portfolio.vercel.app/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-emerald-600 hover:text-emerald-700 font-medium hover:underline transition-colors"
+              >
+                CleanCode1986
+              </a>
+            </p>
           </div>
         </div>
       </div>

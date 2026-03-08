@@ -2,10 +2,13 @@
 
 import { HomeViewModel } from "@/src/presentation/presenters/home/HomePresenter";
 import { useHomePresenter } from "@/src/presentation/presenters/home/useHomePresenter";
+import { Amiri } from "next/font/google";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { getSurahTheme, SurahOrnament } from "../surah/surahThemes";
 import HomeSkeletonView from "./HomeSkeletonView";
+
+const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"] });
 
 interface HomeViewProps {
   initialViewModel?: HomeViewModel;
@@ -188,7 +191,7 @@ export function HomeView({ initialViewModel }: HomeViewProps) {
                         {surah.englishName}
                       </h3>
                       <span
-                        className="text-lg sm:text-xl text-gray-700 flex-shrink-0"
+                        className={`${amiri.className} text-lg sm:text-xl text-gray-700 flex-shrink-0`}
                         dir="rtl"
                       >
                         {surah.name}

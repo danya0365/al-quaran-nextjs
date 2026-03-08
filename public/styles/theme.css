@@ -6,6 +6,13 @@
   --font-mono: "MiSans Thai", "MiSans Thai Variable", system-ui, -apple-system,
     monospace;
   --font-kanit: var(--font-kanit), system-ui, sans-serif;
+  --font-arabic: var(--font-amiri), serif;
+  --font-amiri: var(--font-amiri), serif;
+  --font-lateef: var(--font-lateef), serif;
+  --font-scheherazade: var(--font-scheherazade), serif;
+  --font-tajawal: var(--font-tajawal), sans-serif;
+  --font-reemkufi: var(--font-reemkufi), serif;
+  --font-markazi: var(--font-markazi), serif;
 
   /* Light defaults */
   --color-background: #ffffff;

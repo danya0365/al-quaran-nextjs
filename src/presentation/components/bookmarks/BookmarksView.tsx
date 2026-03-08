@@ -1,7 +1,10 @@
 "use client";
 
 import { useBookmarksPresenter } from "@/src/presentation/presenters/bookmarks/useBookmarksPresenter";
+import { Amiri } from "next/font/google";
 import Link from "next/link";
+
+const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"] });
 
 /**
  * Bookmarks View Component
@@ -42,7 +45,7 @@ export function BookmarksView() {
                   <div className="text-xs sm:text-sm text-gray-600">
                     อายะห์ที่ {viewModel.lastRead.numberInSurah}
                   </div>
-                  <div className="text-sm sm:text-base text-gray-700 mt-1.5 sm:mt-2 leading-relaxed" dir="rtl">
+                  <div className={`${amiri.className} text-sm sm:text-base text-gray-700 mt-1.5 sm:mt-2 leading-relaxed`} dir="rtl">
                     {viewModel.lastRead.text.substring(0, 100)}...
                   </div>
                 </div>
@@ -92,7 +95,7 @@ export function BookmarksView() {
                           {bookmark.surah.englishNameTranslation}
                         </div>
                         <div
-                          className="text-gray-700 leading-relaxed text-sm"
+                          className={`${amiri.className} text-gray-700 leading-relaxed text-sm`}
                           dir="rtl"
                         >
                           {bookmark.text}

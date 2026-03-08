@@ -1,7 +1,10 @@
 "use client";
 
+import { Amiri } from "next/font/google";
 import React, { useMemo, useState } from "react";
 import { TAJWEED_RULES, TajweedRule } from "./tajweedRules";
+
+const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"] });
 
 interface TajweedTextProps {
   text: string;
@@ -138,7 +141,7 @@ export const TajweedText: React.FC<TajweedTextProps> = ({
               <div className="mt-4">
                 <div className="text-xs text-gray-500 mb-1">ตัวอย่าง:</div>
                 <div
-                  className="text-right"
+                  className={`${amiri.className} text-right`}
                   dir="rtl"
                   style={{ fontSize: `${fontSizePx}px` }}
                 >
