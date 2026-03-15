@@ -185,20 +185,6 @@ export function KaraokeView({ surahNumber }: KaraokeViewProps) {
 
       {/* Controls Fixed Bottom */}
       <div className="fixed bottom-0 left-0 right-0 px-6 pt-6 pb-28 bg-gradient-to-t from-[#0a1118] via-[#0a1118] to-transparent pointer-events-none z-40">
-        
-        {/* Debug Transcript Display */}
-        {isListening && (
-          <div className="max-w-2xl mx-auto mb-6 p-4 bg-gray-900/90 border border-gray-700/50 rounded-xl pointer-events-auto backdrop-blur-sm">
-            <p className="text-xs text-gray-400 mb-1 border-b border-gray-800 pb-1">สิ่งที่ระบบได้ยิน (Debug):</p>
-            <p className="text-emerald-300 font-arabic text-lg leading-relaxed text-right" dir="rtl">
-              {transcript} <span className="text-gray-500">{interimTranscript}</span>
-            </p>
-            {transcript.length === 0 && interimTranscript.length === 0 && (
-              <p className="text-gray-600 text-sm text-center italic mt-2">กำลังรอเสียงพูด...</p>
-            )}
-          </div>
-        )}
-
         <div className="max-w-sm mx-auto flex flex-col items-center gap-4 pointer-events-auto">
           
           <span className={`text-sm font-medium transition-colors ${isListening ? 'text-emerald-400' : 'text-gray-500'}`}>
