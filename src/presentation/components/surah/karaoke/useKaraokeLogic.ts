@@ -89,6 +89,8 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
     }
   };
 
+  const [processedTranscriptLength, setProcessedTranscriptLength] = useState(0);
+
   // The Matching Logic Effect
   useEffect(() => {
     if (!isListening || normalizedWords.length === 0) return;
@@ -96,56 +98,42 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
     const rawTranscript = transcript + " " + interimTranscript;
     const fullSpokenText = normalizeArabicText(rawTranscript);
     
-    if (fullSpokenText.length === 0) return;
+    // Only process the part of the transcript we haven't matched against yet
+    // This prevents matching old words against new expected words
+    if (fullSpokenText.length <= processedTranscriptLength) return;
+    
+    const newSpokenText = fullSpokenText.slice(processedTranscriptLength);
+    if (newSpokenText.trim().length === 0) return;
 
     let newMatchCount = matchedWordsCount;
-
-    // Get the last N characters to avoid matching words from way behind
-    const recentSpoken = fullSpokenText.slice(-60);
+    let newProcessedLength = processedTranscriptLength;
 
     let progressMade = true;
-    const maxLookAhead = 4; // Look further ahead in case API skipped multiple words
+    // VERY STRICT Lookahead: Only allow skipping 1 maximum word if the API missed it.
+    const maxLookAhead = 2; 
 
-    // Helper: Super basic fuzzy match for Arabic words
-    // Checks if the key characters of the expected word exist in the spoken text segment
-    const isFuzzyMatch = (expected: string, spokenText: string) => {
-      // Very short words like "wa" (و) or "bi" (ب) are hard. We just assume they pass if they are part of a lookahead
-      // or we just skip them easily if the subsequent word matches.
-      if (expected.length <= 2) return true;
+    // Helper: Strict fuzzy match.
+    const isStrictFuzzyMatch = (expected: string, spokenSegment: string) => {
+      if (expected.length <= 2) return spokenSegment.includes(expected);
 
-      // Extract core characters (ignore common prefixes/suffixes that might distort)
-      // Remove Alif, Lam at the start if present
       const coreExpected = expected.replace(/^[ال]+/g, '');
-      if (coreExpected.length < 3) return spokenText.includes(coreExpected);
-
-      // We just check if the spoken text contains a chunk that is very similar.
-      // Often, Google returns e.g. "عالمين" instead of "العالمين", or "الرحمن" instead of "الرحمان"
+      if (coreExpected.length < 3) return spokenSegment.includes(coreExpected);
       
-      // 1. Direct includes fallback
-      if (spokenText.includes(coreExpected)) return true;
-      
-      // 2. Contains 3 consecutive characters anywhere
-      for (let i = 0; i <= coreExpected.length - 3; i++) {
-        const trigram = coreExpected.substring(i, i + 3);
-        if (spokenText.includes(trigram)) return true;
+      // 1. Exact or Core Match
+      if (spokenSegment.includes(expected) || spokenSegment.includes(coreExpected)) {
+        return true;
       }
       
-      // 3. Fallback: Check if we have at least 70% of the characters in order
-      let expectedIdx = 0;
-      let matchedChars = 0;
-      for (let i = 0; i < spokenText.length && expectedIdx < expected.length; i++) {
-        if (spokenText[i] === expected[expectedIdx]) {
-          matchedChars++;
-          expectedIdx++;
-        } else if (spokenText[i] === ' ' || spokenText[i] === 'ا') {
-           // allow spaces or extra alifs in spoken text to be skipped
-        } else {
-           // if mismatch, let's try skipping one char in expected
-           expectedIdx++; 
-        }
+      // 2. High consecutive sequence match
+      // If the word has 5 letters, we need at least 4 in a row to match.
+      const requiredSeqLength = Math.max(3, Math.floor(coreExpected.length * 0.75));
+      
+      for (let i = 0; i <= coreExpected.length - requiredSeqLength; i++) {
+        const seq = coreExpected.substring(i, i + requiredSeqLength);
+        if (spokenSegment.includes(seq)) return true;
       }
       
-      return (matchedChars / expected.length) >= 0.6; // 60% char match
+      return false;
     };
 
     while (progressMade && newMatchCount < normalizedWords.length) {
@@ -157,10 +145,24 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
         
         const nextExpectedWord = normalizedWords[checkIdx];
         
-        if (isFuzzyMatch(nextExpectedWord, recentSpoken)) {
-          // Found it! Jump the counter to this word
-          // If we looked ahead (offset > 0), this means we just skipped the intermediate words
+        if (isStrictFuzzyMatch(nextExpectedWord, newSpokenText)) {
+          // Found it! 
           newMatchCount = checkIdx + 1;
+          
+          // Fast-forward the processed length so we don't re-match these letters
+          // We find where this word matched and consume up to that point
+          const coreExpected = nextExpectedWord.replace(/^[ال]+/g, '');
+          const matchIndex = Math.max(
+             newSpokenText.indexOf(nextExpectedWord), 
+             newSpokenText.indexOf(coreExpected)
+          );
+          
+          if (matchIndex !== -1) {
+             newProcessedLength += matchIndex + coreExpected.length;
+          } else {
+             newProcessedLength += newSpokenText.length; // If fuzzy matched via sequence, consume all new text
+          }
+          
           progressMade = true;
           break; 
         }
@@ -169,14 +171,16 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
 
     if (newMatchCount > matchedWordsCount) {
       setMatchedWordsCount(newMatchCount);
+      setProcessedTranscriptLength(newProcessedLength);
       
       if (newMatchCount >= normalizedWords.length) {
         setTimeout(() => {
           advanceToNextAyah();
+          setProcessedTranscriptLength(0); // Reset for next Ayah
         }, 800);
       }
     }
-  }, [transcript, interimTranscript, isListening, normalizedWords, matchedWordsCount]);
+  }, [transcript, interimTranscript, isListening, normalizedWords, matchedWordsCount, processedTranscriptLength]);
 
   return {
     isSupported,
