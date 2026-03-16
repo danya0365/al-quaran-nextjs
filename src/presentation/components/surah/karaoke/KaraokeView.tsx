@@ -4,6 +4,7 @@ import { useSurahPresenter } from "@/src/presentation/presenters/surah/useSurahP
 import { useKaraokeLogic } from "./useKaraokeLogic";
 import { Amiri } from "next/font/google";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import SurahSkeletonView from "../SurahSkeletonView";
 
 const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"] });
@@ -16,6 +17,7 @@ interface KaraokeViewProps {
 
 export function KaraokeView({ surahNumber }: KaraokeViewProps) {
   const router = useRouter();
+  const [showTips, setShowTips] = useState(false);
   const { viewModel, loading, error } = useSurahPresenter(surahNumber);
 
   const {
@@ -34,6 +36,7 @@ export function KaraokeView({ surahNumber }: KaraokeViewProps) {
     goToPreviousAyah,
     transcript,
     interimTranscript,
+    isReconnecting,
   } = useKaraokeLogic({ viewModel });
 
   const handleBack = () => {
@@ -104,7 +107,38 @@ export function KaraokeView({ surahNumber }: KaraokeViewProps) {
             </p>
           </div>
           
-          <div className="w-10"></div>
+          <div className="w-10 flex justify-end relative">
+            <button
+              onClick={() => setShowTips(!showTips)}
+              className="bg-white/5 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors w-8 h-8 text-emerald-400 font-bold text-sm border border-emerald-900/30"
+              aria-label="คำแนะนำ"
+            >
+              ?
+            </button>
+            
+            {showTips && (
+              <div className="absolute top-12 right-0 w-72 bg-gray-900 border border-gray-800 shadow-2xl rounded-xl p-4 text-sm z-50 text-left">
+                <div className="flex justify-between items-center mb-2 pb-2 border-b border-gray-800">
+                  <h3 className="font-bold text-emerald-400 font-sans">คำแนะนำการใช้งาน 💡</h3>
+                  <button onClick={() => setShowTips(false)} className="text-gray-500 hover:text-white">✕</button>
+                </div>
+                <ul className="space-y-3 font-sans text-gray-300">
+                  <li className="flex gap-2">
+                    <span className="text-xl">👆</span>
+                    <span><strong>คำค้าง/ไม่ยอมไป:</strong> สามารถเอานิ้ว <strong>แตะที่คำถัดไป</strong> เพื่อบังคับข้ามคำนั้นได้ทันที</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-xl">🟡</span>
+                    <span><strong>ปุ่มไมค์เป็นสีเหลือง:</strong> เน็ตสะดุดหรือกำลังค้าง ให้ลองแตะที่ปุ่มเพื่อรีเฟรชไมค์ใหม่</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-xl">🗣️</span>
+                    <span><strong>อ่านให้ชัดเจน:</strong> ระบบถอดเสียงภาษาอาหรับจะทำงานได้ดีที่สุดในที่เงียบและออกเสียงชัดเจนคำต่อคำ</span>
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -189,20 +223,36 @@ export function KaraokeView({ surahNumber }: KaraokeViewProps) {
       <div className="fixed bottom-0 left-0 right-0 px-6 pt-6 pb-28 bg-gradient-to-t from-[#0a1118] via-[#0a1118] to-transparent pointer-events-none z-40">
         <div className="max-w-sm mx-auto flex flex-col items-center gap-4 pointer-events-auto">
           
-          <span className={`text-sm font-medium transition-colors ${isListening ? 'text-emerald-400' : 'text-gray-500'}`}>
-            {isListening ? 'กำลังฟัง...' : 'แตะเพื่อเริ่มอ่าน'}
+          <span className={`text-sm font-medium transition-colors ${
+            isReconnecting ? 'text-yellow-400' : isListening ? 'text-emerald-400' : 'text-gray-500'
+          }`}>
+            {isReconnecting ? 'ขาดการเชื่อมต่อ กำลังเชื่อมใหม่...' : isListening ? 'กำลังฟัง...' : 'แตะเพื่อเริ่มอ่าน'}
           </span>
           
           <button 
             onClick={toggleListening}
-            disabled={!isSupported}
-            className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 text-2xl ${
-              isListening 
-                ? 'bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.5)] hover:bg-emerald-400 animate-pulse' 
-                : 'bg-gray-800 hover:bg-gray-700 text-gray-400 border border-gray-700'
+            disabled={!isSupported && !isReconnecting}
+            className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 text-2xl relative ${
+              isReconnecting
+                ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/50 hover:bg-yellow-500/30'
+                : isListening 
+                  ? 'bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.5)] hover:bg-emerald-400 animate-pulse text-white' 
+                  : 'bg-gray-800 hover:bg-gray-700 text-gray-400 border border-gray-700'
             } disabled:opacity-50`}
           >
-            {isListening ? '⏸️' : '🎤'}
+            {isReconnecting ? (
+              <svg className="w-8 h-8 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            ) : isListening ? '⏸️' : '🎤'}
+            
+            {/* Show tiny retry icon badge when reconnecting */}
+            {isReconnecting && (
+              <div className="absolute -top-1 -right-1 bg-red-500 rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-lg border-2 border-[#0a1118]">
+                ↻
+              </div>
+            )}
           </button>
         </div>
       </div>
@@ -225,8 +275,8 @@ export function KaraokeView({ surahNumber }: KaraokeViewProps) {
             <div className="mb-2 flex items-center justify-between">
               <div>
                 <span className="text-gray-500">Status: </span>
-                <span className={isListening ? "text-green-400" : "text-yellow-400"}>
-                  {isListening ? "Listening" : "Idle"}
+                <span className={isReconnecting ? "text-yellow-400" : isListening ? "text-green-400" : "text-gray-400"}>
+                  {isReconnecting ? "Reconnecting" : isListening ? "Listening" : "Idle"}
                 </span>
               </div>
               <div>
