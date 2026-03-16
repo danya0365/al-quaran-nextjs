@@ -229,31 +229,58 @@ export function KaraokeView({ surahNumber }: KaraokeViewProps) {
             {isReconnecting ? 'ขาดการเชื่อมต่อ กำลังเชื่อมใหม่...' : isListening ? 'กำลังฟัง...' : 'แตะเพื่อเริ่มอ่าน'}
           </span>
           
-          <button 
-            onClick={toggleListening}
-            disabled={!isSupported && !isReconnecting}
-            className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 text-2xl relative ${
-              isReconnecting
-                ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/50 hover:bg-yellow-500/30'
-                : isListening 
-                  ? 'bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.5)] hover:bg-emerald-400 animate-pulse text-white' 
-                  : 'bg-gray-800 hover:bg-gray-700 text-gray-400 border border-gray-700'
-            } disabled:opacity-50`}
-          >
-            {isReconnecting ? (
-              <svg className="w-8 h-8 animate-spin" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          <div className="flex items-center gap-6">
+            {/* Previous Button */}
+            <button
+              onClick={goToPreviousAyah}
+              disabled={!previousAyah}
+              className="w-12 h-12 rounded-full flex items-center justify-center bg-gray-800/80 hover:bg-gray-700 text-gray-400 border border-gray-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              aria-label="อายะห์ก่อนหน้า"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-            ) : isListening ? '⏸️' : '🎤'}
-            
-            {/* Show tiny retry icon badge when reconnecting */}
-            {isReconnecting && (
-              <div className="absolute -top-1 -right-1 bg-red-500 rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-lg border-2 border-[#0a1118]">
-                ↻
-              </div>
-            )}
-          </button>
+            </button>
+
+            {/* Main Mic Button */}
+            <button 
+              onClick={toggleListening}
+              disabled={!isSupported && !isReconnecting}
+              className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 text-2xl relative ${
+                isReconnecting
+                  ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/50 hover:bg-yellow-500/30'
+                  : isListening 
+                    ? 'bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.5)] hover:bg-emerald-400 animate-pulse text-white' 
+                    : 'bg-gray-800 hover:bg-gray-700 text-gray-400 border border-gray-700'
+              } disabled:opacity-50`}
+            >
+              {isReconnecting ? (
+                <svg className="w-8 h-8 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              ) : isListening ? '⏸️' : '🎤'}
+              
+              {/* Show tiny retry icon badge when reconnecting */}
+              {isReconnecting && (
+                <div className="absolute -top-1 -right-1 bg-red-500 rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-lg border-2 border-[#0a1118]">
+                  ↻
+                </div>
+              )}
+            </button>
+
+            {/* Next Button */}
+            <button
+              onClick={advanceToNextAyah}
+              disabled={!nextAyah}
+              className="w-12 h-12 rounded-full flex items-center justify-center bg-gray-800/80 hover:bg-gray-700 text-gray-400 border border-gray-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              aria-label="อายะห์ถัดไป"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
       
