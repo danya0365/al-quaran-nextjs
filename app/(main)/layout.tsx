@@ -1,4 +1,4 @@
-import { BottomNavigation } from '@/components/BottomNavigation';
+import { BottomNavigation } from '@/src/presentation/components/ui/BottomNavigation';
 
 export default function MainLayout({
   children,

@@ -65,13 +65,13 @@ export function HomeView({ initialViewModel }: HomeViewProps) {
 
   if (error && !viewModel) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-emerald-50 to-white">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-emerald-50 to-white dark:from-gray-900 dark:to-gray-900">
         <div className="text-center px-4">
           <div className="text-red-500 text-6xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">
             เกิดข้อผิดพลาด
           </h2>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">{error}</p>
         </div>
       </div>
     );
@@ -82,10 +82,10 @@ export function HomeView({ initialViewModel }: HomeViewProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white pb-20">
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white dark:from-gray-900 dark:to-gray-900 pb-20">
       {/* Header - Smooth Shrinking Sticky */}
       <div
-        className="sticky top-0 z-50 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-lg px-3 sm:px-6"
+        className="sticky top-0 z-50 bg-gradient-to-r from-emerald-600 to-emerald-700 dark:from-emerald-900 dark:to-gray-800 text-white shadow-lg px-3 sm:px-6"
         style={{
           ...headerPadding,
           transition: "padding 0.1s ease-out",
@@ -111,9 +111,9 @@ export function HomeView({ initialViewModel }: HomeViewProps) {
               placeholder="ค้นหาซูเราะห์..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-3 sm:px-4 py-2 sm:py-3 pr-10 sm:pr-12 rounded-lg sm:rounded-xl bg-white/90 backdrop-blur-sm text-sm sm:text-base text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-300"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 pr-10 sm:pr-12 rounded-lg sm:rounded-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm text-sm sm:text-base text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 border border-transparent dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-300 dark:focus:ring-emerald-500"
             />
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500">
               🔍
             </div>
           </div>
@@ -143,7 +143,7 @@ export function HomeView({ initialViewModel }: HomeViewProps) {
                 </div>
                 <div>
                   <div className="text-xl sm:text-2xl font-bold">30</div>
-                  <div className="text-xs text-emerald-100 mt-0.5 sm:mt-1">
+                  <div className="text-xs text-emerald-100 dark:text-gray-300 mt-0.5 sm:mt-1">
                     ญุซอ์
                   </div>
                 </div>
@@ -156,7 +156,7 @@ export function HomeView({ initialViewModel }: HomeViewProps) {
       {/* Surah List */}
       <div className="max-w-4xl mx-auto p-3 sm:p-6">
         <div className="mb-3 sm:mb-4">
-          <h2 className="text-lg font-semibold text-gray-800">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
             รายการซูเราะห์ ({filteredSurahs?.length || 0})
           </h2>
         </div>
@@ -168,8 +168,7 @@ export function HomeView({ initialViewModel }: HomeViewProps) {
               <Link
                 key={surah.number}
                 href={`/surah/${surah.number}`}
-                className="relative overflow-hidden block bg-white rounded-lg sm:rounded-xl shadow-sm hover:shadow-md transition-all p-2.5 sm:p-4 border"
-                style={{ borderColor: "#F3F4F6" }}
+                className="relative overflow-hidden block bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-sm hover:shadow-md transition-all p-2.5 sm:p-4 border border-gray-100 dark:border-gray-700 group"
               >
                 <div className="flex items-center gap-2.5 sm:gap-4">
                   {/* Number Badge */}
@@ -187,17 +186,17 @@ export function HomeView({ initialViewModel }: HomeViewProps) {
                   {/* Surah Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-1.5 sm:gap-2">
-                      <h3 className="font-semibold text-sm sm:text-base text-gray-800 truncate">
+                      <h3 className="font-semibold text-sm sm:text-base text-gray-800 dark:text-gray-200 truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                         {surah.englishName}
                       </h3>
                       <span
-                        className={`${amiri.className} text-lg sm:text-xl text-gray-700 flex-shrink-0`}
+                        className={`${amiri.className} text-lg sm:text-xl text-gray-700 dark:text-gray-300 flex-shrink-0 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors`}
                         dir="rtl"
                       >
                         {surah.name}
                       </span>
                     </div>
-                    <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5 sm:mt-1 text-xs sm:text-sm text-gray-500">
+                    <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5 sm:mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                       <span>{surah.englishNameTranslation}</span>
                       <span>•</span>
                       <span>{surah.ayahs?.length || 0} อายะห์</span>
@@ -255,8 +254,8 @@ export function HomeView({ initialViewModel }: HomeViewProps) {
 
         {filteredSurahs?.length === 0 && (
           <div className="text-center py-12">
-            <div className="text-6xl mb-4">🔍</div>
-            <p className="text-gray-600">ไม่พบซูเราะห์ที่ค้นหา</p>
+            <div className="text-6xl mb-4 opacity-50">🔍</div>
+            <p className="text-gray-600 dark:text-gray-400">ไม่พบซูเราะห์ที่ค้นหา</p>
           </div>
         )}
       </div>
