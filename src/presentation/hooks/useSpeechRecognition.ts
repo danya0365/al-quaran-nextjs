@@ -21,13 +21,16 @@ export interface UseSpeechRecognitionResult {
 
 export function useSpeechRecognition({
   lang = "ar-SA",
-}: { lang?: string } = {}): UseSpeechRecognitionResult {
+}: { lang?: string } = {}): UseSpeechRecognitionResult & { isReconnecting: boolean } {
   const [isListening, setIsListening] = useState(false);
+  const [isReconnecting, setIsReconnecting] = useState(false);
+  const [retryInstance, setRetryInstance] = useState(0); // Used to force recreation of the API object
   const [transcript, setTranscript] = useState("");
   const [interimTranscript, setInterimTranscript] = useState("");
   const [error, setError] = useState<string | null>(null);
   
   const recognitionRef = useRef<any>(null);
+  const isListeningRequestedRef = useRef(false);
   const isSupported = typeof window !== "undefined" && (!!window.SpeechRecognition || !!window.webkitSpeechRecognition);
 
   useEffect(() => {
@@ -41,6 +44,7 @@ export function useSpeechRecognition({
 
       recognition.onstart = () => {
         setIsListening(true);
+        setIsReconnecting(false);
         setError(null);
       };
 
@@ -64,9 +68,16 @@ export function useSpeechRecognition({
       recognition.onerror = (event: any) => {
         console.error("Speech recognition error:", event.error);
         
-        if (event.error === "not-allowed") {
-          setError("Microphone permission denied. Please allow microphone access.");
-        } else {
+        if (event.error === "not-allowed" || event.error === "audio-capture") {
+          setError("Microphone permission denied or not found. Please check your mic settings.");
+          isListeningRequestedRef.current = false; // Fatal error, stop trying to reconnect
+        } else if (event.error === "network") {
+          // Network errors are common in Web Speech API. Don't show hard error to user.
+          console.warn("Network error encountered. Set reconnecting state...");
+          setIsReconnecting(true);
+        } else if (event.error === "no-speech") {
+          // Just silence timeout. Ignore.
+        } else if (event.error !== "aborted") {
           setError(`Error: ${event.error}`);
         }
         setIsListening(false);
@@ -74,23 +85,42 @@ export function useSpeechRecognition({
 
       recognition.onend = () => {
         setIsListening(false);
-        // Sometimes it stops automatically on silence
-        // In a real Karaoke app, you might want to automatically restart it
-        // if it was supposed to be continuously listening
+        // Automatic reconnect logic
+        if (isListeningRequestedRef.current) {
+          console.log("Speech recognition ended unexpectedly. Rebuilding instance...");
+          setIsReconnecting(true);
+          // Destroy the old instance and create a brand new one
+          setTimeout(() => {
+            if (isListeningRequestedRef.current) {
+              setRetryInstance((prev) => prev + 1);
+            }
+          }, 300);
+        }
       };
 
       recognitionRef.current = recognition;
+      
+      // If this instance was created because of a retry, start it immediately
+      if (isListeningRequestedRef.current) {
+         try {
+           recognition.start();
+         } catch(e) { /* ignore InvalidStateError */ }
+      }
     }
 
     return () => {
       if (recognitionRef.current) {
-        recognitionRef.current.abort();
+         try {
+            recognitionRef.current.abort();
+         } catch(e) { /* ignore */ }
       }
     };
-  }, [lang, isSupported]);
+  }, [lang, isSupported, retryInstance]);
 
   const startListening = useCallback(() => {
     setError(null);
+    setIsReconnecting(false);
+    isListeningRequestedRef.current = true;
     if (!recognitionRef.current) return;
     try {
       recognitionRef.current.start();
@@ -104,6 +134,8 @@ export function useSpeechRecognition({
   }, []);
 
   const stopListening = useCallback(() => {
+    isListeningRequestedRef.current = false;
+    setIsReconnecting(false);
     if (!recognitionRef.current) return;
     try {
       recognitionRef.current.stop();
@@ -126,5 +158,6 @@ export function useSpeechRecognition({
     stopListening,
     resetTranscript,
     isSupported,
+    isReconnecting,
   };
 }

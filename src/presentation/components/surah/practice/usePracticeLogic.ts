@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { useSpeechRecognition } from "@/src/presentation/hooks/useSpeechRecognition";
 import { SurahViewModel } from "@/src/presentation/presenters/surah/SurahPresenter";
+import { usePracticeStore } from "./usePracticeStore";
 
 export function normalizeArabicText(text: string): string {
   if (!text) return "";
@@ -22,14 +23,22 @@ export function normalizeArabicText(text: string): string {
     .trim();
 }
 
-interface UseKaraokeLogicProps {
+interface UsePracticeLogicProps {
   viewModel: SurahViewModel | null;
 }
 
-export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
-  const [currentAyahIndex, setCurrentAyahIndex] = useState(0);
-  const [matchedWordsCount, setMatchedWordsCount] = useState(0);
+export function usePracticeLogic({ viewModel }: UsePracticeLogicProps) {
+  const { currentAyahIndex, setCurrentAyahIndex, matchedWordsCount, setMatchedWordsCount, initializeSurah } = usePracticeStore();
   const [lastMatchTime, setLastMatchTime] = useState(0);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Initialize store state when Surah mounts
+  useEffect(() => {
+    if (viewModel?.arabicSurah?.number) {
+      initializeSurah(viewModel.arabicSurah.number);
+      setIsInitialized(true);
+    }
+  }, [viewModel?.arabicSurah?.number, initializeSurah]);
 
   const {
     isListening,
@@ -40,6 +49,7 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
     resetTranscript,
     error: speechError,
     isSupported,
+    isReconnecting,
   } = useSpeechRecognition({ lang: "ar-SA" });
 
   const ayahs = viewModel?.arabicSurah?.ayahs || [];
@@ -73,7 +83,7 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
 
   const advanceToNextAyah = () => {
     if (activeAyahIndex < ayahs.length - 1) {
-      setCurrentAyahIndex((prev) => prev + 1);
+      setCurrentAyahIndex(currentAyahIndex + 1);
     } else {
       // Finished Surah
       stopListening();
@@ -82,7 +92,7 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
 
   const goToPreviousAyah = () => {
     if (activeAyahIndex > 0) {
-      setCurrentAyahIndex((prev) => prev - 1);
+      setCurrentAyahIndex(currentAyahIndex - 1);
     }
   };
 
@@ -97,23 +107,27 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
     interimTranscriptRef.current = interimTranscript;
   }, [transcript, interimTranscript]);
 
+  // Use a ref to prevent double-firing advanceToNextAyah during the 800ms delay
+  const isAdvancingRef = useRef(false);
+
   // Sync state when active ayah changes manually (Prev/Next buttons or URL)
   // or automatically.
   useEffect(() => {
     setMatchedWordsCount(0);
+    isAdvancingRef.current = false;
     
-    // Instead of resetting the Speech API (which causes state flicker),
-    // we just calculate how much it has heard *up to this point*, and
-    // set that as our start offset for the new Ayah.
+    // Crucial fix: When we move to a new Ayah, we MUST consider all text heard UP TO THIS POINT
+    // as "old text", so it doesn't accidentally trigger matches on the new Ayah.
     const rawTranscript = transcriptRef.current + " " + interimTranscriptRef.current;
     const fullSpokenText = normalizeArabicText(rawTranscript);
     
     setProcessedTranscriptLength(fullSpokenText.length);
-  }, [activeAyahIndex]);
+    setLastMatchTime(Date.now()); // Reset match throttle
+  }, [activeAyahIndex, setMatchedWordsCount]);
 
   // The Matching Logic Effect
   useEffect(() => {
-    if (!isListening || normalizedWords.length === 0) return;
+    if (!isInitialized || !isListening || normalizedWords.length === 0) return;
     
     // Throttle matches to prevent rapid skipping (min 300ms between words)
     if (Date.now() - lastMatchTime < 300) return;
@@ -125,8 +139,9 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
     // This prevents matching old words against new expected words
     if (fullSpokenText.length <= processedTranscriptLength) return;
     
-    const newSpokenText = fullSpokenText.slice(processedTranscriptLength);
-    if (newSpokenText.trim().length === 0) return;
+    // Double check that we are actually looking at new words
+    const currentSpokenText = fullSpokenText.slice(processedTranscriptLength);
+    if (currentSpokenText.trim().length === 0) return;
 
     let newMatchCount = matchedWordsCount;
     let newProcessedLength = processedTranscriptLength;
@@ -137,10 +152,18 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
 
     // Helper: Strict fuzzy match.
     const isStrictFuzzyMatch = (expected: string, spokenSegment: string) => {
-      if (expected.length <= 2) return spokenSegment.includes(expected);
+      // Clean up elongated letters from speaking Tadweed (e.g. مننن -> من, اهههه -> اه)
+      // Removes consecutive identical characters in the spoken segment
+      const normalizedSpoken = spokenSegment.replace(/(.)\1+/g, '$1$1');
+      
+      if (expected.length <= 2) {
+        return normalizedSpoken.includes(expected) || spokenSegment.includes(expected);
+      }
 
       const coreExpected = expected.replace(/^[ال]+/g, '');
-      if (coreExpected.length < 3) return spokenSegment.includes(coreExpected);
+      if (coreExpected.length < 3) {
+        return normalizedSpoken.includes(coreExpected) || spokenSegment.includes(coreExpected);
+      }
       
       // 1. Exact or Core Match
       if (spokenSegment.includes(expected) || spokenSegment.includes(coreExpected)) {
@@ -178,13 +201,17 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
     while (progressMade && newMatchCount < normalizedWords.length) {
       progressMade = false;
       
+      // Update the spoken text to only include what we haven't processed yet
+      const currentLoopSpokenText = fullSpokenText.slice(newProcessedLength);
+      if (currentLoopSpokenText.trim().length === 0) break;
+
       for (let offset = 0; offset < maxLookAhead; offset++) {
         const checkIdx = newMatchCount + offset;
         if (checkIdx >= normalizedWords.length) break;
         
         const nextExpectedWord = normalizedWords[checkIdx];
         
-        if (isStrictFuzzyMatch(nextExpectedWord, newSpokenText)) {
+        if (isStrictFuzzyMatch(nextExpectedWord, currentLoopSpokenText)) {
           // Found it! 
           newMatchCount = checkIdx + 1;
           
@@ -192,14 +219,14 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
           // We find where this word matched and consume up to that point
           const coreExpected = nextExpectedWord.replace(/^[ال]+/g, '');
           const matchIndex = Math.max(
-             newSpokenText.indexOf(nextExpectedWord), 
-             newSpokenText.indexOf(coreExpected)
+             currentLoopSpokenText.indexOf(nextExpectedWord), 
+             currentLoopSpokenText.indexOf(coreExpected)
           );
           
           if (matchIndex !== -1) {
              newProcessedLength += matchIndex + coreExpected.length;
           } else {
-             newProcessedLength += newSpokenText.length; // If fuzzy matched via sequence, consume all new text
+             newProcessedLength += currentLoopSpokenText.length; // If fuzzy matched via sequence, consume all new text
           }
           
           progressMade = true;
@@ -213,7 +240,8 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
       setProcessedTranscriptLength(newProcessedLength);
       setLastMatchTime(Date.now());
       
-      if (newMatchCount >= normalizedWords.length) {
+      if (newMatchCount >= normalizedWords.length && !isAdvancingRef.current) {
+        isAdvancingRef.current = true;
         setTimeout(() => {
           advanceToNextAyah();
         }, 800);
@@ -240,5 +268,6 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
     goToPreviousAyah,
     transcript,
     interimTranscript,
+    isReconnecting,
   };
 }

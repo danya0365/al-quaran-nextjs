@@ -163,15 +163,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
   } as typeof thaiSummaries;
 
   return (
-    <div
-      className="min-h-screen pb-24 transition-colors duration-300 dark:bg-gray-900"
-      style={{
-        background:
-          typeof document !== "undefined" && document.documentElement.classList.contains("dark")
-            ? "transparent"
-            : "linear-gradient(to bottom, rgba(16,185,129,0.06), #ffffff)",
-      }}
-    >
+    <div className="min-h-screen pb-24 transition-colors duration-300 bg-gradient-to-b from-emerald-50 to-white dark:from-gray-900 dark:to-gray-900">
       {/* Header - Smooth Shrinking Sticky */}
       <div
         className="text-white px-3 sm:px-6 shadow-lg sticky top-0 z-10"
@@ -237,9 +229,9 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                   📘 อ่านสรุป
                 </button>
               )}
-              {/* Karaoke Mode */}
+              {/* Practice Mode */}
               <Link
-                href={`/surah/${surah.number}/karaoke`}
+                href={`/surah/${surah.number}/practice`}
                 className="bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
                 style={{
                   width: `${buttonSize * 0.85}rem`,
@@ -247,7 +239,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                   fontSize: `${(1.25 - scrollProgress * 0.375) * 0.8}rem`,
                   transition: "width 0.1s ease-out, height 0.1s ease-out, font-size 0.1s ease-out",
                 }}
-                title="Karaoke Mode"
+                title="โหมดฝึกอ่าน (Practice Mode)"
               >
                 🎤
               </Link>
