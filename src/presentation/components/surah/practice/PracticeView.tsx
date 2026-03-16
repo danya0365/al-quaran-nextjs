@@ -1,11 +1,12 @@
 "use client";
 
+import { cn } from "@/src/presentation/utils/style";
 import { useSurahPresenter } from "@/src/presentation/presenters/surah/useSurahPresenter";
-import { usePracticeLogic } from "./usePracticeLogic";
 import { Amiri } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import SurahSkeletonView from "../SurahSkeletonView";
+import { usePracticeLogic } from "./usePracticeLogic";
 
 const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"] });
 
@@ -74,17 +75,17 @@ export function PracticeView({ surahNumber }: PracticeViewProps) {
   const surah = viewModel.arabicSurah;
 
   return (
-    <div className="min-h-screen pb-24 bg-[#0a1118] text-gray-100 flex flex-col font-sans selection:bg-emerald-500/30">
+    <div className="min-h-screen transition-colors duration-300 bg-gradient-to-b from-emerald-50 to-white dark:from-gray-900 dark:to-gray-900 text-gray-800 dark:text-gray-100 flex flex-col font-sans selection:bg-emerald-500/30">
       {/* Header */}
-      <div className="px-4 py-4 sm:px-6 shadow-sm sticky top-0 z-10 bg-[#0a1118]/80 backdrop-blur-md border-b border-gray-800/50">
+      <div className="px-4 py-4 sm:px-6 shadow-sm sticky top-0 z-10 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800/50">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <button
             onClick={handleBack}
-            className="bg-white/5 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors flex-shrink-0 w-10 h-10"
+            className="bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors flex-shrink-0 w-10 h-10"
             aria-label="กลับ"
           >
             <svg
-              className="w-5 h-5 text-gray-400"
+              className="w-5 h-5 text-gray-600 dark:text-gray-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -99,30 +100,30 @@ export function PracticeView({ surahNumber }: PracticeViewProps) {
           </button>
 
           <div className="text-center flex-1">
-            <h1 className="font-bold text-lg text-emerald-400">
+            <h1 className="font-bold text-lg text-emerald-600 dark:text-emerald-400">
               {surah.englishName}
             </h1>
-            <p className="text-xs text-emerald-400/60 font-medium tracking-widest uppercase mt-0.5">
+            <p className="text-xs text-emerald-600/60 dark:text-emerald-400/60 font-medium tracking-widest uppercase mt-0.5">
               โหมดฝึกอ่าน (Practice Mode)
             </p>
           </div>
           
-          <div className="w-10 flex justify-end relative">
+          <div className="w-10 flex flex-shrink-0 justify-end relative">
             <button
               onClick={() => setShowTips(!showTips)}
-              className="bg-white/5 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors w-8 h-8 text-emerald-400 font-bold text-sm border border-emerald-900/30"
+              className="bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors w-8 h-8 text-emerald-600 dark:text-emerald-400 font-bold text-sm border border-emerald-200 dark:border-emerald-900/50"
               aria-label="คำแนะนำ"
             >
               ?
             </button>
             
             {showTips && (
-              <div className="absolute top-12 right-0 w-72 bg-gray-900 border border-gray-800 shadow-2xl rounded-xl p-4 text-sm z-50 text-left">
-                <div className="flex justify-between items-center mb-2 pb-2 border-b border-gray-800">
-                  <h3 className="font-bold text-emerald-400 font-sans">คำแนะนำการใช้งาน 💡</h3>
-                  <button onClick={() => setShowTips(false)} className="text-gray-500 hover:text-white">✕</button>
+              <div className="absolute top-12 right-0 w-72 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl rounded-xl p-4 text-sm z-50 text-left">
+                <div className="flex justify-between items-center mb-2 pb-2 border-b border-gray-100 dark:border-gray-700">
+                  <h3 className="font-bold text-emerald-600 dark:text-emerald-400 font-sans">คำแนะนำการใช้งาน 💡</h3>
+                  <button onClick={() => setShowTips(false)} className="text-gray-500 hover:text-gray-900 dark:hover:text-white">✕</button>
                 </div>
-                <ul className="space-y-3 font-sans text-gray-300">
+                <ul className="space-y-3 font-sans text-gray-700 dark:text-gray-200">
                   <li className="flex gap-2">
                     <span className="text-xl">👆</span>
                     <span><strong>คำค้าง/ไม่ยอมไป:</strong> สามารถเอานิ้ว <strong>แตะที่คำถัดไป</strong> เพื่อบังคับข้ามคำนั้นได้ทันที</span>
@@ -166,14 +167,14 @@ export function PracticeView({ surahNumber }: PracticeViewProps) {
                {previousAyah?.text}
             </p>
             {previousAyah && (
-              <span className="text-xs text-gray-500 block mt-2">
+              <span className="text-xs text-gray-500 dark:text-gray-600 block mt-2">
                 Ayah {previousAyah.numberInSurah}
               </span>
             )}
           </div>
 
           {/* Current Ayah */}
-          <div className="bg-gradient-to-b from-gray-800/40 to-gray-900/60 rounded-3xl p-6 md:p-12 border border-emerald-900/20 shadow-[0_0_40px_rgba(16,185,129,0.03)] transform transition-all duration-300 relative z-10 w-full">
+          <div className="bg-white/60 dark:bg-gray-800 rounded-3xl p-6 md:p-12 border border-emerald-100 dark:border-gray-700 shadow-sm transition-all duration-300 relative z-10 w-full">
             <div className={`${amiri.className} text-4xl md:text-5xl lg:text-5xl leading-loose md:leading-loose text-center flex flex-wrap justify-center gap-x-3 md:gap-x-4 gap-y-6`} dir="rtl">
               {originalWords.map((word, idx) => {
                 const isMatched = idx < matchedWordsCount;
@@ -185,10 +186,10 @@ export function PracticeView({ surahNumber }: PracticeViewProps) {
                     onClick={() => setMatchedWordsCount(idx)} // Allow clicking to skip forward/backward
                     className={`transition-all duration-300 cursor-pointer ${
                       isMatched 
-                        ? 'text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)] font-bold' 
+                        ? 'text-emerald-600 dark:text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.2)] dark:drop-shadow-[0_0_8px_rgba(52,211,153,0.3)] font-bold' 
                         : isCurrent && isListening
-                          ? 'text-white border-b-2 border-emerald-500/50 pb-1'
-                          : 'text-gray-500 hover:text-gray-400'
+                          ? 'text-gray-900 dark:text-gray-100 border-b-2 border-emerald-500/50 pb-1'
+                          : 'text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400'
                     }`}
                   >
                     {word}
@@ -196,7 +197,7 @@ export function PracticeView({ surahNumber }: PracticeViewProps) {
                 );
               })}
               
-              <span className="inline-flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-full border border-emerald-900/50 text-emerald-500/50 text-base md:text-lg mx-2 self-center">
+              <span className="inline-flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-full border border-emerald-200 dark:border-gray-600 text-emerald-500/70 dark:text-gray-400 text-base md:text-lg mx-2 self-center bg-emerald-50 dark:bg-gray-700/50">
                 {activeAyah.numberInSurah}
               </span>
             </div>
@@ -207,11 +208,11 @@ export function PracticeView({ surahNumber }: PracticeViewProps) {
             className={`transition-all duration-500 ${nextAyah ? 'opacity-30 transform scale-90 translate-y-0 cursor-pointer hover:opacity-50' : 'opacity-0 transform translate-y-8 absolute left-0 right-0 -z-10'}`}
             onClick={advanceToNextAyah}
           >
-             <p className={`${amiri.className} text-xl md:text-2xl text-gray-400`} dir="rtl">
+             <p className={`${amiri.className} text-xl md:text-2xl text-gray-400 dark:text-gray-500`} dir="rtl">
                {nextAyah?.text}
             </p>
             {nextAyah && (
-              <span className="text-xs text-gray-500 block mt-2">
+              <span className="text-xs text-gray-500 dark:text-gray-600 block mt-2">
                 Ayah {nextAyah.numberInSurah}
               </span>
             )}
@@ -220,11 +221,11 @@ export function PracticeView({ surahNumber }: PracticeViewProps) {
       </div>
 
       {/* Controls Fixed Bottom */}
-      <div className="fixed bottom-0 left-0 right-0 px-6 pt-6 pb-28 bg-gradient-to-t from-[#0a1118] via-[#0a1118] to-transparent pointer-events-none z-40">
+      <div className="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-white via-white dark:from-gray-900 dark:via-gray-900 to-transparent pointer-events-none z-40">
         <div className="max-w-sm mx-auto flex flex-col items-center gap-4 pointer-events-auto">
           
           <span className={`text-sm font-medium transition-colors ${
-            isReconnecting ? 'text-yellow-400' : isListening ? 'text-emerald-400' : 'text-gray-500'
+            isReconnecting ? 'text-yellow-500 dark:text-yellow-400' : isListening ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-500'
           }`}>
             {isReconnecting ? 'ขาดการเชื่อมต่อ กำลังเชื่อมใหม่...' : isListening ? 'กำลังฟัง...' : 'แตะเพื่อเริ่มอ่าน'}
           </span>
@@ -234,7 +235,7 @@ export function PracticeView({ surahNumber }: PracticeViewProps) {
             <button
               onClick={goToPreviousAyah}
               disabled={!previousAyah}
-              className="w-12 h-12 rounded-full flex items-center justify-center bg-gray-800/80 hover:bg-gray-700 text-gray-400 border border-gray-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              className="w-12 h-12 rounded-full flex items-center justify-center bg-white dark:bg-gray-800/80 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 shadow-sm transition-colors disabled:opacity-30 disabled:cursor-not-allowed pointer-events-auto"
               aria-label="อายะห์ก่อนหน้า"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -246,13 +247,13 @@ export function PracticeView({ surahNumber }: PracticeViewProps) {
             <button 
               onClick={toggleListening}
               disabled={!isSupported && !isReconnecting}
-              className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 text-2xl relative ${
-                isReconnecting
-                  ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/50 hover:bg-yellow-500/30'
-                  : isListening 
-                    ? 'bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.5)] hover:bg-emerald-400 animate-pulse text-white' 
-                    : 'bg-gray-800 hover:bg-gray-700 text-gray-400 border border-gray-700'
-              } disabled:opacity-50`}
+              className={cn(
+                "w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 text-2xl relative",
+                "disabled:opacity-50 pointer-events-auto shadow-md",
+                isReconnecting && "bg-yellow-50 dark:bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-500/50 hover:bg-yellow-100 dark:hover:bg-yellow-500/30",
+                isListening && !isReconnecting && "bg-emerald-600 dark:bg-emerald-500 shadow-md dark:shadow-[0_0_20px_rgba(16,185,129,0.5)] hover:bg-emerald-500 dark:hover:bg-emerald-400 animate-pulse text-white",
+                !isListening && !isReconnecting && "bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-400 border border-gray-200 dark:border-gray-700"
+              )}
             >
               {isReconnecting ? (
                 <svg className="w-8 h-8 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -263,7 +264,7 @@ export function PracticeView({ surahNumber }: PracticeViewProps) {
               
               {/* Show tiny retry icon badge when reconnecting */}
               {isReconnecting && (
-                <div className="absolute -top-1 -right-1 bg-red-500 rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-lg border-2 border-[#0a1118]">
+                <div className="absolute -top-1 -right-1 bg-red-500 rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-lg border-2 border-white dark:border-gray-900 text-white">
                   ↻
                 </div>
               )}
@@ -273,7 +274,7 @@ export function PracticeView({ surahNumber }: PracticeViewProps) {
             <button
               onClick={advanceToNextAyah}
               disabled={!nextAyah}
-              className="w-12 h-12 rounded-full flex items-center justify-center bg-gray-800/80 hover:bg-gray-700 text-gray-400 border border-gray-700 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              className="w-12 h-12 rounded-full flex items-center justify-center bg-white dark:bg-gray-800/80 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 shadow-sm transition-colors disabled:opacity-30 disabled:cursor-not-allowed pointer-events-auto"
               aria-label="อายะห์ถัดไป"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
