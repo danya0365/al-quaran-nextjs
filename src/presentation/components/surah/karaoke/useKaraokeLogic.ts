@@ -125,9 +125,6 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
     // This prevents matching old words against new expected words
     if (fullSpokenText.length <= processedTranscriptLength) return;
     
-    const newSpokenText = fullSpokenText.slice(processedTranscriptLength);
-    if (newSpokenText.trim().length === 0) return;
-
     let newMatchCount = matchedWordsCount;
     let newProcessedLength = processedTranscriptLength;
 
@@ -178,13 +175,17 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
     while (progressMade && newMatchCount < normalizedWords.length) {
       progressMade = false;
       
+      // Update the spoken text to only include what we haven't processed yet
+      const currentSpokenText = fullSpokenText.slice(newProcessedLength);
+      if (currentSpokenText.trim().length === 0) break;
+
       for (let offset = 0; offset < maxLookAhead; offset++) {
         const checkIdx = newMatchCount + offset;
         if (checkIdx >= normalizedWords.length) break;
         
         const nextExpectedWord = normalizedWords[checkIdx];
         
-        if (isStrictFuzzyMatch(nextExpectedWord, newSpokenText)) {
+        if (isStrictFuzzyMatch(nextExpectedWord, currentSpokenText)) {
           // Found it! 
           newMatchCount = checkIdx + 1;
           
@@ -192,14 +193,14 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
           // We find where this word matched and consume up to that point
           const coreExpected = nextExpectedWord.replace(/^[ال]+/g, '');
           const matchIndex = Math.max(
-             newSpokenText.indexOf(nextExpectedWord), 
-             newSpokenText.indexOf(coreExpected)
+             currentSpokenText.indexOf(nextExpectedWord), 
+             currentSpokenText.indexOf(coreExpected)
           );
           
           if (matchIndex !== -1) {
              newProcessedLength += matchIndex + coreExpected.length;
           } else {
-             newProcessedLength += newSpokenText.length; // If fuzzy matched via sequence, consume all new text
+             newProcessedLength += currentSpokenText.length; // If fuzzy matched via sequence, consume all new text
           }
           
           progressMade = true;
