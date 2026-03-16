@@ -49,6 +49,7 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
     resetTranscript,
     error: speechError,
     isSupported,
+    isReconnecting,
   } = useSpeechRecognition({ lang: "ar-SA" });
 
   const ayahs = viewModel?.arabicSurah?.ayahs || [];
@@ -267,5 +268,6 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
     goToPreviousAyah,
     transcript,
     interimTranscript,
+    isReconnecting,
   };
 }
