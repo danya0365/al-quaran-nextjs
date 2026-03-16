@@ -1,17 +1,17 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useSpeechRecognition } from "@/src/presentation/hooks/useSpeechRecognition";
 import { SurahViewModel } from "@/src/presentation/presenters/surah/SurahPresenter";
 
 export function normalizeArabicText(text: string): string {
   if (!text) return "";
   return text
-    // Remove diacritics (tashkeel/harakat) and special Quranic symbols
+    // Remove ALL diacritics (tashkeel/harakat) and special Quranic symbols
     .replace(
-      /[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06E8\u06EA-\u06ED]/g,
+      /[\u0600-\u061B\u064B-\u065F\u0670\u06D6-\u06ED\u08D4-\u08E1]/g,
       ""
     )
-    // Normalize forms of Alef
-    .replace(/[أإآا]/g, "ا")
+    // Normalize forms of Alef, including Alif Waslah (ٱ)
+    .replace(/[أإآٱا]/g, "ا")
     // Normalize Teh Marbuta to Heh (speech API might mix them up)
     .replace(/ة/g, "ه")
     // Normalize Yaa / Alif Maksura
@@ -29,6 +29,7 @@ interface UseKaraokeLogicProps {
 export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
   const [currentAyahIndex, setCurrentAyahIndex] = useState(0);
   const [matchedWordsCount, setMatchedWordsCount] = useState(0);
+  const [lastMatchTime, setLastMatchTime] = useState(0);
 
   const {
     isListening,
@@ -73,8 +74,6 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
   const advanceToNextAyah = () => {
     if (activeAyahIndex < ayahs.length - 1) {
       setCurrentAyahIndex((prev) => prev + 1);
-      setMatchedWordsCount(0);
-      resetTranscript();
     } else {
       // Finished Surah
       stopListening();
@@ -84,16 +83,40 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
   const goToPreviousAyah = () => {
     if (activeAyahIndex > 0) {
       setCurrentAyahIndex((prev) => prev - 1);
-      setMatchedWordsCount(0);
-      resetTranscript();
     }
   };
 
   const [processedTranscriptLength, setProcessedTranscriptLength] = useState(0);
 
+  // Keep refs of the latest transcripts to use in the Ayah change effect
+  // without adding them to the dependency array (which would cause infinite loops)
+  const transcriptRef = useRef("");
+  const interimTranscriptRef = useRef("");
+  useEffect(() => {
+    transcriptRef.current = transcript;
+    interimTranscriptRef.current = interimTranscript;
+  }, [transcript, interimTranscript]);
+
+  // Sync state when active ayah changes manually (Prev/Next buttons or URL)
+  // or automatically.
+  useEffect(() => {
+    setMatchedWordsCount(0);
+    
+    // Instead of resetting the Speech API (which causes state flicker),
+    // we just calculate how much it has heard *up to this point*, and
+    // set that as our start offset for the new Ayah.
+    const rawTranscript = transcriptRef.current + " " + interimTranscriptRef.current;
+    const fullSpokenText = normalizeArabicText(rawTranscript);
+    
+    setProcessedTranscriptLength(fullSpokenText.length);
+  }, [activeAyahIndex]);
+
   // The Matching Logic Effect
   useEffect(() => {
     if (!isListening || normalizedWords.length === 0) return;
+    
+    // Throttle matches to prevent rapid skipping (min 300ms between words)
+    if (Date.now() - lastMatchTime < 300) return;
 
     const rawTranscript = transcript + " " + interimTranscript;
     const fullSpokenText = normalizeArabicText(rawTranscript);
@@ -125,12 +148,28 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
       }
       
       // 2. High consecutive sequence match
-      // If the word has 5 letters, we need at least 4 in a row to match.
-      const requiredSeqLength = Math.max(3, Math.floor(coreExpected.length * 0.75));
+      // If the word has 5 letters, we allow matching if ~60% of the word matches in sequence.
+      const requiredSeqLength = Math.max(3, Math.floor(coreExpected.length * 0.6));
       
       for (let i = 0; i <= coreExpected.length - requiredSeqLength; i++) {
         const seq = coreExpected.substring(i, i + requiredSeqLength);
         if (spokenSegment.includes(seq)) return true;
+      }
+
+      // 3. Fallback: Check if the spoken segments contains most characters in order (Subsequence)
+      // Useful when speech API drops a middle letter (e.g. نَسْتَعِينُ hearing نستعين but returning نستين )
+      // ONLY apply this if the expected word is reasonably long (4+ chars) to prevent short word false positives.
+      if (coreExpected.length >= 4) {
+        let matchIdx = 0;
+        let matchedChars = 0;
+        for (let i = 0; i < coreExpected.length; i++) {
+          const charIdx = spokenSegment.indexOf(coreExpected[i], matchIdx);
+          if (charIdx !== -1) {
+            matchedChars++;
+            matchIdx = charIdx + 1; // move forward
+          }
+        }
+        return matchedChars >= requiredSeqLength;
       }
       
       return false;
@@ -172,11 +211,11 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
     if (newMatchCount > matchedWordsCount) {
       setMatchedWordsCount(newMatchCount);
       setProcessedTranscriptLength(newProcessedLength);
+      setLastMatchTime(Date.now());
       
       if (newMatchCount >= normalizedWords.length) {
         setTimeout(() => {
           advanceToNextAyah();
-          setProcessedTranscriptLength(0); // Reset for next Ayah
         }, 800);
       }
     }

@@ -8,6 +8,8 @@ import SurahSkeletonView from "../SurahSkeletonView";
 
 const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"] });
 
+const SHOW_DEBUG_UI = false;
+
 interface KaraokeViewProps {
   surahNumber: number;
 }
@@ -214,6 +216,44 @@ export function KaraokeView({ surahNumber }: KaraokeViewProps) {
           background: 'radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.03) 0%, transparent 70%)'
         }}
       />
+
+      {/* Debug UI */}
+      {SHOW_DEBUG_UI && (
+        <div className="fixed bottom-0 right-0 p-4 w-full max-w-sm z-50 pointer-events-none">
+          <div className="bg-black/80 backdrop-blur border border-gray-800 rounded-xl p-4 text-xs font-mono text-gray-300 shadow-2xl">
+            <div className="text-emerald-500 font-bold mb-1">🎤 Debug Info</div>
+            <div className="mb-2 flex items-center justify-between">
+              <div>
+                <span className="text-gray-500">Status: </span>
+                <span className={isListening ? "text-green-400" : "text-yellow-400"}>
+                  {isListening ? "Listening" : "Idle"}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-500">Matched: </span>
+                <span className="text-emerald-400">{matchedWordsCount} / {originalWords.length}</span>
+              </div>
+            </div>
+            
+            <div className="mb-1 text-gray-500 flex justify-between">
+              <span>Expected Words:</span>
+            </div>
+            <div className="bg-emerald-900/20 rounded p-2 mb-2 break-words text-emerald-200/80 leading-relaxed" dir="rtl">
+              {originalWords.map((w, i) => i === matchedWordsCount ? `[${w}]` : w).join(' ')}
+            </div>
+
+            <div className="mb-1 text-gray-500">Final Transcript:</div>
+            <div className="bg-white/5 rounded p-2 min-h-[40px] break-words text-white leading-relaxed" dir="rtl">
+              {transcript || <span className="text-gray-600">...</span>}
+            </div>
+            
+            <div className="mt-2 text-gray-500">Interim Transcript:</div>
+            <div className="bg-white/5 rounded p-2 min-h-[40px] break-words text-yellow-200/80 leading-relaxed" dir="rtl">
+              {interimTranscript || <span className="text-gray-600">...</span>}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
