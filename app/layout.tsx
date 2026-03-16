@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ThemeProvider } from "@/src/presentation/providers/ThemeProvider";
 import {
   Amiri,
   Kanit,
@@ -132,11 +133,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="th">
+    <html lang="th" suppressHydrationWarning>
       <body
         className={`${kanit.variable} ${amiri.variable} ${lateef.variable} ${scheherazade.variable} ${tajawal.variable} ${reemKufi.variable} ${markazi.variable} antialiased`}
       >
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
