@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PortfolioShowcase } from "@/src/presentation/components/shared/PortfolioShowcase";
 import { ThemeProvider } from "@/src/presentation/providers/ThemeProvider";
 import {
   Amiri,
@@ -144,6 +145,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <PortfolioShowcase />
         </ThemeProvider>
       </body>
     </html>
