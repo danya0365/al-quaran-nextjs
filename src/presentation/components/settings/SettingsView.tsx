@@ -2,6 +2,7 @@
 
 import { useAppVersion } from "@/src/presentation/hooks/useAppVersion";
 import { useSettingsPresenter } from "@/src/presentation/presenters/settings/useSettingsPresenter";
+import { LANGUAGE_MAP } from "@/src/presentation/presenters/settings/SettingsPresenter";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 
@@ -273,10 +274,10 @@ export function SettingsView() {
                             className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-left hover:bg-emerald-50 dark:hover:bg-emerald-900/40 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0"
                           >
                             <div className="font-medium text-sm sm:text-base text-gray-800 dark:text-gray-200">
-                              {translation.englishName}
+                              {translation.language ? LANGUAGE_MAP[translation.language] || translation.language.toUpperCase() : "ไม่ระบุภาษา"}
                             </div>
-                            <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                              {translation.language}
+                            <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-0.5">
+                              แปลโดย: {translation.englishName}
                             </div>
                           </button>
                         ))}
@@ -323,10 +324,10 @@ export function SettingsView() {
                           className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-left hover:bg-emerald-50 dark:hover:bg-emerald-900/40 transition-colors border-b border-gray-100 dark:border-gray-700 last:border-b-0"
                         >
                           <div className="font-medium text-sm sm:text-base text-gray-800 dark:text-gray-200">
-                            {reciter.englishName}
+                            {reciter.language ? LANGUAGE_MAP[reciter.language] || reciter.language.toUpperCase() : "ไม่ระบุภาษา"}
                           </div>
-                          <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                            {reciter.language}
+                          <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-0.5">
+                            เสียงอ่านโดย: {reciter.englishName}
                           </div>
                         </button>
                       ))}
