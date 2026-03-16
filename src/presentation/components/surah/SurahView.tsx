@@ -163,15 +163,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
   } as typeof thaiSummaries;
 
   return (
-    <div
-      className="min-h-screen pb-24 transition-colors duration-300 dark:bg-gray-900"
-      style={{
-        background:
-          typeof document !== "undefined" && document.documentElement.classList.contains("dark")
-            ? "transparent"
-            : "linear-gradient(to bottom, rgba(16,185,129,0.06), #ffffff)",
-      }}
-    >
+    <div className="min-h-screen pb-24 transition-colors duration-300 bg-gradient-to-b from-emerald-50 to-white dark:from-gray-900 dark:to-gray-900">
       {/* Header - Smooth Shrinking Sticky */}
       <div
         className="text-white px-3 sm:px-6 shadow-lg sticky top-0 z-10"
