@@ -28,6 +28,7 @@ export function useSpeechRecognition({
   const [error, setError] = useState<string | null>(null);
   
   const recognitionRef = useRef<any>(null);
+  const isListeningRequestedRef = useRef(false);
   const isSupported = typeof window !== "undefined" && (!!window.SpeechRecognition || !!window.webkitSpeechRecognition);
 
   useEffect(() => {
@@ -64,9 +65,15 @@ export function useSpeechRecognition({
       recognition.onerror = (event: any) => {
         console.error("Speech recognition error:", event.error);
         
-        if (event.error === "not-allowed") {
-          setError("Microphone permission denied. Please allow microphone access.");
-        } else {
+        if (event.error === "not-allowed" || event.error === "audio-capture") {
+          setError("Microphone permission denied or not found. Please check your mic settings.");
+          isListeningRequestedRef.current = false; // Fatal error, stop trying to reconnect
+        } else if (event.error === "network") {
+          // Network errors are common in Web Speech API. Don't show hard error to user.
+          console.warn("Network error encountered. Will attempt to reconnect...");
+        } else if (event.error === "no-speech") {
+          // Just silence timeout. Ignore.
+        } else if (event.error !== "aborted") {
           setError(`Error: ${event.error}`);
         }
         setIsListening(false);
@@ -74,9 +81,21 @@ export function useSpeechRecognition({
 
       recognition.onend = () => {
         setIsListening(false);
-        // Sometimes it stops automatically on silence
-        // In a real Karaoke app, you might want to automatically restart it
-        // if it was supposed to be continuously listening
+        // Automatic reconnect logic
+        if (isListeningRequestedRef.current) {
+          console.log("Speech recognition ended unexpectedly. Auto-restarting...");
+          setTimeout(() => {
+            if (isListeningRequestedRef.current && recognitionRef.current) {
+              try {
+                recognitionRef.current.start();
+              } catch (e: any) {
+                if (e.name !== "InvalidStateError") {
+                  console.error("Failed to auto-restart speech recognition:", e);
+                }
+              }
+            }
+          }, 300);
+        }
       };
 
       recognitionRef.current = recognition;
@@ -91,6 +110,7 @@ export function useSpeechRecognition({
 
   const startListening = useCallback(() => {
     setError(null);
+    isListeningRequestedRef.current = true;
     if (!recognitionRef.current) return;
     try {
       recognitionRef.current.start();
@@ -104,6 +124,7 @@ export function useSpeechRecognition({
   }, []);
 
   const stopListening = useCallback(() => {
+    isListeningRequestedRef.current = false;
     if (!recognitionRef.current) return;
     try {
       recognitionRef.current.stop();
