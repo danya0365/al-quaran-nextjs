@@ -1,7 +1,7 @@
 "use client";
 
 import { useSurahPresenter } from "@/src/presentation/presenters/surah/useSurahPresenter";
-import { useKaraokeLogic } from "./useKaraokeLogic";
+import { usePracticeLogic } from "./usePracticeLogic";
 import { Amiri } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -11,11 +11,11 @@ const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"] });
 
 const SHOW_DEBUG_UI = false;
 
-interface KaraokeViewProps {
+interface PracticeViewProps {
   surahNumber: number;
 }
 
-export function KaraokeView({ surahNumber }: KaraokeViewProps) {
+export function PracticeView({ surahNumber }: PracticeViewProps) {
   const router = useRouter();
   const [showTips, setShowTips] = useState(false);
   const { viewModel, loading, error } = useSurahPresenter(surahNumber);
@@ -37,7 +37,7 @@ export function KaraokeView({ surahNumber }: KaraokeViewProps) {
     transcript,
     interimTranscript,
     isReconnecting,
-  } = useKaraokeLogic({ viewModel });
+  } = usePracticeLogic({ viewModel });
 
   const handleBack = () => {
     router.back();
@@ -103,7 +103,7 @@ export function KaraokeView({ surahNumber }: KaraokeViewProps) {
               {surah.englishName}
             </h1>
             <p className="text-xs text-emerald-400/60 font-medium tracking-widest uppercase mt-0.5">
-              Karaoke Recitation
+              โหมดฝึกอ่าน (Practice Mode)
             </p>
           </div>
           

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface KaraokeState {
+interface PracticeState {
   activeSurahNumber: number | null;
   currentAyahIndex: number;
   matchedWordsCount: number;
@@ -13,7 +13,7 @@ interface KaraokeState {
   resetProgress: () => void;
 }
 
-export const useKaraokeStore = create<KaraokeState>()(
+export const usePracticeStore = create<PracticeState>()(
   persist(
     (set, get) => ({
       activeSurahNumber: null,
@@ -48,7 +48,7 @@ export const useKaraokeStore = create<KaraokeState>()(
       },
     }),
     {
-      name: "quran-karaoke-storage", // keys for localStorage
+      name: "quran-practice-storage", // keys for localStorage
     }
   )
 );

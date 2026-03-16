@@ -1,4 +1,4 @@
-import { KaraokeView } from "@/src/presentation/components/surah/karaoke/KaraokeView";
+import { PracticeView } from "@/src/presentation/components/surah/practice/PracticeView";
 import { SurahPresenterFactory } from "@/src/presentation/presenters/surah/SurahPresenter";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -6,13 +6,13 @@ import Link from "next/link";
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 
-interface KaraokePageProps {
+interface PracticePageProps {
   params: Promise<{ number: string }>;
 }
 
 export async function generateMetadata({
   params,
-}: KaraokePageProps): Promise<Metadata> {
+}: PracticePageProps): Promise<Metadata> {
   const resolvedParams = await params;
   const presenter = SurahPresenterFactory.create();
   const surahNumber = parseInt(resolvedParams.number);
@@ -20,20 +20,20 @@ export async function generateMetadata({
   try {
     const defaultMeta = await presenter.generateMetadata(surahNumber);
     return {
-      title: `${defaultMeta.title} - Karaoke Mode`,
-      description: `Read and recite ${defaultMeta.title} with Karaoke Mode`,
+      title: `${defaultMeta.title} - Practice Mode`,
+      description: `Read and recite ${defaultMeta.title} with Practice Mode`,
     };
   } catch (error) {
     console.error("Error generating metadata:", error);
 
     return {
-      title: "Karaoke Mode - Al-Quran",
+      title: "Practice Mode - Al-Quran",
       description: "Recite Quran with interactive highlighting",
     };
   }
 }
 
-export default async function KaraokePage({ params }: KaraokePageProps) {
+export default async function PracticePage({ params }: PracticePageProps) {
   const resolvedParams = await params;
   const surahNumber = parseInt(resolvedParams.number);
 
@@ -56,5 +56,5 @@ export default async function KaraokePage({ params }: KaraokePageProps) {
     );
   }
 
-  return <KaraokeView surahNumber={surahNumber} />;
+  return <PracticeView surahNumber={surahNumber} />;
 }

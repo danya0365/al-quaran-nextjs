@@ -237,9 +237,9 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                   📘 อ่านสรุป
                 </button>
               )}
-              {/* Karaoke Mode */}
+              {/* Practice Mode */}
               <Link
-                href={`/surah/${surah.number}/karaoke`}
+                href={`/surah/${surah.number}/practice`}
                 className="bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
                 style={{
                   width: `${buttonSize * 0.85}rem`,
@@ -247,7 +247,7 @@ export function SurahView({ surahNumber, initialViewModel }: SurahViewProps) {
                   fontSize: `${(1.25 - scrollProgress * 0.375) * 0.8}rem`,
                   transition: "width 0.1s ease-out, height 0.1s ease-out, font-size 0.1s ease-out",
                 }}
-                title="Karaoke Mode"
+                title="โหมดฝึกอ่าน (Practice Mode)"
               >
                 🎤
               </Link>

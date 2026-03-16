@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { useSpeechRecognition } from "@/src/presentation/hooks/useSpeechRecognition";
 import { SurahViewModel } from "@/src/presentation/presenters/surah/SurahPresenter";
-import { useKaraokeStore } from "./useKaraokeStore";
+import { usePracticeStore } from "./usePracticeStore";
 
 export function normalizeArabicText(text: string): string {
   if (!text) return "";
@@ -23,12 +23,12 @@ export function normalizeArabicText(text: string): string {
     .trim();
 }
 
-interface UseKaraokeLogicProps {
+interface UsePracticeLogicProps {
   viewModel: SurahViewModel | null;
 }
 
-export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
-  const { currentAyahIndex, setCurrentAyahIndex, matchedWordsCount, setMatchedWordsCount, initializeSurah } = useKaraokeStore();
+export function usePracticeLogic({ viewModel }: UsePracticeLogicProps) {
+  const { currentAyahIndex, setCurrentAyahIndex, matchedWordsCount, setMatchedWordsCount, initializeSurah } = usePracticeStore();
   const [lastMatchTime, setLastMatchTime] = useState(0);
   const [isInitialized, setIsInitialized] = useState(false);
 
