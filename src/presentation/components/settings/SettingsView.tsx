@@ -102,12 +102,12 @@ export function SettingsView() {
       <div className="max-w-4xl mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
         {/* Reading Settings */}
         <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100 dark:border-gray-700">
-          <h2 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3 sm:mb-4">การอ่าน</h2>
+          <h2 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3 sm:mb-4">การแสดงผลเนื้อหา</h2>
 
           <div className="space-y-3 sm:space-y-4">
             {/* Font Size */}
             <div className="flex items-center justify-between">
-              <span className="text-sm sm:text-base text-gray-700 dark:text-gray-300">ขนาดตัวอักษร</span>
+              <span className="text-sm sm:text-base text-gray-700 dark:text-gray-300">ขนาดอักษรอาหรับ</span>
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <button
                   onClick={() =>
@@ -137,7 +137,7 @@ export function SettingsView() {
 
             {/* Show Translation */}
             <div className="flex items-center justify-between">
-              <span className="text-sm sm:text-base text-gray-700 dark:text-gray-300">แสดงคำแปล</span>
+              <span className="text-sm sm:text-base text-gray-700 dark:text-gray-300">คำแปลภาษาไทย</span>
               <button
                 onClick={() =>
                   updateSettings({
@@ -162,7 +162,7 @@ export function SettingsView() {
 
             {/* Show Tajweed */}
             <div className="flex items-center justify-between">
-              <span className="text-sm sm:text-base text-gray-700 dark:text-gray-300">แสดงทัจญ์วีด</span>
+              <span className="text-sm sm:text-base text-gray-700 dark:text-gray-300">แถบสีทัจญ์วีด (Tajweed)</span>
               <button
                 onClick={() =>
                   updateSettings({ showTajweed: !viewModel.settings.showTajweed })
@@ -186,10 +186,10 @@ export function SettingsView() {
         {/* Display Settings */}
         {mounted && (
           <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100 dark:border-gray-700">
-            <h2 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3 sm:mb-4">การแสดงผล</h2>
+            <h2 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3 sm:mb-4">รูปแบบหน้าจอ</h2>
             
             <div className="flex items-center justify-between">
-              <span className="text-sm sm:text-base text-gray-700 dark:text-gray-300">ธีม (Theme)</span>
+              <span className="text-sm sm:text-base text-gray-700 dark:text-gray-300">โหมดสีหน้าจอ (Theme)</span>
               <div className="flex bg-gray-100 dark:bg-gray-700 p-1 rounded-lg gap-1">
                 <button
                   onClick={() => setTheme('light')}
@@ -229,13 +229,13 @@ export function SettingsView() {
         {/* Editions */}
         <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100 dark:border-gray-700">
           <h2 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3 sm:mb-4">
-            ฉบับที่ใช้
+            เสียงอ่านและสำนวนการแปล
           </h2>
 
           <div className="space-y-3 sm:space-y-4">
             {/* Translation */}
             <div ref={translationRef}>
-              <label className="block text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1.5 sm:mb-2">คำแปล</label>
+              <label className="block text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1.5 sm:mb-2">สำนวนการแปล</label>
               <button
                 onClick={() => {
                   setShowTranslationPicker((v) => !v);
@@ -288,7 +288,7 @@ export function SettingsView() {
             {/* Reciter */}
             <div ref={reciterRef}>
               <label className="block text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1.5 sm:mb-2">
-                ผู้อ่าน
+                เสียงนักอ่าน (Qari)
               </label>
               <button
                 onClick={() => {
@@ -339,20 +339,20 @@ export function SettingsView() {
 
         {/* Stats */}
         <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100 dark:border-gray-700">
-          <h2 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3 sm:mb-4">สถิติ</h2>
+          <h2 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-3 sm:mb-4">ข้อมูลการใช้งานของคุณ</h2>
 
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
             <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-3 sm:p-4 text-center border border-emerald-100/50 dark:border-emerald-800/30">
               <div className="text-2xl sm:text-3xl font-bold text-emerald-600 dark:text-emerald-400">
                 {viewModel.bookmarksCount}
               </div>
-              <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">บุ๊คมาร์ค</div>
+              <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">อายะห์ที่บันทึกไว้</div>
             </div>
             <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-3 sm:p-4 text-center border border-amber-100/50 dark:border-amber-800/30">
               <div className="text-2xl sm:text-3xl font-bold text-amber-600 dark:text-amber-400">
                 {viewModel.hasLastRead ? "1" : "0"}
               </div>
-              <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">อ่านล่าสุด</div>
+              <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-0.5 sm:mt-1">ตำแหน่งอ่านล่าสุด</div>
             </div>
           </div>
         </div>
