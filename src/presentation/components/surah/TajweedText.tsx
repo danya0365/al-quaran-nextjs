@@ -128,7 +128,7 @@ export const TajweedText: React.FC<TajweedTextProps> = ({
                 ●
               </div>
               <div>
-                <div className="font-semibold text-gray-800">
+                <div className="font-semibold text-2xl text-gray-800">
                   {modal.rule.name}
                 </div>
                 <div className="mt-1 text-sm text-gray-600 leading-relaxed">
@@ -138,16 +138,33 @@ export const TajweedText: React.FC<TajweedTextProps> = ({
             </div>
 
             {modal.sample && (
-              <div className="mt-4">
-                <div className="text-xs text-gray-500 mb-1">ตัวอย่าง:</div>
-                <div
-                  className={`${amiri.className} text-right`}
-                  dir="rtl"
-                  style={{ fontSize: `${fontSizePx}px` }}
-                >
-                  <span className={`px-1 rounded ${modal.rule.colorClass}`}>
-                    {modal.sample}
-                  </span>
+              <div className="mt-4 bg-gray-50 rounded-lg p-3 sm:p-4 border border-gray-100">
+                <div className="flex flex-col gap-3">
+                  <div>
+                    <div className="text-xs text-gray-500 mb-2 font-medium">ตัวอย่างคำ:</div>
+                    <div
+                      className={`${amiri.className} text-right`}
+                      dir="rtl"
+                      style={{ fontSize: `${Math.max(fontSizePx, 24)}px` }}
+                    >
+                      <span className={`px-1 ${modal.rule.colorClass}`}>
+                        {modal.sample}
+                      </span>
+                    </div>
+                  </div>
+                  {modal.rule.pronunciation && (
+                    <div className="pt-3 border-t border-gray-200/60">
+                      <div className="text-xs text-emerald-600 mb-1 font-semibold flex items-center gap-1">
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                        </svg>
+                        วิธีอ่าน
+                      </div>
+                      <div className="text-sm text-gray-700 leading-relaxed font-medium">
+                        {modal.rule.pronunciation}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
