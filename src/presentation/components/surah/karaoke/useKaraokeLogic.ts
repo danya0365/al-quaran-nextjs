@@ -106,10 +106,14 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
     interimTranscriptRef.current = interimTranscript;
   }, [transcript, interimTranscript]);
 
+  // Use a ref to prevent double-firing advanceToNextAyah during the 800ms delay
+  const isAdvancingRef = useRef(false);
+
   // Sync state when active ayah changes manually (Prev/Next buttons or URL)
   // or automatically.
   useEffect(() => {
     setMatchedWordsCount(0);
+    isAdvancingRef.current = false;
     
     // Crucial fix: When we move to a new Ayah, we MUST consider all text heard UP TO THIS POINT
     // as "old text", so it doesn't accidentally trigger matches on the new Ayah.
@@ -235,7 +239,8 @@ export function useKaraokeLogic({ viewModel }: UseKaraokeLogicProps) {
       setProcessedTranscriptLength(newProcessedLength);
       setLastMatchTime(Date.now());
       
-      if (newMatchCount >= normalizedWords.length) {
+      if (newMatchCount >= normalizedWords.length && !isAdvancingRef.current) {
+        isAdvancingRef.current = true;
         setTimeout(() => {
           advanceToNextAyah();
         }, 800);
