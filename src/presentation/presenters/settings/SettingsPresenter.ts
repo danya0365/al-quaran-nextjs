@@ -1,5 +1,5 @@
-import { Translation, Reciter } from "@/types/quran";
-import { QuranSettings, ActiveEditions } from "@/store/quranStore";
+import { ActiveEditions, QuranSettings } from "@/store/quranStore";
+import { Reciter, Translation } from "@/types/quran";
 
 // List of popular, high-quality Qaris to filter the raw API response
 const CURATED_RECITERS = [
@@ -72,8 +72,6 @@ export const LANGUAGE_MAP: Record<string, string> = {
   "pl": "ภาษาโปแลนด์",
   "ps": "ภาษาพัชโต",
   "si": "ภาษาสิงหล",
-  "sw": "ภาษาสวาฮีลี",
-  "ur": "ภาษาอูรดู",
 };
 
 /**
