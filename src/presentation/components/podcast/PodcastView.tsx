@@ -28,6 +28,23 @@ export default function PodcastView() {
   // Search query state
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Filter surahs based on search - MUST be before any early returns
+  const filteredSurahs = useMemo(() => {
+    if (!viewModel?.surahs) return [];
+
+    const query = searchQuery.toLowerCase().trim();
+    if (!query) return viewModel.surahs;
+
+    return viewModel.surahs.filter((surah) => {
+      return (
+        surah.englishName.toLowerCase().includes(query) ||
+        surah.englishNameTranslation.toLowerCase().includes(query) ||
+        surah.name.includes(query) ||
+        surah.number.toString().includes(query)
+      );
+    });
+  }, [viewModel?.surahs, searchQuery]);
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
@@ -80,23 +97,6 @@ export default function PodcastView() {
   const totalSurahs = surahs.length;
   const totalAyahs = surahs.reduce((acc, s) => acc + (s.ayahs?.length || 0), 0);
   const totalJuz = 30;
-
-  // Filter surahs based on search - memoized for performance
-  const filteredSurahs = useMemo(() => {
-    if (!surahs) return [];
-
-    const query = searchQuery.toLowerCase().trim();
-    if (!query) return surahs;
-
-    return surahs.filter((surah) => {
-      return (
-        surah.englishName.toLowerCase().includes(query) ||
-        surah.englishNameTranslation.toLowerCase().includes(query) ||
-        surah.name.includes(query) ||
-        surah.number.toString().includes(query)
-      );
-    });
-  }, [surahs, searchQuery]);
 
   return (
     <div className="min-h-screen bg-page-gradient pb-20">
