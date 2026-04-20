@@ -6,9 +6,9 @@ import {
   getAudioForSurahFromApi,
 } from "@/api/api";
 import { usePodcastStore } from "@/store/podcastStore";
-import { Surah } from "@/types/quran";
+import { useQuranStore } from "@/store/quranStore";
 import { Play, Plus, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import FullScreenPlayer from "./FullScreenPlayer";
 import MiniPlayer from "./MiniPlayer";
 
@@ -36,25 +36,31 @@ export default function PodcastView() {
   const currentItem = queue[currentQueueIndex];
   const currentAyah = currentItem?.ayahs[currentAyahIndex];
 
-  // State for real surah data
-  const [surahs, setSurahs] = useState<Surah[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Use surah data from quranStore (single source of truth)
+  const {
+    surahs,
+    initialized,
+    setSurahs,
+    setAvailableTranslations,
+    setAvailableReciters,
+    setInitialized,
+  } = useQuranStore();
 
-  // Fetch real surah data on mount
+  // Fetch data if not initialized (same pattern as HomeView)
   useEffect(() => {
-    const fetchSurahs = async () => {
-      try {
-        const data = await getAllSurahsFromApi(reciter);
-        setSurahs(data);
-      } catch (error) {
-        console.error("Error fetching surahs:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSurahs();
-  }, [reciter]);
+    if (!initialized || surahs.length === 0) {
+      const fetchData = async () => {
+        try {
+          const data = await getAllSurahsFromApi(reciter);
+          setSurahs(data);
+          setInitialized(true);
+        } catch (error) {
+          console.error("Error fetching surahs:", error);
+        }
+      };
+      fetchData();
+    }
+  }, [initialized, surahs.length, reciter, setSurahs, setInitialized]);
 
   // Play audio when currentAyah changes - same pattern as SurahView
   useEffect(() => {
@@ -220,72 +226,78 @@ export default function PodcastView() {
         <h2 className="text-lg font-semibold text-foreground mb-4">
           รายการซูเราะห์
         </h2>
-        <div className="grid grid-cols-1 gap-3">
-          {surahs.map((surah) => {
-            const inQueue = isInQueue(surah.number);
-            const isCurrent = currentItem?.surah.number === surah.number;
+        {!initialized || surahs.length === 0 ? (
+          <div className="text-center py-12 text-muted-foreground">
+            กำลังโหลดข้อมูลซูเราะห์...
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-3">
+            {surahs.map((surah) => {
+              const inQueue = isInQueue(surah.number);
+              const isCurrent = currentItem?.surah.number === surah.number;
 
-            return (
-              <div
-                key={surah.number}
-                className={`flex items-center gap-4 p-4 rounded-xl border transition-all ${
-                  isCurrent
-                    ? "bg-primary/10 border-primary"
-                    : "bg-card-bg border-card-border"
-                }`}
-              >
+              return (
                 <div
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold flex-shrink-0 ${
+                  key={surah.number}
+                  className={`flex items-center gap-4 p-4 rounded-xl border transition-all ${
                     isCurrent
-                      ? "bg-primary text-white"
-                      : "bg-muted text-muted-foreground"
+                      ? "bg-primary/10 border-primary"
+                      : "bg-card-bg border-card-border"
                   }`}
                 >
-                  {surah.number}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-foreground truncate">
-                    {surah.englishName}
-                  </p>
-                  <p className="text-sm text-muted-foreground truncate">
-                    {surah.name}
-                  </p>
-                </div>
-                <div className="flex items-center gap-1">
-                  {/* Play Button - Play Immediately */}
-                  <button
-                    onClick={() => handlePlayImmediately(surah.number)}
-                    className={`p-2 rounded-full transition-colors ${
+                  <div
+                    className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold flex-shrink-0 ${
                       isCurrent
                         ? "bg-primary text-white"
-                        : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                        : "bg-muted text-muted-foreground"
                     }`}
-                    title="เล่นทันที"
                   >
-                    <Play className="w-5 h-5" />
-                  </button>
+                    {surah.number}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-foreground truncate">
+                      {surah.englishName}
+                    </p>
+                    <p className="text-sm text-muted-foreground truncate">
+                      {surah.name}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {/* Play Button - Play Immediately */}
+                    <button
+                      onClick={() => handlePlayImmediately(surah.number)}
+                      className={`p-2 rounded-full transition-colors ${
+                        isCurrent
+                          ? "bg-primary text-white"
+                          : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                      }`}
+                      title="เล่นทันที"
+                    >
+                      <Play className="w-5 h-5" />
+                    </button>
 
-                  {/* Add/Remove from Queue Button */}
-                  <button
-                    onClick={() => handleToggleQueue(surah.number)}
-                    className={`p-2 rounded-full transition-colors ${
-                      inQueue
-                        ? "bg-muted text-foreground"
-                        : "hover:bg-muted text-muted-foreground hover:text-foreground"
-                    }`}
-                    title={inQueue ? "เอาออกจากคิว" : "เพิ่มในคิว"}
-                  >
-                    {inQueue ? (
-                      <X className="w-5 h-5" />
-                    ) : (
-                      <Plus className="w-5 h-5" />
-                    )}
-                  </button>
+                    {/* Add/Remove from Queue Button */}
+                    <button
+                      onClick={() => handleToggleQueue(surah.number)}
+                      className={`p-2 rounded-full transition-colors ${
+                        inQueue
+                          ? "bg-muted text-foreground"
+                          : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                      }`}
+                      title={inQueue ? "เอาออกจากคิว" : "เพิ่มในคิว"}
+                    >
+                      {inQueue ? (
+                        <X className="w-5 h-5" />
+                      ) : (
+                        <Plus className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Audio Element */}
