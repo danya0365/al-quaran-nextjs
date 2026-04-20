@@ -15,14 +15,12 @@ export default function PodcastView() {
     currentQueueIndex,
     currentAyahIndex,
     isPlaying,
-    audioUrl,
     playbackRate,
     isFullScreen,
     reciter,
     toggleSurahPlayback,
     removeFromQueue,
     playNext,
-    setAudioUrl,
     setCurrentTime,
     setDuration,
     setIsPlaying,
@@ -31,33 +29,30 @@ export default function PodcastView() {
   const currentItem = queue[currentQueueIndex];
   const currentAyah = currentItem?.ayahs[currentAyahIndex];
 
-  // Fetch audio URL when ayah changes
+  // Play audio when currentAyah changes - same pattern as SurahView
   useEffect(() => {
-    if (currentAyah?.audio) {
-      setAudioUrl(currentAyah.audio);
+    if (currentAyah && audioRef.current && isPlaying) {
+      if (currentAyah.audio) {
+        audioRef.current.src = currentAyah.audio;
+        audioRef.current.playbackRate = playbackRate;
+        audioRef.current.play();
+        setIsPlaying(true);
+      }
     }
-  }, [currentAyah, setAudioUrl]);
+  }, [currentAyah, isPlaying, playbackRate, setIsPlaying]);
 
-  // Handle audio playback
+  // Handle play/pause toggle (when user manually clicks play/pause)
   useEffect(() => {
-    if (!audioRef.current || !audioUrl) return;
-
-    audioRef.current.src = audioUrl;
-    audioRef.current.playbackRate = playbackRate;
+    if (!audioRef.current) return;
 
     if (isPlaying) {
-      audioRef.current.play();
+      audioRef.current.play().catch(() => {
+        // Ignore autoplay errors
+      });
     } else {
       audioRef.current.pause();
     }
-  }, [audioUrl, isPlaying, playbackRate]);
-
-  // Handle playback rate changes
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.playbackRate = playbackRate;
-    }
-  }, [playbackRate]);
+  }, [isPlaying]);
 
   // Handle audio events
   useEffect(() => {
@@ -84,11 +79,21 @@ export default function PodcastView() {
       setIsPlaying(false);
     };
 
+    const handleCanPlay = () => {
+      // Auto-play when audio is ready (for auto-next)
+      if (isPlaying) {
+        audio.play().catch(() => {
+          // Ignore autoplay errors
+        });
+      }
+    };
+
     audio.addEventListener("timeupdate", handleTimeUpdate);
     audio.addEventListener("loadedmetadata", handleLoadedMetadata);
     audio.addEventListener("ended", handleEnded);
     audio.addEventListener("play", handlePlay);
     audio.addEventListener("pause", handlePause);
+    audio.addEventListener("canplay", handleCanPlay);
 
     return () => {
       audio.removeEventListener("timeupdate", handleTimeUpdate);
@@ -96,8 +101,9 @@ export default function PodcastView() {
       audio.removeEventListener("ended", handleEnded);
       audio.removeEventListener("play", handlePlay);
       audio.removeEventListener("pause", handlePause);
+      audio.removeEventListener("canplay", handleCanPlay);
     };
-  }, [playNext, setCurrentTime, setDuration, setIsPlaying]);
+  }, [playNext, setCurrentTime, setDuration, setIsPlaying, isPlaying]);
 
   // Handle surah selection - toggle playback
   const handleSurahClick = async (surahNumber: number) => {
