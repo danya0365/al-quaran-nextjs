@@ -1,0 +1,244 @@
+"use client";
+
+import { getArabicSurahFromApi, getAudioForSurahFromApi } from "@/api/api";
+import { usePodcastStore } from "@/store/podcastStore";
+import { Surah } from "@/types/quran";
+import { Pause, Play, Plus, X } from "lucide-react";
+import { useEffect, useRef } from "react";
+import FullScreenPlayer from "./FullScreenPlayer";
+import MiniPlayer from "./MiniPlayer";
+
+export default function PodcastView() {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const {
+    queue,
+    currentQueueIndex,
+    currentAyahIndex,
+    isPlaying,
+    audioUrl,
+    playbackRate,
+    isFullScreen,
+    reciter,
+    toggleSurahPlayback,
+    removeFromQueue,
+    playNext,
+    setAudioUrl,
+    setCurrentTime,
+    setDuration,
+    setIsPlaying,
+  } = usePodcastStore();
+
+  const currentItem = queue[currentQueueIndex];
+  const currentAyah = currentItem?.ayahs[currentAyahIndex];
+
+  // Fetch audio URL when ayah changes
+  useEffect(() => {
+    if (currentAyah?.audio) {
+      setAudioUrl(currentAyah.audio);
+    }
+  }, [currentAyah, setAudioUrl]);
+
+  // Handle audio playback
+  useEffect(() => {
+    if (!audioRef.current || !audioUrl) return;
+
+    audioRef.current.src = audioUrl;
+    audioRef.current.playbackRate = playbackRate;
+
+    if (isPlaying) {
+      audioRef.current.play();
+    } else {
+      audioRef.current.pause();
+    }
+  }, [audioUrl, isPlaying, playbackRate]);
+
+  // Handle playback rate changes
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.playbackRate = playbackRate;
+    }
+  }, [playbackRate]);
+
+  // Handle audio events
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handleTimeUpdate = () => {
+      setCurrentTime(audio.currentTime);
+    };
+
+    const handleLoadedMetadata = () => {
+      setDuration(audio.duration);
+    };
+
+    const handleEnded = () => {
+      playNext();
+    };
+
+    const handlePlay = () => {
+      setIsPlaying(true);
+    };
+
+    const handlePause = () => {
+      setIsPlaying(false);
+    };
+
+    audio.addEventListener("timeupdate", handleTimeUpdate);
+    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+    audio.addEventListener("ended", handleEnded);
+    audio.addEventListener("play", handlePlay);
+    audio.addEventListener("pause", handlePause);
+
+    return () => {
+      audio.removeEventListener("timeupdate", handleTimeUpdate);
+      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      audio.removeEventListener("ended", handleEnded);
+      audio.removeEventListener("play", handlePlay);
+      audio.removeEventListener("pause", handlePause);
+    };
+  }, [playNext, setCurrentTime, setDuration, setIsPlaying]);
+
+  // Handle surah selection - toggle playback
+  const handleSurahClick = async (surahNumber: number) => {
+    try {
+      const [arabicSurah, audioSurah] = await Promise.all([
+        getArabicSurahFromApi(surahNumber),
+        getAudioForSurahFromApi(surahNumber, reciter),
+      ]);
+
+      if (audioSurah?.ayahs) {
+        toggleSurahPlayback(arabicSurah, audioSurah.ayahs);
+      }
+    } catch (error) {
+      console.error("Error loading surah:", error);
+    }
+  };
+
+  // Handle remove from queue
+  const handleRemoveFromQueue = (e: React.MouseEvent, surahNumber: number) => {
+    e.stopPropagation();
+    removeFromQueue(surahNumber);
+  };
+
+  // Mock surah list (114 surahs)
+  const surahs: Surah[] = Array.from({ length: 114 }, (_, i) => ({
+    number: i + 1,
+    name: getSurahName(i + 1),
+    englishName: getSurahEnglishName(i + 1),
+    englishNameTranslation: "",
+    revelationType: i < 87 ? "Meccan" : "Medinan",
+    ayahs: [],
+  }));
+
+  const isInQueue = (surahNumber: number) => {
+    return queue.some((item) => item.surah.number === surahNumber);
+  };
+
+  return (
+    <div className="min-h-screen bg-background pb-24">
+      {/* Header */}
+      <div className="bg-primary text-white px-6 pt-8 pb-6 shadow-lg sticky top-0 z-10">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-2xl font-bold mb-2">ฟังต่อเนื่อง</h1>
+          <p className="text-glass-bg-hover text-sm">
+            เลือกซูเราะห์เพื่อฟังแบบต่อเนื่อง
+          </p>
+        </div>
+      </div>
+
+      {/* Surah List */}
+      <div className="max-w-4xl mx-auto px-6 py-6">
+        <h2 className="text-lg font-semibold text-foreground mb-4">
+          รายการซูเราะห์
+        </h2>
+        <div className="grid grid-cols-1 gap-3">
+          {surahs.map((surah) => {
+            const inQueue = isInQueue(surah.number);
+            const isCurrent = currentItem?.surah.number === surah.number;
+
+            return (
+              <button
+                key={surah.number}
+                onClick={() => handleSurahClick(surah.number)}
+                className={`flex items-center gap-4 p-4 rounded-xl border transition-all text-left ${
+                  isCurrent
+                    ? "bg-primary/10 border-primary"
+                    : "bg-card-bg border-card-border hover:border-primary/50"
+                }`}
+              >
+                <div
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold flex-shrink-0 ${
+                    isCurrent
+                      ? "bg-primary text-white"
+                      : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {surah.number}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-foreground truncate">
+                    {surah.englishName}
+                  </p>
+                  <p className="text-sm text-muted-foreground truncate">
+                    {surah.name}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  {isCurrent ? (
+                    isPlaying ? (
+                      <Pause className="w-5 h-5 text-primary" />
+                    ) : (
+                      <Play className="w-5 h-5 text-primary" />
+                    )
+                  ) : inQueue ? (
+                    <button
+                      onClick={(e) => handleRemoveFromQueue(e, surah.number)}
+                      className="p-1 rounded-full hover:bg-muted transition-colors"
+                    >
+                      <X className="w-5 h-5 text-muted-foreground" />
+                    </button>
+                  ) : (
+                    <Plus className="w-5 h-5 text-muted-foreground" />
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Audio Element */}
+      <audio ref={audioRef} preload="auto" />
+
+      {/* Mini Player */}
+      {currentItem && <MiniPlayer audioRef={audioRef} />}
+
+      {/* Full Screen Player */}
+      {isFullScreen && currentItem && <FullScreenPlayer audioRef={audioRef} />}
+    </div>
+  );
+}
+
+// Helper functions for surah names
+function getSurahName(number: number): string {
+  const names: Record<number, string> = {
+    1: "الفاتحة",
+    2: "البقرة",
+    3: "آل عمران",
+    4: "النساء",
+    5: "المائدة",
+  };
+  return names[number] || `سورة ${number}`;
+}
+
+function getSurahEnglishName(number: number): string {
+  const names: Record<number, string> = {
+    1: "Al-Fatihah",
+    2: "Al-Baqarah",
+    3: "Ali 'Imran",
+    4: "An-Nisa",
+    5: "Al-Ma'idah",
+  };
+  return names[number] || `Surah ${number}`;
+}

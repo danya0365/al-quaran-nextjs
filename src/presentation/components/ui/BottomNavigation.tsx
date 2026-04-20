@@ -14,6 +14,12 @@ export function BottomNavigation() {
       active: pathname === "/home" || pathname === "/",
     },
     {
+      name: "ฟัง",
+      icon: "🎧",
+      href: "/podcast",
+      active: pathname === "/podcast",
+    },
+    {
       name: "บุ๊คมาร์ค",
       icon: "🔖",
       href: "/bookmarks",
@@ -30,7 +36,7 @@ export function BottomNavigation() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 shadow-lg z-50">
       <div className="max-w-4xl mx-auto px-6">
-        <div className="grid grid-cols-3 gap-2 py-2">
+        <div className="grid grid-cols-4 gap-2 py-2">
           {navItems.map((item) => (
             <Link
               key={item.href}
