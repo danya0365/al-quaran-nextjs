@@ -26,14 +26,14 @@
      Page Background Gradients
      ============================================ */
   .bg-page-gradient {
-    @apply bg-gradient-to-b from-green-50 to-background dark:from-gray-900 dark:to-gray-900;
+    @apply bg-gradient-to-b from-green-50 to-background dark:from-surface dark:to-surface;
   }
 
   /* ============================================
      Header Gradients
      ============================================ */
   .bg-header-gradient {
-    @apply bg-gradient-to-r from-primary to-primary-dark dark:from-primary-dark dark:to-gray-800;
+    @apply bg-gradient-to-r from-primary to-primary-dark dark:from-primary-dark dark:to-muted-dark;
   }
 
   /* ============================================
@@ -52,14 +52,14 @@
   }
 
   .bg-glass-subtle {
-    @apply bg-glass-bg backdrop-blur-sm;
+    @apply bg-white/10 backdrop-blur-sm;
   }
 
   /* ============================================
      Text Colors - Semantic
      ============================================ */
   .text-heading {
-    @apply text-foreground;
+    @apply text-on-surface;
   }
 
   .text-body {
@@ -85,7 +85,7 @@
      Input Styles
      ============================================ */
   .input-glass {
-    @apply bg-background/90 dark:bg-surface/90 backdrop-blur-sm text-foreground placeholder-muted-dark border border-transparent dark:border-border;
+    @apply bg-background/90 dark:bg-surface/90 backdrop-blur-sm text-on-surface placeholder-muted-dark border border-transparent dark:border-border;
   }
 
   .input-focus-ring {
