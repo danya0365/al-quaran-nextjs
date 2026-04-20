@@ -33,7 +33,7 @@
      Header Gradients
      ============================================ */
   .bg-header-gradient {
-    @apply bg-gradient-to-r from-primary to-primary-dark dark:from-primary-dark dark:to-muted-dark;
+    @apply bg-gradient-to-r from-primary to-primary-dark dark:from-secondary-light dark:to-surface;
   }
 
   /* ============================================
