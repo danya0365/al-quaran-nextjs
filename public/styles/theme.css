@@ -1,172 +1,520 @@
-/* 🎨 Theme Tokens */
-@theme {
-  /* Custom Font Variables */
-  --font-sans: "MiSans Thai", "MiSans Thai Variable", system-ui, -apple-system,
-    sans-serif;
-  --font-mono: "MiSans Thai", "MiSans Thai Variable", system-ui, -apple-system,
-    monospace;
-  --font-kanit: var(--font-kanit), system-ui, sans-serif;
-  --font-arabic: var(--font-amiri), serif;
-  --font-amiri: var(--font-amiri), serif;
-  --font-lateef: var(--font-lateef), serif;
-  --font-scheherazade: var(--font-scheherazade), serif;
-  --font-tajawal: var(--font-tajawal), sans-serif;
-  --font-reemkufi: var(--font-reemkufi), serif;
-  --font-markazi: var(--font-markazi), serif;
+/* 🎨 Theme Tokens - Al-Quran Next.js
+   
+   :root        → Light mode CSS variables
+   .dark        → Dark mode overrides  
+   @theme inline → Tailwind v4 utility mapping (var() only)
+   ============================================ */
 
-  /* Light defaults */
-  --color-background: #ffffff;
-  --color-foreground: #171717;
-  --color-surface: #ffffff;
-  --color-on-surface: #000000;
+/* ============================================
+   Light Mode (Default)
+   ============================================ */
+:root {
+  /* Typography */
+  --font-sans:
+    "MiSans Thai", "MiSans Thai Variable", system-ui, -apple-system, sans-serif;
+  --font-mono:
+    "MiSans Thai", "MiSans Thai Variable", system-ui, -apple-system, monospace;
 
-  /* Queue status colors -> ใช้ bg-waiting, text-serving ได้เลย */
-  --color-waiting: #f59e0b;
-  --color-serving: #10b981;
-  --color-completed: #6b7280;
-  --color-cancelled: #ef4444;
-  --color-priority: #8b5cf6;
-
-  /* Status colors */
-  --color-success: #10b981;
-  --color-success-light: #d1fae5;
-  --color-success-dark: #047857;
-  --color-warning: #f59e0b;
-  --color-warning-light: #fef3c7;
-  --color-warning-dark: #d97706;
-  --color-error: #ef4444;
-  --color-error-light: #fee2e2;
-  --color-error-dark: #dc2626;
-  --color-info: #3b82f6;
-  --color-info-light: #dbeafe;
-  --color-info-dark: #1d4ed8;
+  /* Base colors */
+  --background: #ffffff;
+  --foreground: #171717;
+  --surface: #ffffff;
+  --on-surface: #000000;
 
   /* UI Colors - Gray scale */
-  --color-muted: #6b7280;
-  --color-muted-light: #f9fafb;
-  --color-muted-dark: #374151;
-  --color-border: #e5e7eb;
-  --color-border-light: #f3f4f6;
-  --color-border-dark: #374151;
+  --muted: #e5e7eb;
+  --muted-light: #f3f4f6;
+  --muted-dark: #9ca3af;
+  --border: #e5e7eb;
+  --border-light: #f3f4f6;
+  --border-dark: #374151;
+
+  /* Queue status colors */
+  --waiting: #f59e0b;
+  --serving: #10b981;
+  --completed: #6b7280;
+  --cancelled: #ef4444;
+  --priority: #8b5cf6;
+
+  /* Status colors */
+  --success: #10b981;
+  --success-light: #d1fae5;
+  --success-dark: #047857;
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+  --warning-dark: #d97706;
+  --error: #ef4444;
+  --error-light: #fee2e2;
+  --error-dark: #dc2626;
+  --info: #3b82f6;
+  --info-light: #dbeafe;
+  --info-dark: #1d4ed8;
 
   /* Input colors */
-  --color-input: #d1d5db;
-  --color-input-bg: #ffffff;
-  --color-input-focus: #ffffff;
-  --color-input-placeholder: #9ca3af;
-  --color-input-border: #d1d5db;
+  --input: #d1d5db;
+  --input-bg: #ffffff;
+  --input-focus: #ffffff;
+  --input-placeholder: #9ca3af;
+  --input-border: #d1d5db;
 
-  /* Focus and interaction colors */
-  --color-ring: #3b82f6;
-  --color-ring-offset-background: #ffffff;
+  /* Focus and interaction */
+  --ring: #3b82f6;
+  --ring-offset-background: #ffffff;
 
   /* Alert colors */
-  --color-red-50: #fef2f2;
-  --color-red-100: #fee2e2;
-  --color-red-200: #fecaca;
-  --color-red-700: #b91c1c;
-  --color-green-50: #f0fdf4;
-  --color-green-100: #dcfce7;
-  --color-green-200: #bbf7d0;
-  --color-green-300: #86efac;
-  --color-green-400: #4ade80;
-  --color-green-500: #22c55e;
-  --color-green-600: #16a34a;
-  --color-green-700: #15803d;
-  --color-green-800: #166534;
-  --color-green-900: #14532d;
+  --red-50: #fef2f2;
+  --red-100: #fee2e2;
+  --red-200: #fecaca;
+  --red-700: #b91c1c;
+  --green-50: #f0fdf4;
+  --green-100: #dcfce7;
+  --green-200: #bbf7d0;
+  --green-300: #86efac;
+  --green-400: #4ade80;
+  --green-500: #22c55e;
+  --green-600: #16a34a;
+  --green-700: #15803d;
+  --green-800: #166534;
+  --green-900: #14532d;
 
-  /* Additional gray variants for complete theme system */
-  --color-gray-50: #f9fafb;
-  --color-gray-100: #f3f4f6;
-  --color-gray-200: #e5e7eb;
-  --color-gray-300: #d1d5db;
-  --color-gray-400: #9ca3af;
-  --color-gray-500: #6b7280;
-  --color-gray-600: #4b5563;
-  --color-gray-700: #374151;
-  --color-gray-800: #1f2937;
-  --color-gray-900: #111827;
+  /* Gray scale */
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
 
-  /* Primary brand colors - Shop Queue Theme (Orange) */
-  --color-primary: #f97316;
-  --color-primary-light: #fed7aa;
-  --color-primary-dark: #ea580c;
-  --color-primary-foreground: #ffffff;
-  --color-secondary: #fb923c;
-  --color-secondary-light: #ffedd5;
-  --color-secondary-dark: #f97316;
-  --color-secondary-foreground: #ffffff;
+  /* Primary brand (Emerald Islamic) */
+  --primary: #059669;
+  --primary-light: #6ee7b7;
+  --primary-dark: #047857;
+  --primary-foreground: #ffffff;
+  --secondary: #10b981;
+  --secondary-light: #d1fae5;
+  --secondary-dark: #059669;
+  --secondary-foreground: #ffffff;
 
-  /* Hero Section Colors */
-  --color-hero-text-light: #ffedd5;
-  --color-hero-text-accent: #ea580c;
-  --color-hero-button-bg: #ffedd5;
-  --color-hero-status-active: #4ade80;
-  --color-hero-status-waiting: #fb923c;
-  --color-hero-status-pending: #fdba74;
-  --color-hero-accent-soft: #fdba74;
+  /* Accent colors */
+  --accent-emerald: #10b981;
+  --accent-emerald-light: #34d399;
+  --accent-emerald-dark: #059669;
+  --accent-amber: #f59e0b;
+  --accent-amber-light: #fbbf24;
+  --accent-amber-dark: #d97706;
+  --accent-golden: #fbbf24;
+  --accent-golden-light: #fcd34d;
+  --accent-golden-dark: #f59e0b;
 
-  /* Hero Demo Card Colors - Better Contrast */
-  --color-hero-card-bg: rgba(0, 0, 0, 0.3);
-  --color-hero-card-text: #ffffff;
-  --color-hero-card-text-muted: #e5e7eb;
-  --color-hero-card-border: rgba(255, 255, 255, 0.2);
+  /* Hero Section */
+  --hero-text-light: #d1fae5;
+  --hero-text-accent: #059669;
+  --hero-button-bg: #d1fae5;
+  --hero-status-active: #10b981;
+  --hero-status-waiting: #f59e0b;
+  --hero-status-pending: #fbbf24;
+  --hero-accent-soft: #fcd34d;
+  --hero-primary: #059669;
+  --hero-secondary: #047857;
+  --hero-tertiary: #10b981;
+  --hero-accent: #34d399;
+  --hero-light: #6ee7b7;
+  --hero-warm: #d1fae5;
 
-  /* Theme Toggle Colors */
-  --color-theme-toggle-bg: rgba(249, 115, 22, 0.1);
-  --color-theme-toggle-border: rgba(249, 115, 22, 0.2);
-  --color-theme-toggle-hover-bg: rgba(249, 115, 22, 0.15);
-  --color-theme-toggle-icon: #f97316;
-  --color-theme-toggle-focus: rgba(249, 115, 22, 0.3);
+  /* Hero Demo Card */
+  --hero-card-bg: rgba(0, 0, 0, 0.3);
+  --hero-card-text: #ffffff;
+  --hero-card-text-muted: #e5e7eb;
+  --hero-card-border: rgba(255, 255, 255, 0.2);
 
-  /* Landing Page Colors */
-  --color-landing-from: #0f172a;
-  --color-landing-via: #581c87;
-  --color-landing-to: #0f172a;
-  --color-landing-text-from: #c4b5fd;
-  --color-landing-text-via: #f472b6;
-  --color-landing-text-to: #a5b4fc;
-  --color-landing-muted: #d1d5db;
-  --color-landing-secondary: #9ca3af;
-  --color-landing-border: rgba(255, 255, 255, 0.1);
-  --color-landing-glass: rgba(255, 255, 255, 0.05);
-  --color-landing-glass-hover: rgba(255, 255, 255, 0.1);
-  --color-landing-orb-purple: rgba(168, 85, 247, 0.2);
-  --color-landing-orb-blue: rgba(59, 130, 246, 0.2);
-  --color-landing-orb-indigo: rgba(99, 102, 241, 0.1);
-  --color-landing-btn-from: #9333ea;
-  --color-landing-btn-to: #6366f1;
-  --color-landing-btn-hover-from: #7e22ce;
-  --color-landing-btn-hover-to: #4f46e5;
-  --color-landing-btn-border: rgba(168, 85, 247, 0.5);
-  --color-landing-btn-hover-bg: rgba(168, 85, 247, 0.1);
-  
-  /* Tech Stack Colors */
-  --color-tech-nextjs-from: #4b5563;
-  --color-tech-nextjs-to: #374151;
-  --color-tech-r3f-from: #9333ea;
-  --color-tech-r3f-to: #db2777;
-  --color-tech-typescript-from: #2563eb;
-  --color-tech-typescript-to: #6366f1;
-  --color-tech-tailwind-from: #14b8a6;
-  --color-tech-tailwind-to: #06b6d4;
+  /* Theme Toggle */
+  --theme-toggle-bg: rgba(5, 150, 105, 0.1);
+  --theme-toggle-border: rgba(5, 150, 105, 0.2);
+  --theme-toggle-hover-bg: rgba(5, 150, 105, 0.15);
+  --theme-toggle-icon: #059669;
+  --theme-toggle-focus: rgba(5, 150, 105, 0.3);
 
-  /* Overlay colors */
-  --color-overlay: rgba(0, 0, 0, 0.5);
-  --color-overlay-light: rgba(255, 255, 255, 0.9);
-  --color-overlay-dark: rgba(0, 0, 0, 0.8);
+  /* Landing Page - Emerald Islamic Theme */
+  --landing-bg-from: #065f46;
+  --landing-bg-via: #0c4a6e;
+  --landing-bg-to: #1e3a8a;
+  --landing-text-from: #34d399;
+  --landing-text-via: #6ee7b7;
+  --landing-text-to: #60a5fa;
+  --landing-muted: #d1d5db;
+  --landing-secondary: #9ca3af;
+  --landing-border: rgba(255, 255, 255, 0.1);
+  --landing-glass: rgba(255, 255, 255, 0.05);
+  --landing-glass-hover: rgba(255, 255, 255, 0.1);
+  --landing-orb-emerald: rgba(16, 185, 129, 0.2);
+  --landing-orb-amber: rgba(251, 191, 36, 0.2);
+  --landing-orb-blue: rgba(59, 130, 246, 0.2);
+  --landing-btn-from: #059669;
+  --landing-btn-to: #10b981;
+  --landing-btn-hover-from: #047857;
+  --landing-btn-hover-to: #059669;
+  --landing-btn-border: rgba(16, 185, 129, 0.5);
+  --landing-btn-hover-bg: rgba(16, 185, 129, 0.1);
 
-  /* Header colors (light mode) */
-  --color-header-bg: rgba(255, 255, 255, 0.5);
-  --color-header-border: rgba(229, 231, 235, 0.8);
+  /* Overlays */
+  --overlay: rgba(0, 0, 0, 0.5);
+  --overlay-light: rgba(255, 255, 255, 0.9);
+  --overlay-dark: rgba(0, 0, 0, 0.8);
 
-  /* Footer colors (light mode) */
-  --color-footer-bg: #ffffff;
-  --color-footer-border: #e5e7eb;
+  /* Header */
+  --header-bg: rgba(255, 255, 255, 0.5);
+  --header-border: rgba(229, 231, 235, 0.8);
 
-  /* Navigation colors */
-  --color-nav-link: #374151;
-  --color-nav-link-hover: #f97316;
-  --color-nav-link-active: #f97316;
+  /* Footer */
+  --footer-bg: #ffffff;
+  --footer-border: #e5e7eb;
+
+  /* Navigation */
+  --nav-link: #374151;
+  --nav-link-hover: #059669;
+  --nav-link-active: #047857;
+
+  /* Cards */
+  --card-bg: rgba(255, 255, 255, 0.8);
+  --card-border: rgba(0, 0, 0, 0.1);
+  --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 15px rgba(0, 0, 0, 0.03);
+
+  /* Hero patterns */
+  --hero-pattern-opacity: 0.1;
+  --hero-glow-color: rgba(16, 185, 129, 0.3);
+
+  /* Additional dark mode specific */
+  --development-light: #fef3c7;
+  --development-dark: #d97706;
+  --islamic-light: #d1fae5;
+  --islamic-dark: #047857;
+  --ramadan-light: #f3e8ff;
+  --ramadan-dark: #7c3aed;
+
+  /* Glass effect */
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-bg-hover: rgba(255, 255, 255, 0.15);
+  --glass-bg-subtle: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.2);
+}
+
+/* ============================================
+   Dark Mode Overrides
+   ============================================ */
+.dark {
+  /* Base colors */
+  --background: #0a0a0a;
+  --foreground: #f5f5f5;
+  --surface: #1a1a1a;
+  --on-surface: #ffffff;
+
+  /* UI Colors - Gray scale */
+  --muted: #4b5563;
+  --muted-light: #374151;
+  --muted-dark: #9ca3af;
+  --border: #374151;
+  --border-light: #1f2937;
+  --border-dark: #6b7280;
+
+  /* Status colors */
+  --success-light: #065f46;
+  --success-dark: #34d399;
+  --warning-light: #92400e;
+  --warning-dark: #fbbf24;
+  --error-light: #991b1b;
+  --error-dark: #f87171;
+  --info-light: #1e3a8a;
+  --info-dark: #60a5fa;
+
+  /* Additional status */
+  --development-light: #92400e;
+  --development-dark: #fbbf24;
+  --islamic-light: #065f46;
+  --islamic-dark: #34d399;
+  --ramadan-light: #581c87;
+  --ramadan-dark: #a78bfa;
+
+  /* Input colors */
+  --input: #374151;
+  --input-bg: #1f2937;
+  --input-focus: #1f2937;
+  --input-placeholder: #6b7280;
+  --input-border: #374151;
+
+  /* Focus */
+  --ring: #60a5fa;
+  --ring-offset-background: #0a0a0a;
+
+  /* Primary brand */
+  --primary: #10b981;
+  --primary-light: #065f46;
+  --primary-dark: #34d399;
+  --secondary: #059669;
+  --secondary-light: #064e3b;
+  --secondary-dark: #6ee7b7;
+
+  /* Accent colors */
+  --accent-emerald: #34d399;
+  --accent-emerald-light: #065f46;
+  --accent-emerald-dark: #6ee7b7;
+  --accent-amber: #fbbf24;
+  --accent-amber-light: #92400e;
+  --accent-amber-dark: #fcd34d;
+  --accent-golden: #fcd34d;
+  --accent-golden-light: #92400e;
+  --accent-golden-dark: #fef3c7;
+
+  /* Overlays */
+  --overlay: rgba(0, 0, 0, 0.7);
+  --overlay-light: rgba(0, 0, 0, 0.9);
+  --overlay-dark: rgba(255, 255, 255, 0.1);
+
+  /* Header */
+  --header-bg: rgba(10, 10, 10, 0.5);
+  --header-border: rgba(55, 65, 81, 0.5);
+
+  /* Footer */
+  --footer-bg: #0a0a0a;
+  --footer-border: #374151;
+
+  /* Theme Toggle */
+  --theme-toggle-bg: rgba(16, 185, 129, 0.2);
+  --theme-toggle-border: rgba(16, 185, 129, 0.3);
+  --theme-toggle-hover-bg: rgba(16, 185, 129, 0.25);
+  --theme-toggle-icon: #34d399;
+  --theme-toggle-focus: rgba(16, 185, 129, 0.4);
+
+  /* Hero Section */
+  --hero-text-light: #6ee7b7;
+  --hero-text-accent: #34d399;
+  --hero-button-bg: #1f2937;
+  --hero-status-active: #34d399;
+  --hero-status-waiting: #fbbf24;
+  --hero-status-pending: #fbbf24;
+  --hero-accent-soft: #6ee7b7;
+
+  /* Hero Demo Card */
+  --hero-card-bg: rgba(255, 255, 255, 0.1);
+  --hero-card-text: #f5f5f5;
+  --hero-card-text-muted: #9ca3af;
+  --hero-card-border: rgba(255, 255, 255, 0.15);
+
+  /* Cards */
+  --card-bg: rgba(30, 30, 30, 0.8);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --card-shadow:
+    0 4px 6px rgba(255, 255, 255, 0.05), 0 10px 15px rgba(255, 255, 255, 0.03);
+
+  /* Navigation */
+  --nav-link: #9ca3af;
+  --nav-link-hover: #34d399;
+  --nav-link-active: #10b981;
+
+  /* Glass effect */
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-bg-hover: rgba(255, 255, 255, 0.1);
+  --glass-bg-subtle: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.15);
+}
+
+/* ============================================
+   Tailwind v4 Theme Mapping (@theme inline)
+   All values reference CSS variables only
+   ============================================ */
+@theme inline {
+  /* Typography */
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  /* Base semantic colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-on-surface: var(--on-surface);
+
+  /* UI Colors */
+  --color-muted: var(--muted);
+  --color-muted-light: var(--muted-light);
+  --color-muted-dark: var(--muted-dark);
+  --color-border: var(--border);
+  --color-border-light: var(--border-light);
+  --color-border-dark: var(--border-dark);
+
+  /* Queue status */
+  --color-waiting: var(--waiting);
+  --color-serving: var(--serving);
+  --color-completed: var(--completed);
+  --color-cancelled: var(--cancelled);
+  --color-priority: var(--priority);
+
+  /* Status colors */
+  --color-success: var(--success);
+  --color-success-light: var(--success-light);
+  --color-success-dark: var(--success-dark);
+  --color-warning: var(--warning);
+  --color-warning-light: var(--warning-light);
+  --color-warning-dark: var(--warning-dark);
+  --color-error: var(--error);
+  --color-error-light: var(--error-light);
+  --color-error-dark: var(--error-dark);
+  --color-info: var(--info);
+  --color-info-light: var(--info-light);
+  --color-info-dark: var(--info-dark);
+
+  /* Input colors */
+  --color-input: var(--input);
+  --color-input-bg: var(--input-bg);
+  --color-input-focus: var(--input-focus);
+  --color-input-placeholder: var(--input-placeholder);
+  --color-input-border: var(--input-border);
+
+  /* Focus */
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--ring-offset-background);
+
+  /* Alert colors */
+  --color-red-50: var(--red-50);
+  --color-red-100: var(--red-100);
+  --color-red-200: var(--red-200);
+  --color-red-700: var(--red-700);
+  --color-green-50: var(--green-50);
+  --color-green-100: var(--green-100);
+  --color-green-200: var(--green-200);
+  --color-green-300: var(--green-300);
+  --color-green-400: var(--green-400);
+  --color-green-500: var(--green-500);
+  --color-green-600: var(--green-600);
+  --color-green-700: var(--green-700);
+  --color-green-800: var(--green-800);
+  --color-green-900: var(--green-900);
+
+  /* Gray scale */
+  --color-gray-50: var(--gray-50);
+  --color-gray-100: var(--gray-100);
+  --color-gray-200: var(--gray-200);
+  --color-gray-300: var(--gray-300);
+  --color-gray-400: var(--gray-400);
+  --color-gray-500: var(--gray-500);
+  --color-gray-600: var(--gray-600);
+  --color-gray-700: var(--gray-700);
+  --color-gray-800: var(--gray-800);
+  --color-gray-900: var(--gray-900);
+
+  /* Primary brand */
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-light: var(--secondary-light);
+  --color-secondary-dark: var(--secondary-dark);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  /* Hero Section */
+  --color-hero-text-light: var(--hero-text-light);
+  --color-hero-text-accent: var(--hero-text-accent);
+  --color-hero-button-bg: var(--hero-button-bg);
+  --color-hero-status-active: var(--hero-status-active);
+  --color-hero-status-waiting: var(--hero-status-waiting);
+  --color-hero-status-pending: var(--hero-status-pending);
+  --color-hero-accent-soft: var(--hero-accent-soft);
+  --color-hero-primary: var(--hero-primary);
+  --color-hero-secondary: var(--hero-secondary);
+  --color-hero-accent: var(--hero-accent);
+  --color-hero-light: var(--hero-light);
+  --color-hero-warm: var(--hero-warm);
+
+  /* Hero Demo Card */
+  --color-hero-card-bg: var(--hero-card-bg);
+  --color-hero-card-text: var(--hero-card-text);
+  --color-hero-card-text-muted: var(--hero-card-text-muted);
+  --color-hero-card-border: var(--hero-card-border);
+
+  /* Theme Toggle */
+  --color-theme-toggle-bg: var(--theme-toggle-bg);
+  --color-theme-toggle-border: var(--theme-toggle-border);
+  --color-theme-toggle-hover-bg: var(--theme-toggle-hover-bg);
+  --color-theme-toggle-icon: var(--theme-toggle-icon);
+  --color-theme-toggle-focus: var(--theme-toggle-focus);
+
+  /* Accent colors */
+  --color-accent-emerald: var(--accent-emerald);
+  --color-accent-emerald-light: var(--accent-emerald-light);
+  --color-accent-emerald-dark: var(--accent-emerald-dark);
+  --color-accent-amber: var(--accent-amber);
+  --color-accent-amber-light: var(--accent-amber-light);
+  --color-accent-amber-dark: var(--accent-amber-dark);
+  --color-accent-golden: var(--accent-golden);
+  --color-accent-golden-light: var(--accent-golden-light);
+  --color-accent-golden-dark: var(--accent-golden-dark);
+
+  /* Landing Page */
+  --color-landing-bg-from: var(--landing-bg-from);
+  --color-landing-bg-via: var(--landing-bg-via);
+  --color-landing-bg-to: var(--landing-bg-to);
+  --color-landing-text-from: var(--landing-text-from);
+  --color-landing-text-via: var(--landing-text-via);
+  --color-landing-text-to: var(--landing-text-to);
+  --color-landing-muted: var(--landing-muted);
+  --color-landing-secondary: var(--landing-secondary);
+  --color-landing-border: var(--landing-border);
+  --color-landing-glass: var(--landing-glass);
+  --color-landing-glass-hover: var(--landing-glass-hover);
+  --color-landing-orb-emerald: var(--landing-orb-emerald);
+  --color-landing-orb-amber: var(--landing-orb-amber);
+  --color-landing-orb-blue: var(--landing-orb-blue);
+  --color-landing-btn-from: var(--landing-btn-from);
+  --color-landing-btn-to: var(--landing-btn-to);
+  --color-landing-btn-hover-from: var(--landing-btn-hover-from);
+  --color-landing-btn-hover-to: var(--landing-btn-hover-to);
+  --color-landing-btn-border: var(--landing-btn-border);
+  --color-landing-btn-hover-bg: var(--landing-btn-hover-bg);
+
+  /* Hero Section - tertiary */
+  --color-hero-tertiary: var(--hero-tertiary);
+
+  /* Glass effect */
+  --color-glass-bg: var(--glass-bg);
+  --color-glass-bg-hover: var(--glass-bg-hover);
+  --color-glass-bg-subtle: var(--glass-bg-subtle);
+  --color-glass-border: var(--glass-border);
+
+  /* Overlays */
+  --color-overlay: var(--overlay);
+  --color-overlay-light: var(--overlay-light);
+  --color-overlay-dark: var(--overlay-dark);
+
+  /* Header */
+  --color-header-bg: var(--header-bg);
+  --color-header-border: var(--header-border);
+
+  /* Footer */
+  --color-footer-bg: var(--footer-bg);
+  --color-footer-border: var(--footer-border);
+
+  /* Navigation */
+  --color-nav-link: var(--nav-link);
+  --color-nav-link-hover: var(--nav-link-hover);
+  --color-nav-link-active: var(--nav-link-active);
+
+  /* Additional status */
+  --color-development-light: var(--development-light);
+  --color-development-dark: var(--development-dark);
+  --color-islamic-light: var(--islamic-light);
+  --color-islamic-dark: var(--islamic-dark);
+  --color-ramadan-light: var(--ramadan-light);
+  --color-ramadan-dark: var(--ramadan-dark);
+
+  /* Cards */
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--card-border);
+  --color-card-shadow: var(--card-shadow);
+
+  /* Hero patterns */
+  --color-hero-pattern-opacity: var(--hero-pattern-opacity);
+  --color-hero-glow-color: var(--hero-glow-color);
 }
