@@ -22,9 +22,9 @@
   --on-surface: #000000;
 
   /* UI Colors - Gray scale */
-  --muted: #6b7280;
-  --muted-light: #f9fafb;
-  --muted-dark: #374151;
+  --muted: #e5e7eb;
+  --muted-light: #f3f4f6;
+  --muted-dark: #9ca3af;
   --border: #e5e7eb;
   --border-light: #f3f4f6;
   --border-dark: #374151;
@@ -213,9 +213,9 @@
   --on-surface: #ffffff;
 
   /* UI Colors - Gray scale */
-  --muted: #9ca3af;
-  --muted-light: #1f2937;
-  --muted-dark: #d1d5db;
+  --muted: #4b5563;
+  --muted-light: #374151;
+  --muted-dark: #9ca3af;
   --border: #374151;
   --border-light: #1f2937;
   --border-dark: #6b7280;
