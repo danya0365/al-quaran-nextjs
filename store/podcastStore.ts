@@ -40,6 +40,7 @@ export interface PodcastState {
 
   // Actions
   playSurah: (surah: Surah, ayahs: Ayah[]) => void;
+  addToQueueOnly: (surah: Surah, ayahs: Ayah[]) => void;
   removeFromQueue: (surahNumber: number) => void;
   toggleSurahPlayback: (surah: Surah, ayahs: Ayah[]) => void;
   playNext: () => void;
@@ -84,6 +85,14 @@ export const usePodcastStore = create<PodcastState>()(
           currentTime: 0,
           duration: 0,
         });
+      },
+
+      addToQueueOnly: (surah: Surah, ayahs: Ayah[]) => {
+        const { queue } = get();
+        const exists = queue.some((item) => item.surah.number === surah.number);
+        if (exists) return;
+
+        set({ queue: [...queue, { surah, ayahs }] });
       },
 
       removeFromQueue: (surahNumber: number) => {

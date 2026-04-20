@@ -3,7 +3,7 @@
 import { getArabicSurahFromApi, getAudioForSurahFromApi } from "@/api/api";
 import { usePodcastStore } from "@/store/podcastStore";
 import { Surah } from "@/types/quran";
-import { Pause, Play, Plus, X } from "lucide-react";
+import { Play, Plus, X } from "lucide-react";
 import { useEffect, useRef } from "react";
 import FullScreenPlayer from "./FullScreenPlayer";
 import MiniPlayer from "./MiniPlayer";
@@ -20,6 +20,8 @@ export default function PodcastView() {
     reciter,
     toggleSurahPlayback,
     removeFromQueue,
+    playSurah,
+    addToQueueOnly,
     playNext,
     playNextWithAutoLoad,
     setCurrentTime,
@@ -136,8 +138,8 @@ export default function PodcastView() {
     reciter,
   ]);
 
-  // Handle surah selection - toggle playback
-  const handleSurahClick = async (surahNumber: number) => {
+  // Handle play immediately (clear queue and play)
+  const handlePlayImmediately = async (surahNumber: number) => {
     try {
       const [arabicSurah, audioSurah] = await Promise.all([
         getArabicSurahFromApi(surahNumber),
@@ -145,17 +147,32 @@ export default function PodcastView() {
       ]);
 
       if (audioSurah?.ayahs) {
-        toggleSurahPlayback(arabicSurah, audioSurah.ayahs);
+        playSurah(arabicSurah, audioSurah.ayahs);
       }
     } catch (error) {
       console.error("Error loading surah:", error);
     }
   };
 
-  // Handle remove from queue
-  const handleRemoveFromQueue = (e: React.MouseEvent, surahNumber: number) => {
-    e.stopPropagation();
-    removeFromQueue(surahNumber);
+  // Handle toggle add/remove from queue (NO auto-play)
+  const handleToggleQueue = async (surahNumber: number) => {
+    if (isInQueue(surahNumber)) {
+      removeFromQueue(surahNumber);
+      return;
+    }
+
+    try {
+      const [arabicSurah, audioSurah] = await Promise.all([
+        getArabicSurahFromApi(surahNumber),
+        getAudioForSurahFromApi(surahNumber, reciter),
+      ]);
+
+      if (audioSurah?.ayahs) {
+        addToQueueOnly(arabicSurah, audioSurah.ayahs); // Just add, don't play
+      }
+    } catch (error) {
+      console.error("Error loading surah:", error);
+    }
   };
 
   // Mock surah list (114 surahs)
@@ -195,13 +212,12 @@ export default function PodcastView() {
             const isCurrent = currentItem?.surah.number === surah.number;
 
             return (
-              <button
+              <div
                 key={surah.number}
-                onClick={() => handleSurahClick(surah.number)}
-                className={`flex items-center gap-4 p-4 rounded-xl border transition-all text-left ${
+                className={`flex items-center gap-4 p-4 rounded-xl border transition-all ${
                   isCurrent
                     ? "bg-primary/10 border-primary"
-                    : "bg-card-bg border-card-border hover:border-primary/50"
+                    : "bg-card-bg border-card-border"
                 }`}
               >
                 <div
@@ -221,25 +237,38 @@ export default function PodcastView() {
                     {surah.name}
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
-                  {isCurrent ? (
-                    isPlaying ? (
-                      <Pause className="w-5 h-5 text-primary" />
+                <div className="flex items-center gap-1">
+                  {/* Play Button - Play Immediately */}
+                  <button
+                    onClick={() => handlePlayImmediately(surah.number)}
+                    className={`p-2 rounded-full transition-colors ${
+                      isCurrent
+                        ? "bg-primary text-white"
+                        : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                    }`}
+                    title="เล่นทันที"
+                  >
+                    <Play className="w-5 h-5" />
+                  </button>
+
+                  {/* Add/Remove from Queue Button */}
+                  <button
+                    onClick={() => handleToggleQueue(surah.number)}
+                    className={`p-2 rounded-full transition-colors ${
+                      inQueue
+                        ? "bg-muted text-foreground"
+                        : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                    }`}
+                    title={inQueue ? "เอาออกจากคิว" : "เพิ่มในคิว"}
+                  >
+                    {inQueue ? (
+                      <X className="w-5 h-5" />
                     ) : (
-                      <Play className="w-5 h-5 text-primary" />
-                    )
-                  ) : inQueue ? (
-                    <button
-                      onClick={(e) => handleRemoveFromQueue(e, surah.number)}
-                      className="p-1 rounded-full hover:bg-muted transition-colors"
-                    >
-                      <X className="w-5 h-5 text-muted-foreground" />
-                    </button>
-                  ) : (
-                    <Plus className="w-5 h-5 text-muted-foreground" />
-                  )}
+                      <Plus className="w-5 h-5" />
+                    )}
+                  </button>
                 </div>
-              </button>
+              </div>
             );
           })}
         </div>
