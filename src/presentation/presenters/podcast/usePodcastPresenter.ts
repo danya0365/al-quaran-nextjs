@@ -7,7 +7,7 @@ import {
 } from "@/api/api";
 import { usePodcastStore } from "@/store/podcastStore";
 import { useQuranStore } from "@/store/quranStore";
-import { Surah, Ayah } from "@/types/quran";
+import { Ayah, Surah } from "@/types/quran";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export interface PodcastViewModel {
@@ -21,7 +21,7 @@ export interface PodcastViewModel {
 }
 
 export interface PodcastPresenterState {
-  viewModel: PodcastViewModel;
+  viewModel: PodcastViewModel | null;
   loading: boolean;
   error: string | null;
   audioRef: React.RefObject<HTMLAudioElement | null>;
@@ -41,7 +41,7 @@ export interface PodcastPresenterActions {
  */
 export function usePodcastPresenter(): [
   PodcastPresenterState,
-  PodcastPresenterActions
+  PodcastPresenterActions,
 ] {
   // ==========================================
   // STORES
@@ -63,12 +63,7 @@ export function usePodcastPresenter(): [
     setIsPlaying,
   } = usePodcastStore();
 
-  const {
-    surahs,
-    initialized,
-    setSurahs,
-    setInitialized,
-  } = useQuranStore();
+  const { surahs, initialized, setSurahs, setInitialized } = useQuranStore();
 
   // ==========================================
   // REFS (MOVED FROM VIEW - Pattern Rule: No refs in View)
@@ -87,19 +82,19 @@ export function usePodcastPresenter(): [
   // ==========================================
   const currentItem = useMemo(
     () => queue[currentQueueIndex] || null,
-    [queue, currentQueueIndex]
+    [queue, currentQueueIndex],
   );
 
   const currentAyah = useMemo(
     () => currentItem?.ayahs[currentAyahIndex] || null,
-    [currentItem, currentAyahIndex]
+    [currentItem, currentAyahIndex],
   );
 
   const inQueue = useCallback(
     (surahNumber: number) => {
       return queue.some((item) => item.surah.number === surahNumber);
     },
-    [queue]
+    [queue],
   );
 
   // ==========================================
@@ -277,7 +272,7 @@ export function usePodcastPresenter(): [
         setError(err instanceof Error ? err.message : "Failed to play surah");
       }
     },
-    [reciter, playSurah]
+    [reciter, playSurah],
   );
 
   const handleToggleQueue = useCallback(
@@ -301,7 +296,7 @@ export function usePodcastPresenter(): [
         setError(err instanceof Error ? err.message : "Failed to add to queue");
       }
     },
-    [reciter, inQueue, removeFromQueue, addToQueueOnly]
+    [reciter, inQueue, removeFromQueue, addToQueueOnly],
   );
 
   const retryLoad = useCallback(async () => {
@@ -309,10 +304,13 @@ export function usePodcastPresenter(): [
   }, [loadData]);
 
   // ==========================================
-  // BUILD VIEW MODEL
+  // BUILD VIEW MODEL (null when not initialized)
   // ==========================================
-  const viewModel: PodcastViewModel = useMemo(
-    () => ({
+  const viewModel: PodcastViewModel | null = useMemo(() => {
+    if (!initialized || surahs.length === 0) {
+      return null;
+    }
+    return {
       surahs,
       initialized,
       currentItem,
@@ -320,17 +318,16 @@ export function usePodcastPresenter(): [
       isPlaying,
       isFullScreen,
       inQueue,
-    }),
-    [
-      surahs,
-      initialized,
-      currentItem,
-      currentAyah,
-      isPlaying,
-      isFullScreen,
-      inQueue,
-    ]
-  );
+    };
+  }, [
+    surahs,
+    initialized,
+    currentItem,
+    currentAyah,
+    isPlaying,
+    isFullScreen,
+    inQueue,
+  ]);
 
   // ==========================================
   // RETURN [STATE, ACTIONS] TUPLE

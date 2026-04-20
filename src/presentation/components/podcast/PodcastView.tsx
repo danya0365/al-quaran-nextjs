@@ -18,55 +18,29 @@ export default function PodcastView() {
   const [state, actions] = usePodcastPresenter();
   const { viewModel, loading, error, audioRef } = state;
 
-  // Show loading state
-  if (loading && !viewModel.initialized) {
+  // Show loading state - match HomeView pattern: return just skeleton
+  if (loading && !viewModel) {
+    return <PodcastSkeletonView />;
+  }
+
+  // Show error state
+  if (error && !viewModel) {
     return (
-      <div className="min-h-screen bg-background pb-24">
-        <div className="bg-primary text-white px-6 pt-8 pb-6 shadow-lg sticky top-0 z-10">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-2xl font-bold mb-2">ฟังต่อเนื่อง</h1>
-            <p className="text-glass-bg-hover text-sm">
-              เลือกซูเราะห์เพื่อฟังแบบต่อเนื่อง
-            </p>
-          </div>
-        </div>
-        <div className="max-w-4xl mx-auto px-6 py-6">
-          <h2 className="text-lg font-semibold text-foreground mb-4">
-            รายการซูเราะห์
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <div className="text-center px-4">
+          <div className="text-red-500 text-6xl mb-4">⚠️</div>
+          <h2 className="text-2xl font-bold text-foreground mb-2">
+            เกิดข้อผิดพลาด
           </h2>
-          <PodcastSkeletonView />
+          <p className="text-muted-foreground mb-4">{error}</p>
         </div>
-        <audio ref={audioRef} preload="auto" />
       </div>
     );
   }
 
-  // Show error state
-  if (error && !viewModel.initialized) {
-    return (
-      <div className="min-h-screen bg-background pb-24">
-        <div className="bg-primary text-white px-6 pt-8 pb-6 shadow-lg sticky top-0 z-10">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-2xl font-bold mb-2">ฟังต่อเนื่อง</h1>
-            <p className="text-glass-bg-hover text-sm">
-              เลือกซูเราะห์เพื่อฟังแบบต่อเนื่อง
-            </p>
-          </div>
-        </div>
-        <div className="max-w-4xl mx-auto px-6 py-6">
-          <div className="text-center py-12">
-            <p className="text-red-500 mb-4">เกิดข้อผิดพลาด: {error}</p>
-            <button
-              onClick={actions.retryLoad}
-              className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors"
-            >
-              ลองใหม่อีกครั้ง
-            </button>
-          </div>
-        </div>
-        <audio ref={audioRef} preload="auto" />
-      </div>
-    );
+  // No viewModel yet
+  if (!viewModel) {
+    return null;
   }
 
   const { surahs, initialized, currentItem, isFullScreen } = viewModel;
