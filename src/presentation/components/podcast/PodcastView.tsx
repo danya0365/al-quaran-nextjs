@@ -1,10 +1,14 @@
 "use client";
 
-import { getArabicSurahFromApi, getAudioForSurahFromApi } from "@/api/api";
+import {
+  getAllSurahsFromApi,
+  getArabicSurahFromApi,
+  getAudioForSurahFromApi,
+} from "@/api/api";
 import { usePodcastStore } from "@/store/podcastStore";
 import { Surah } from "@/types/quran";
 import { Play, Plus, X } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import FullScreenPlayer from "./FullScreenPlayer";
 import MiniPlayer from "./MiniPlayer";
 
@@ -31,6 +35,26 @@ export default function PodcastView() {
 
   const currentItem = queue[currentQueueIndex];
   const currentAyah = currentItem?.ayahs[currentAyahIndex];
+
+  // State for real surah data
+  const [surahs, setSurahs] = useState<Surah[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch real surah data on mount
+  useEffect(() => {
+    const fetchSurahs = async () => {
+      try {
+        const data = await getAllSurahsFromApi(reciter);
+        setSurahs(data);
+      } catch (error) {
+        console.error("Error fetching surahs:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSurahs();
+  }, [reciter]);
 
   // Play audio when currentAyah changes - same pattern as SurahView
   useEffect(() => {
@@ -175,16 +199,6 @@ export default function PodcastView() {
     }
   };
 
-  // Mock surah list (114 surahs)
-  const surahs: Surah[] = Array.from({ length: 114 }, (_, i) => ({
-    number: i + 1,
-    name: getSurahName(i + 1),
-    englishName: getSurahEnglishName(i + 1),
-    englishNameTranslation: "",
-    revelationType: i < 87 ? "Meccan" : "Medinan",
-    ayahs: [],
-  }));
-
   const isInQueue = (surahNumber: number) => {
     return queue.some((item) => item.surah.number === surahNumber);
   };
@@ -284,27 +298,4 @@ export default function PodcastView() {
       {isFullScreen && currentItem && <FullScreenPlayer audioRef={audioRef} />}
     </div>
   );
-}
-
-// Helper functions for surah names
-function getSurahName(number: number): string {
-  const names: Record<number, string> = {
-    1: "الفاتحة",
-    2: "البقرة",
-    3: "آل عمران",
-    4: "النساء",
-    5: "المائدة",
-  };
-  return names[number] || `سورة ${number}`;
-}
-
-function getSurahEnglishName(number: number): string {
-  const names: Record<number, string> = {
-    1: "Al-Fatihah",
-    2: "Al-Baqarah",
-    3: "Ali 'Imran",
-    4: "An-Nisa",
-    5: "Al-Ma'idah",
-  };
-  return names[number] || `Surah ${number}`;
 }
