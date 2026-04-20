@@ -11,6 +11,7 @@ import { Play, Plus, X } from "lucide-react";
 import { useEffect, useRef } from "react";
 import FullScreenPlayer from "./FullScreenPlayer";
 import MiniPlayer from "./MiniPlayer";
+import PodcastSkeletonView from "./PodcastSkeletonView";
 
 export default function PodcastView() {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -227,9 +228,7 @@ export default function PodcastView() {
           รายการซูเราะห์
         </h2>
         {!initialized || surahs.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground">
-            กำลังโหลดข้อมูลซูเราะห์...
-          </div>
+          <PodcastSkeletonView />
         ) : (
           <div className="grid grid-cols-1 gap-3">
             {surahs.map((surah) => {

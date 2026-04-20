@@ -1,3 +1,3 @@
-import HomeSkeletonView from "@/src/presentation/components/home/HomeSkeletonView";
+import PodcastSkeletonView from "@/src/presentation/components/podcast/PodcastSkeletonView";
 
-export default HomeSkeletonView;
+export default PodcastSkeletonView;
