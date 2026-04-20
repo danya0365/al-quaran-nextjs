@@ -4,7 +4,26 @@ import { useAppVersion } from "@/src/presentation/hooks/useAppVersion";
 import { LANGUAGE_MAP } from "@/src/presentation/presenters/settings/SettingsPresenter";
 import { useSettingsPresenter } from "@/src/presentation/presenters/settings/useSettingsPresenter";
 import { useTheme } from "next-themes";
+import {
+  Amiri,
+  Lateef,
+  Markazi_Text,
+  Reem_Kufi,
+  Scheherazade_New,
+  Tajawal,
+} from "next/font/google";
 import { useEffect, useRef, useState } from "react";
+
+// Initialize Arabic fonts
+const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"] });
+const lateef = Lateef({ subsets: ["arabic"], weight: ["400", "700"] });
+const scheherazade = Scheherazade_New({
+  subsets: ["arabic"],
+  weight: ["400", "700"],
+});
+const tajawal = Tajawal({ subsets: ["arabic"], weight: ["400", "700"] });
+const reemKufi = Reem_Kufi({ subsets: ["arabic"], weight: ["400", "700"] });
+const markazi = Markazi_Text({ subsets: ["arabic"], weight: ["400", "700"] });
 
 /**
  * Settings View Component
@@ -143,7 +162,7 @@ export function SettingsView() {
             {/* Show Translation */}
             <div className="flex items-center justify-between">
               <span className="text-sm sm:text-base text-on-surface">
-                คำแปลภาษาไทย
+                แสดงคำแปล
               </span>
               <button
                 onClick={() =>
@@ -187,6 +206,109 @@ export function SettingsView() {
                 <div
                   className={`w-6 h-6 bg-surface rounded-full transition-transform ${
                     viewModel.settings.showTajweed
+                      ? "translate-x-7"
+                      : "translate-x-1"
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Font Family Selector */}
+            <div className="pt-2">
+              <span className="text-sm sm:text-base text-on-surface block mb-2">
+                ฟอนต์อาหรับ
+              </span>
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                {[
+                  {
+                    key: "Amiri",
+                    label: "Amiri",
+                    className: amiri.className,
+                  },
+                  {
+                    key: "Lateef",
+                    label: "Lateef",
+                    className: lateef.className,
+                  },
+                  {
+                    key: "ScheherazadeNew",
+                    label: "Scheherazade",
+                    className: scheherazade.className,
+                  },
+                  {
+                    key: "Tajawal",
+                    label: "Tajawal",
+                    className: tajawal.className,
+                  },
+                  {
+                    key: "ReemKufi",
+                    label: "Reem Kufi",
+                    className: reemKufi.className,
+                  },
+                  {
+                    key: "MarkaziText",
+                    label: "Markazi",
+                    className: markazi.className,
+                  },
+                ].map((f) => (
+                  <button
+                    key={f.key}
+                    onClick={() => updateSettings({ fontFamily: f.key })}
+                    className={`p-2 sm:p-3 rounded-lg border text-center text-xs sm:text-sm ${
+                      viewModel.settings.fontFamily === f.key
+                        ? "border-primary bg-success-light/50 dark:bg-success-dark/20"
+                        : "border-border bg-muted hover:bg-muted-light"
+                    } ${f.className}`}
+                  >
+                    <span className="dark:text-on-surface">بِسْمِ</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Auto Play */}
+            <div className="flex items-center justify-between">
+              <span className="text-sm sm:text-base text-on-surface">
+                เล่นอัตโนมัติ
+              </span>
+              <button
+                onClick={() =>
+                  updateSettings({
+                    autoPlay: !viewModel.settings.autoPlay,
+                  })
+                }
+                className={`w-14 h-7 rounded-full transition-colors ${
+                  viewModel.settings.autoPlay ? "bg-primary" : "bg-muted-dark"
+                }`}
+              >
+                <div
+                  className={`w-6 h-6 bg-surface rounded-full transition-transform ${
+                    viewModel.settings.autoPlay
+                      ? "translate-x-7"
+                      : "translate-x-1"
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Auto Scroll */}
+            <div className="flex items-center justify-between">
+              <span className="text-sm sm:text-base text-on-surface">
+                เลื่อนอัตโนมัติ
+              </span>
+              <button
+                onClick={() =>
+                  updateSettings({
+                    autoScroll: !viewModel.settings.autoScroll,
+                  })
+                }
+                className={`w-14 h-7 rounded-full transition-colors ${
+                  viewModel.settings.autoScroll ? "bg-primary" : "bg-muted-dark"
+                }`}
+              >
+                <div
+                  className={`w-6 h-6 bg-surface rounded-full transition-transform ${
+                    viewModel.settings.autoScroll
                       ? "translate-x-7"
                       : "translate-x-1"
                   }`}
