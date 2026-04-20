@@ -43,6 +43,9 @@ export interface PodcastState {
   removeFromQueue: (surahNumber: number) => void;
   toggleSurahPlayback: (surah: Surah, ayahs: Ayah[]) => void;
   playNext: () => void;
+  playNextWithAutoLoad: (
+    loadNextSurah: () => Promise<{ surah: Surah; ayahs: Ayah[] } | null>,
+  ) => Promise<void>;
   playPrev: () => void;
   playPause: () => void;
   setAudioUrl: (url: string | null) => void;
@@ -169,6 +172,61 @@ export const usePodcastStore = create<PodcastState>()(
 
         // End of queue - stop playing
         set({ isPlaying: false, currentTime: 0 });
+      },
+
+      playNextWithAutoLoad: async (
+        loadNextSurah: () => Promise<{ surah: Surah; ayahs: Ayah[] } | null>,
+      ) => {
+        const { queue, currentQueueIndex, currentAyahIndex } = get();
+        const currentItem = queue[currentQueueIndex];
+
+        if (!currentItem) return;
+
+        // Try next ayah in current surah
+        if (currentAyahIndex < currentItem.ayahs.length - 1) {
+          set({ currentAyahIndex: currentAyahIndex + 1, isPlaying: true });
+          return;
+        }
+
+        // Try next surah in queue
+        if (currentQueueIndex < queue.length - 1) {
+          set({
+            currentQueueIndex: currentQueueIndex + 1,
+            currentAyahIndex: 0,
+            currentTime: 0,
+            duration: 0,
+            isPlaying: true,
+          });
+          return;
+        }
+
+        // End of current surah - auto load next surah (Surah 114 loops back to 1)
+        const nextSurahNumber =
+          currentItem.surah.number >= 114 ? 1 : currentItem.surah.number + 1;
+
+        try {
+          // We need to load the next surah from the component
+          // This is handled by the callback
+          const nextSurahData = await loadNextSurah();
+
+          if (nextSurahData) {
+            // Replace queue with next surah and play
+            set({
+              queue: [nextSurahData],
+              currentQueueIndex: 0,
+              currentAyahIndex: 0,
+              currentTime: 0,
+              duration: 0,
+              isPlaying: true,
+            });
+          } else {
+            // Failed to load - stop playing
+            set({ isPlaying: false, currentTime: 0 });
+          }
+        } catch (error) {
+          console.error("Failed to auto-load next surah:", error);
+          set({ isPlaying: false, currentTime: 0 });
+        }
       },
 
       playPrev: () => {

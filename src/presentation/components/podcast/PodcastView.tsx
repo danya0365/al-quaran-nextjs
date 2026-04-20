@@ -21,6 +21,7 @@ export default function PodcastView() {
     toggleSurahPlayback,
     removeFromQueue,
     playNext,
+    playNextWithAutoLoad,
     setCurrentTime,
     setDuration,
     setIsPlaying,
@@ -67,8 +68,31 @@ export default function PodcastView() {
       setDuration(audio.duration);
     };
 
-    const handleEnded = () => {
-      playNext();
+    const handleEnded = async () => {
+      // Use playNextWithAutoLoad to automatically load next surah when current ends
+      await playNextWithAutoLoad(async () => {
+        const { queue, currentQueueIndex } = usePodcastStore.getState();
+        const currentItem = queue[currentQueueIndex];
+        if (!currentItem) return null;
+
+        // Calculate next surah number (1-114 loop)
+        const nextSurahNumber =
+          currentItem.surah.number >= 114 ? 1 : currentItem.surah.number + 1;
+
+        try {
+          const [arabicSurah, audioSurah] = await Promise.all([
+            getArabicSurahFromApi(nextSurahNumber),
+            getAudioForSurahFromApi(nextSurahNumber, reciter),
+          ]);
+
+          if (audioSurah?.ayahs) {
+            return { surah: arabicSurah, ayahs: audioSurah.ayahs };
+          }
+        } catch (error) {
+          console.error("Failed to load next surah:", error);
+        }
+        return null;
+      });
     };
 
     const handlePlay = () => {
@@ -103,7 +127,14 @@ export default function PodcastView() {
       audio.removeEventListener("pause", handlePause);
       audio.removeEventListener("canplay", handleCanPlay);
     };
-  }, [playNext, setCurrentTime, setDuration, setIsPlaying, isPlaying]);
+  }, [
+    playNextWithAutoLoad,
+    setCurrentTime,
+    setDuration,
+    setIsPlaying,
+    isPlaying,
+    reciter,
+  ]);
 
   // Handle surah selection - toggle playback
   const handleSurahClick = async (surahNumber: number) => {
