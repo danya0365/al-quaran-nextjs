@@ -198,6 +198,7 @@
   /* Glass effect */
   --glass-bg: rgba(255, 255, 255, 0.1);
   --glass-bg-hover: rgba(255, 255, 255, 0.15);
+  --glass-bg-subtle: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(255, 255, 255, 0.2);
 }
 
@@ -316,6 +317,7 @@
   /* Glass effect */
   --glass-bg: rgba(255, 255, 255, 0.05);
   --glass-bg-hover: rgba(255, 255, 255, 0.1);
+  --glass-bg-subtle: rgba(255, 255, 255, 0.03);
   --glass-border: rgba(255, 255, 255, 0.15);
 }
 
@@ -478,6 +480,7 @@
   /* Glass effect */
   --color-glass-bg: var(--glass-bg);
   --color-glass-bg-hover: var(--glass-bg-hover);
+  --color-glass-bg-subtle: var(--glass-bg-subtle);
   --color-glass-border: var(--glass-border);
 
   /* Overlays */
