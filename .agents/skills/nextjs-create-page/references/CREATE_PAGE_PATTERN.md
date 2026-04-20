@@ -543,14 +543,20 @@ export interface [PageName]ViewModel {
 /**
  * Presenter for [PageName] management
  * ✅ Receives repository via constructor injection (not Supabase directly)
+ * ✅ Serves as the Single Source of Truth for both UI Views and API Routes
  */
 export class [PageName]Presenter {
   constructor(
     private readonly repository: I[PageItem]Repository
   ) {}
 
+  // ============================================================
+  // VIEW MODEL METHODS (For Client/Server Components)
+  // ============================================================
+
   /**
    * Get view model for the page
+   * ⚠️ Use this ONLY for rendering UI views, NOT for API route responses
    */
   async getViewModel(page: number = 1, perPage: number = 10): Promise<[PageName]ViewModel> {
     try {
@@ -582,6 +588,11 @@ export class [PageName]Presenter {
       description: "ระบบจัดการ[PageThaiDescription]",
     };
   }
+
+  // ============================================================
+  // GRANULAR DATA METHODS (For API Routes & Individual Actions)
+  // ============================================================
+  // ⚠️ API Routes MUST call these methods individually rather than using getViewModel()
 
   /**
    * Create a new item
@@ -1159,6 +1170,11 @@ export function use[PageName]Presenter(
 
 ## 4. Pattern: `src/presentation/components/[page-name]/[PageName]View.tsx`
 
+### Rules for View Components:
+- **100% logic-free**: The View should only be responsible for rendering JSX.
+- **No local state, no effects, no refs**: Move all `useState`, `useEffect`, and `useRef` to the custom hook (`use[PageName]Presenter`).
+- **Thin Presentation Layer**: All data and actions must come from the `[state, actions]` tuple.
+
 ```typescript
 "use client";
 
@@ -1173,44 +1189,10 @@ interface [PageName]ViewProps {
 
 export function [PageName]View({ [paramName], initialViewModel }: [PageName]ViewProps) {
   // ✅ Hook receives paramName and initialViewModel
-  // presenterOverride is optional, useful for testing
+  // ✅ EVERYTHING (state, actions, helpers, refs) comes from this hook
   const [state, actions] = use[PageName]Presenter([paramName], initialViewModel);
 
-  const [searchTerm, setSearchTerm] = useState("");
   const viewModel = state.viewModel;
-
-  // Helper functions
-  const formatStatus = (status: string) => {
-    switch (status) {
-      case "active":
-        return "ใช้งาน";
-      case "inactive":
-        return "ไม่ใช้งาน";
-      default:
-        return status;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "bg-green-100 text-green-800";
-      case "inactive":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Intl.DateTimeFormat("th-TH", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(new Date(dateString));
-  };
 
   // Show loading only on initial load or when explicitly loading
   if (state.loading && !viewModel) {
@@ -1364,8 +1346,8 @@ export function [PageName]View({ [paramName], initialViewModel }: [PageName]View
                 type="text"
                 placeholder="ค้นหา..."
                 className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                value={state.searchTerm}
+                onChange={(e) => actions.setSearchTerm(e.target.value)}
               />
             </div>
           </div>
@@ -1408,15 +1390,15 @@ export function [PageName]View({ [paramName], initialViewModel }: [PageName]View
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
-                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
+                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${actions.getStatusColor(
                         item.isActive ? "active" : "inactive"
                       )}`}
                     >
-                      {formatStatus(item.isActive ? "active" : "inactive")}
+                      {actions.formatStatus(item.isActive ? "active" : "inactive")}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {formatDate(item.createdAt)}
+                    {actions.formatDate(item.createdAt)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
@@ -1477,6 +1459,7 @@ export function [PageName]View({ [paramName], initialViewModel }: [PageName]View
 ### Key Features:
 
 - **Client component** with "use client" directive
+- **100% logic-free**: JSX only, no hooks like `useState`, `useEffect`, or `useRef`
 - **Presenter hook integration** for state and actions
 - **Loading, error, and empty states** with proper UX
 - **Statistics cards** for data overview
