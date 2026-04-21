@@ -40,6 +40,7 @@ export interface PodcastState {
 
   // Actions
   playSurah: (surah: Surah, ayahs: Ayah[]) => void;
+  playSurahWithFullScreen: (surah: Surah, ayahs: Ayah[]) => void;
   addToQueueOnly: (surah: Surah, ayahs: Ayah[]) => void;
   removeFromQueue: (surahNumber: number) => void;
   toggleSurahPlayback: (surah: Surah, ayahs: Ayah[]) => void;
@@ -82,6 +83,19 @@ export const usePodcastStore = create<PodcastState>()(
           currentQueueIndex: 0,
           currentAyahIndex: 0,
           isPlaying: true,
+          currentTime: 0,
+          duration: 0,
+        });
+      },
+
+      playSurahWithFullScreen: (surah: Surah, ayahs: Ayah[]) => {
+        // Clear queue, play surah, and open full screen
+        set({
+          queue: [{ surah, ayahs }],
+          currentQueueIndex: 0,
+          currentAyahIndex: 0,
+          isPlaying: true,
+          isFullScreen: true,
           currentTime: 0,
           duration: 0,
         });

@@ -20,3 +20,82 @@
     background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   }
 }
+
+@layer utilities {
+  /* ============================================
+     Page Background Gradients
+     ============================================ */
+  .bg-page-gradient {
+    @apply bg-gradient-to-b from-green-50 to-background dark:from-surface dark:to-surface;
+  }
+
+  /* ============================================
+     Header Gradients
+     ============================================ */
+  .bg-header-gradient {
+    @apply bg-gradient-to-r from-primary to-primary-dark dark:from-secondary-light dark:to-surface;
+  }
+
+  /* ============================================
+     Glass/Card Backgrounds
+     ============================================ */
+  .bg-glass {
+    @apply bg-glass-bg backdrop-blur-sm;
+  }
+
+  .bg-glass-hover {
+    @apply bg-glass-bg-hover backdrop-blur-sm;
+  }
+
+  .bg-glass-solid {
+    @apply bg-background/90 dark:bg-surface/90 backdrop-blur-sm;
+  }
+
+  .bg-glass-subtle {
+    @apply bg-white/10 backdrop-blur-sm;
+  }
+
+  /* ============================================
+     Text Colors - Semantic
+     ============================================ */
+  .text-heading {
+    @apply text-on-surface;
+  }
+
+  .text-body {
+    @apply text-muted-dark;
+  }
+
+  .text-hero-muted {
+    @apply text-hero-text-light;
+  }
+
+  /* ============================================
+     Card Styles
+     ============================================ */
+  .card-base {
+    @apply bg-surface rounded-xl shadow-sm border border-border;
+  }
+
+  .card-hover {
+    @apply bg-surface rounded-xl shadow-sm border border-border hover:shadow-md transition-all;
+  }
+
+  /* ============================================
+     Input Styles
+     ============================================ */
+  .input-glass {
+    @apply bg-background/90 dark:bg-surface/90 backdrop-blur-sm text-on-surface placeholder-muted-dark border border-transparent dark:border-border;
+  }
+
+  .input-focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary;
+  }
+
+  /* ============================================
+     Interactive States
+     ============================================ */
+  .link-hover-emerald {
+    @apply group-hover:text-primary dark:group-hover:text-primary-dark transition-colors;
+  }
+}

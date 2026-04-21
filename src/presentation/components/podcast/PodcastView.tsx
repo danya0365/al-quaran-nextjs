@@ -1,291 +1,295 @@
 "use client";
 
-import {
-  getAllSurahsFromApi,
-  getArabicSurahFromApi,
-  getAudioForSurahFromApi,
-} from "@/api/api";
-import { usePodcastStore } from "@/store/podcastStore";
-import { Surah } from "@/types/quran";
-import { Play, Plus, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { usePodcastPresenter } from "@/src/presentation/presenters/podcast/usePodcastPresenter";
+import { Play, Plus, Search, X } from "lucide-react";
+import { Amiri } from "next/font/google";
+import { useEffect, useMemo, useState } from "react";
+import { getSurahTheme } from "../surah/surahThemes";
 import FullScreenPlayer from "./FullScreenPlayer";
 import MiniPlayer from "./MiniPlayer";
+import PodcastSkeletonView from "./PodcastSkeletonView";
 
+const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"] });
+
+/**
+ * PodcastView - Redesigned to match HomeView pattern
+ * ✅ Animated header with search bar
+ * ✅ Dynamic stats section
+ * ✅ Card-based surah list with gradient badges
+ * ✅ Functional search filtering
+ */
 export default function PodcastView() {
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const {
-    queue,
-    currentQueueIndex,
-    currentAyahIndex,
-    isPlaying,
-    playbackRate,
-    isFullScreen,
-    reciter,
-    toggleSurahPlayback,
-    removeFromQueue,
-    playSurah,
-    addToQueueOnly,
-    playNext,
-    playNextWithAutoLoad,
-    setCurrentTime,
-    setDuration,
-    setIsPlaying,
-  } = usePodcastStore();
+  const [state, actions] = usePodcastPresenter();
+  const { viewModel, loading, error, audioRef } = state;
 
-  const currentItem = queue[currentQueueIndex];
-  const currentAyah = currentItem?.ayahs[currentAyahIndex];
+  // Smooth scroll animation for header
+  const [scrollProgress, setScrollProgress] = useState(0);
 
-  // State for real surah data
-  const [surahs, setSurahs] = useState<Surah[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Search query state
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Fetch real surah data on mount
+  // Filter surahs based on search - MUST be before any early returns
+  const filteredSurahs = useMemo(() => {
+    if (!viewModel?.surahs) return [];
+
+    const query = searchQuery.toLowerCase().trim();
+    if (!query) return viewModel.surahs;
+
+    return viewModel.surahs.filter((surah) => {
+      return (
+        surah.englishName.toLowerCase().includes(query) ||
+        surah.englishNameTranslation.toLowerCase().includes(query) ||
+        surah.name.includes(query) ||
+        surah.number.toString().includes(query)
+      );
+    });
+  }, [viewModel?.surahs, searchQuery]);
+
   useEffect(() => {
-    const fetchSurahs = async () => {
-      try {
-        const data = await getAllSurahsFromApi(reciter);
-        setSurahs(data);
-      } catch (error) {
-        console.error("Error fetching surahs:", error);
-      } finally {
-        setLoading(false);
-      }
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      const maxScroll = 100;
+      const progress = Math.min(scrollPosition / maxScroll, 1);
+      setScrollProgress(progress);
     };
 
-    fetchSurahs();
-  }, [reciter]);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-  // Play audio when currentAyah changes - same pattern as SurahView
-  useEffect(() => {
-    if (currentAyah && audioRef.current && isPlaying) {
-      if (currentAyah.audio) {
-        audioRef.current.src = currentAyah.audio;
-        audioRef.current.playbackRate = playbackRate;
-        audioRef.current.play();
-        setIsPlaying(true);
-      }
-    }
-  }, [currentAyah, isPlaying, playbackRate, setIsPlaying]);
-
-  // Handle play/pause toggle (when user manually clicks play/pause)
-  useEffect(() => {
-    if (!audioRef.current) return;
-
-    if (isPlaying) {
-      audioRef.current.play().catch(() => {
-        // Ignore autoplay errors
-      });
-    } else {
-      audioRef.current.pause();
-    }
-  }, [isPlaying]);
-
-  // Handle audio events
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const handleTimeUpdate = () => {
-      setCurrentTime(audio.currentTime);
-    };
-
-    const handleLoadedMetadata = () => {
-      setDuration(audio.duration);
-    };
-
-    const handleEnded = async () => {
-      // Use playNextWithAutoLoad to automatically load next surah when current ends
-      await playNextWithAutoLoad(async () => {
-        const { queue, currentQueueIndex } = usePodcastStore.getState();
-        const currentItem = queue[currentQueueIndex];
-        if (!currentItem) return null;
-
-        // Calculate next surah number (1-114 loop)
-        const nextSurahNumber =
-          currentItem.surah.number >= 114 ? 1 : currentItem.surah.number + 1;
-
-        try {
-          const [arabicSurah, audioSurah] = await Promise.all([
-            getArabicSurahFromApi(nextSurahNumber),
-            getAudioForSurahFromApi(nextSurahNumber, reciter),
-          ]);
-
-          if (audioSurah?.ayahs) {
-            return { surah: arabicSurah, ayahs: audioSurah.ayahs };
-          }
-        } catch (error) {
-          console.error("Failed to load next surah:", error);
-        }
-        return null;
-      });
-    };
-
-    const handlePlay = () => {
-      setIsPlaying(true);
-    };
-
-    const handlePause = () => {
-      setIsPlaying(false);
-    };
-
-    const handleCanPlay = () => {
-      // Auto-play when audio is ready (for auto-next)
-      if (isPlaying) {
-        audio.play().catch(() => {
-          // Ignore autoplay errors
-        });
-      }
-    };
-
-    audio.addEventListener("timeupdate", handleTimeUpdate);
-    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
-    audio.addEventListener("ended", handleEnded);
-    audio.addEventListener("play", handlePlay);
-    audio.addEventListener("pause", handlePause);
-    audio.addEventListener("canplay", handleCanPlay);
-
-    return () => {
-      audio.removeEventListener("timeupdate", handleTimeUpdate);
-      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
-      audio.removeEventListener("ended", handleEnded);
-      audio.removeEventListener("play", handlePlay);
-      audio.removeEventListener("pause", handlePause);
-      audio.removeEventListener("canplay", handleCanPlay);
-    };
-  }, [
-    playNextWithAutoLoad,
-    setCurrentTime,
-    setDuration,
-    setIsPlaying,
-    isPlaying,
-    reciter,
-  ]);
-
-  // Handle play immediately (clear queue and play)
-  const handlePlayImmediately = async (surahNumber: number) => {
-    try {
-      const [arabicSurah, audioSurah] = await Promise.all([
-        getArabicSurahFromApi(surahNumber),
-        getAudioForSurahFromApi(surahNumber, reciter),
-      ]);
-
-      if (audioSurah?.ayahs) {
-        playSurah(arabicSurah, audioSurah.ayahs);
-      }
-    } catch (error) {
-      console.error("Error loading surah:", error);
-    }
+  // Calculate dynamic values based on scroll progress
+  const headerPadding = {
+    paddingTop: `${2 - scrollProgress * 1}rem`,
+    paddingBottom: `${1.5 - scrollProgress * 1}rem`,
   };
 
-  // Handle toggle add/remove from queue (NO auto-play)
-  const handleToggleQueue = async (surahNumber: number) => {
-    if (isInQueue(surahNumber)) {
-      removeFromQueue(surahNumber);
-      return;
-    }
+  const statsOpacity = Math.max(1 - scrollProgress * 1.5, 0);
+  const statsHeight = Math.max(1 - scrollProgress * 1.5, 0);
 
-    try {
-      const [arabicSurah, audioSurah] = await Promise.all([
-        getArabicSurahFromApi(surahNumber),
-        getAudioForSurahFromApi(surahNumber, reciter),
-      ]);
+  // Show loading state - match HomeView pattern: return just skeleton
+  if (loading && !viewModel) {
+    return <PodcastSkeletonView />;
+  }
 
-      if (audioSurah?.ayahs) {
-        addToQueueOnly(arabicSurah, audioSurah.ayahs); // Just add, don't play
-      }
-    } catch (error) {
-      console.error("Error loading surah:", error);
-    }
-  };
+  // Show error state
+  if (error && !viewModel) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-page-gradient">
+        <div className="text-center px-4">
+          <div className="text-error text-6xl mb-4">⚠️</div>
+          <h2 className="text-2xl font-bold text-heading mb-2">
+            เกิดข้อผิดพลาด
+          </h2>
+          <p className="text-body mb-4">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
-  const isInQueue = (surahNumber: number) => {
-    return queue.some((item) => item.surah.number === surahNumber);
-  };
+  // No viewModel yet
+  if (!viewModel) {
+    return null;
+  }
+
+  const { surahs, initialized, currentItem, isFullScreen } = viewModel;
+
+  // Calculate dynamic stats
+  const totalSurahs = surahs.length;
+  const totalAyahs = surahs.reduce((acc, s) => acc + (s.ayahs?.length || 0), 0);
+  const totalJuz = 30;
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      {/* Header */}
-      <div className="bg-primary text-white px-6 pt-8 pb-6 shadow-lg sticky top-0 z-10">
+    <div className="min-h-screen bg-page-gradient pb-20">
+      {/* Header - Smooth Shrinking Sticky */}
+      <div
+        className="sticky top-0 z-50 bg-header-gradient text-white shadow-lg px-3 sm:px-6"
+        style={{
+          ...headerPadding,
+          transition: "padding 0.1s ease-out",
+        }}
+      >
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-2xl font-bold mb-2">ฟังต่อเนื่อง</h1>
-          <p className="text-glass-bg-hover text-sm">
-            เลือกซูเราะห์เพื่อฟังแบบต่อเนื่อง
-          </p>
+          <div className="flex items-center justify-between mb-3 sm:mb-6">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <h1 className="text-2xl sm:text-3xl font-bold">ฟังต่อเนื่อง</h1>
+              <p className="text-hero-muted text-xs sm:text-sm mt-1">
+                Continuous Play
+              </p>
+            </div>
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-glass-subtle rounded-full flex items-center justify-center">
+              <span className="text-xl sm:text-2xl">🎧</span>
+            </div>
+          </div>
+
+          {/* Search Bar */}
+          <div className="relative mb-3 sm:mb-4">
+            <input
+              type="text"
+              placeholder="ค้นหาซูเราะห์..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 pr-10 sm:pr-12 rounded-lg sm:rounded-xl input-glass input-focus-ring text-sm sm:text-base"
+            />
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-dark">
+              <Search className="w-5 h-5" />
+            </div>
+          </div>
+
+          {/* Stats - Inside Header */}
+          {statsOpacity > 0 && (
+            <div
+              style={{
+                opacity: statsOpacity,
+                maxHeight: `${statsHeight * 6}rem`,
+                overflow: "hidden",
+                transition: "opacity 0.1s ease-out, max-height 0.1s ease-out",
+              }}
+            >
+              <div className="grid grid-cols-3 gap-2 sm:gap-4 text-center bg-glass-subtle rounded-lg sm:rounded-xl p-2.5 sm:p-4">
+                <div>
+                  <div className="text-xl sm:text-2xl font-bold">
+                    {totalSurahs}
+                  </div>
+                  <div className="text-xs text-hero-muted mt-0.5 sm:mt-1">
+                    ซูเราะห์
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xl sm:text-2xl font-bold">
+                    {totalAyahs.toLocaleString()}
+                  </div>
+                  <div className="text-xs text-hero-muted mt-0.5 sm:mt-1">
+                    อายะห์
+                  </div>
+                </div>
+                <div>
+                  <div className="text-xl sm:text-2xl font-bold">
+                    {totalJuz}
+                  </div>
+                  <div className="text-xs text-hero-muted mt-0.5 sm:mt-1">
+                    ญุซอ์
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Surah List */}
-      <div className="max-w-4xl mx-auto px-6 py-6">
-        <h2 className="text-lg font-semibold text-foreground mb-4">
-          รายการซูเราะห์
-        </h2>
-        <div className="grid grid-cols-1 gap-3">
-          {surahs.map((surah) => {
-            const inQueue = isInQueue(surah.number);
-            const isCurrent = currentItem?.surah.number === surah.number;
+      <div className="max-w-4xl mx-auto p-3 sm:p-6">
+        <div className="mb-3 sm:mb-4">
+          <h2 className="text-lg font-semibold text-heading">
+            รายการซูเราะห์ ({filteredSurahs?.length || 0})
+          </h2>
+        </div>
 
-            return (
-              <div
-                key={surah.number}
-                className={`flex items-center gap-4 p-4 rounded-xl border transition-all ${
-                  isCurrent
-                    ? "bg-primary/10 border-primary"
-                    : "bg-card-bg border-card-border"
-                }`}
-              >
+        {!initialized || filteredSurahs.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4 opacity-50">🔍</div>
+            <p className="text-body">
+              {searchQuery ? "ไม่พบซูเราะห์ที่ค้นหา" : "ไม่มีรายการซูเราะห์"}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-2 sm:space-y-3">
+            {filteredSurahs.map((surah) => {
+              const theme = getSurahTheme(surah.number);
+              const inQueue = viewModel.inQueue(surah.number);
+              const isCurrent = currentItem?.surah.number === surah.number;
+
+              return (
                 <div
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold flex-shrink-0 ${
-                    isCurrent
-                      ? "bg-primary text-white"
-                      : "bg-muted text-muted-foreground"
+                  key={surah.number}
+                  className={`relative overflow-hidden block card-hover p-2.5 sm:p-4 group ${
+                    isCurrent ? "ring-2 ring-primary" : ""
                   }`}
                 >
-                  {surah.number}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-foreground truncate">
-                    {surah.englishName}
-                  </p>
-                  <p className="text-sm text-muted-foreground truncate">
-                    {surah.name}
-                  </p>
-                </div>
-                <div className="flex items-center gap-1">
-                  {/* Play Button - Play Immediately */}
-                  <button
-                    onClick={() => handlePlayImmediately(surah.number)}
-                    className={`p-2 rounded-full transition-colors ${
-                      isCurrent
-                        ? "bg-primary text-white"
-                        : "hover:bg-muted text-muted-foreground hover:text-foreground"
-                    }`}
-                    title="เล่นทันที"
-                  >
-                    <Play className="w-5 h-5" />
-                  </button>
+                  <div className="flex items-center gap-2.5 sm:gap-4">
+                    {/* Number Badge */}
+                    <div
+                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm"
+                      style={{
+                        background: `linear-gradient(135deg, ${theme.from}, ${theme.to})`,
+                      }}
+                    >
+                      <span className="text-white font-bold text-sm sm:text-base">
+                        {surah.number}
+                      </span>
+                    </div>
 
-                  {/* Add/Remove from Queue Button */}
-                  <button
-                    onClick={() => handleToggleQueue(surah.number)}
-                    className={`p-2 rounded-full transition-colors ${
-                      inQueue
-                        ? "bg-muted text-foreground"
-                        : "hover:bg-muted text-muted-foreground hover:text-foreground"
-                    }`}
-                    title={inQueue ? "เอาออกจากคิว" : "เพิ่มในคิว"}
-                  >
-                    {inQueue ? (
-                      <X className="w-5 h-5" />
-                    ) : (
-                      <Plus className="w-5 h-5" />
-                    )}
-                  </button>
+                    {/* Surah Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-1.5 sm:gap-2">
+                        <h3 className="font-semibold text-sm sm:text-base text-heading truncate link-hover-emerald">
+                          {surah.englishName}
+                        </h3>
+                        <span
+                          className={`${amiri.className} text-lg sm:text-xl text-gray-600 dark:text-gray-400 flex-shrink-0 link-hover-emerald`}
+                          dir="rtl"
+                        >
+                          {surah.name}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5 sm:mt-1 text-xs sm:text-sm text-body">
+                        <span>{surah.englishNameTranslation}</span>
+                        <span>•</span>
+                        <span>{surah.ayahs?.length || 0} อายะห์</span>
+                        <span>•</span>
+                        <span
+                          className="px-1.5 sm:px-2 py-0.5 rounded-full text-xs"
+                          style={{
+                            backgroundColor: theme.accentSoft,
+                            color: theme.accent,
+                          }}
+                        >
+                          {surah.revelationType === "Meccan"
+                            ? "มักกะห์"
+                            : "มะดีนะห์"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      {/* Play Button - Play with FullScreen */}
+                      <button
+                        onClick={() =>
+                          actions.handlePlayWithFullScreen(surah.number)
+                        }
+                        className={`p-2 rounded-full transition-colors ${
+                          isCurrent
+                            ? "bg-primary text-white"
+                            : "hover:bg-muted text-muted-dark hover:text-foreground"
+                        }`}
+                        title="เล่นทันที"
+                      >
+                        <Play className="w-5 h-5" />
+                      </button>
+
+                      {/* Add/Remove from Queue Button */}
+                      <button
+                        onClick={() => actions.handleToggleQueue(surah.number)}
+                        className={`p-2 rounded-full transition-colors ${
+                          inQueue
+                            ? "bg-muted text-foreground"
+                            : "hover:bg-muted text-muted-dark hover:text-foreground"
+                        }`}
+                        title={inQueue ? "เอาออกจากคิว" : "เพิ่มในคิว"}
+                      >
+                        {inQueue ? (
+                          <X className="w-5 h-5" />
+                        ) : (
+                          <Plus className="w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Audio Element */}

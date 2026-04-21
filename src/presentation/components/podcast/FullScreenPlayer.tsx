@@ -1,15 +1,28 @@
 "use client";
 
-import { RefObject, useEffect } from "react";
 import { usePodcastStore } from "@/store/podcastStore";
+import { useQuranStore } from "@/store/quranStore";
+import { Minimize2, Pause, Play, SkipBack, SkipForward, X } from "lucide-react";
 import {
-  Play,
-  Pause,
-  SkipForward,
-  SkipBack,
-  Minimize2,
-  X,
-} from "lucide-react";
+  Amiri,
+  Lateef,
+  Markazi_Text,
+  Reem_Kufi,
+  Scheherazade_New,
+  Tajawal,
+} from "next/font/google";
+import { RefObject, useEffect } from "react";
+
+// Arabic fonts - same as SurahView
+const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"] });
+const lateef = Lateef({ subsets: ["arabic"], weight: ["400"] });
+const scheherazade = Scheherazade_New({
+  subsets: ["arabic"],
+  weight: ["400", "700"],
+});
+const tajawal = Tajawal({ subsets: ["arabic"], weight: ["400", "700"] });
+const reemKufi = Reem_Kufi({ subsets: ["arabic"], weight: ["400", "700"] });
+const markazi = Markazi_Text({ subsets: ["arabic"], weight: ["400", "700"] });
 
 interface FullScreenPlayerProps {
   audioRef: RefObject<HTMLAudioElement | null>;
@@ -17,9 +30,7 @@ interface FullScreenPlayerProps {
 
 const PLAYBACK_RATES = [0.75, 1, 1.25, 1.5, 2];
 
-export default function FullScreenPlayer({
-  audioRef,
-}: FullScreenPlayerProps) {
+export default function FullScreenPlayer({ audioRef }: FullScreenPlayerProps) {
   const {
     queue,
     currentQueueIndex,
@@ -35,6 +46,23 @@ export default function FullScreenPlayer({
     setPlaybackRate,
     setCurrentTime,
   } = usePodcastStore();
+
+  // Get Quran settings for Arabic font
+  const { settings } = useQuranStore();
+
+  // Calculate Arabic font class based on settings
+  const arabicFontClass =
+    settings.fontFamily === "Lateef"
+      ? lateef.className
+      : settings.fontFamily === "ScheherazadeNew"
+        ? scheherazade.className
+        : settings.fontFamily === "Tajawal"
+          ? tajawal.className
+          : settings.fontFamily === "ReemKufi"
+            ? reemKufi.className
+            : settings.fontFamily === "MarkaziText"
+              ? markazi.className
+              : amiri.className;
 
   const currentItem = queue[currentQueueIndex];
   const currentAyah = currentItem?.ayahs[currentAyahIndex];
@@ -111,14 +139,22 @@ export default function FullScreenPlayer({
       <div className="flex-1 flex flex-col justify-center px-6 py-8">
         {prevAyah && (
           <div className="text-center mb-4 opacity-40">
-            <p className="text-lg text-foreground" dir="rtl">
+            <p
+              className={`text-lg text-foreground ${arabicFontClass}`}
+              dir="rtl"
+              style={{ fontSize: `${Math.max(settings.fontSize - 4, 14)}px` }}
+            >
               {prevAyah.text}
             </p>
           </div>
         )}
 
         <div className="text-center py-8 px-6 bg-primary/5 rounded-2xl border border-primary/20">
-          <p className="text-3xl font-semibold text-foreground leading-relaxed" dir="rtl">
+          <p
+            className={`text-3xl font-semibold text-foreground leading-relaxed ${arabicFontClass}`}
+            dir="rtl"
+            style={{ fontSize: `${settings.fontSize + 8}px` }}
+          >
             {currentAyah.text}
           </p>
           <div className="flex items-center justify-center gap-2 mt-4">
@@ -130,7 +166,11 @@ export default function FullScreenPlayer({
 
         {nextAyah && (
           <div className="text-center mt-4 opacity-40">
-            <p className="text-lg text-foreground" dir="rtl">
+            <p
+              className={`text-lg text-foreground ${arabicFontClass}`}
+              dir="rtl"
+              style={{ fontSize: `${Math.max(settings.fontSize - 4, 14)}px` }}
+            >
               {nextAyah.text}
             </p>
           </div>
