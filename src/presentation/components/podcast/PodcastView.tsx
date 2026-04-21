@@ -252,10 +252,10 @@ export default function PodcastView() {
 
                     {/* Action Buttons */}
                     <div className="flex items-center gap-1 flex-shrink-0">
-                      {/* Play Button - Play Immediately */}
+                      {/* Play Button - Play with FullScreen */}
                       <button
                         onClick={() =>
-                          actions.handlePlayImmediately(surah.number)
+                          actions.handlePlayWithFullScreen(surah.number)
                         }
                         className={`p-2 rounded-full transition-colors ${
                           isCurrent

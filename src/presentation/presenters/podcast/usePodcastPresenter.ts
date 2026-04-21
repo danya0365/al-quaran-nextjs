@@ -29,6 +29,7 @@ export interface PodcastPresenterState {
 
 export interface PodcastPresenterActions {
   handlePlayImmediately: (surahNumber: number) => Promise<void>;
+  handlePlayWithFullScreen: (surahNumber: number) => Promise<void>;
   handleToggleQueue: (surahNumber: number) => Promise<void>;
   retryLoad: () => Promise<void>;
 }
@@ -56,6 +57,7 @@ export function usePodcastPresenter(): [
     reciter,
     removeFromQueue,
     playSurah,
+    playSurahWithFullScreen,
     addToQueueOnly,
     playNextWithAutoLoad,
     setCurrentTime,
@@ -275,6 +277,25 @@ export function usePodcastPresenter(): [
     [reciter, playSurah],
   );
 
+  const handlePlayWithFullScreen = useCallback(
+    async (surahNumber: number) => {
+      try {
+        const [arabicSurah, audioSurah] = await Promise.all([
+          getArabicSurahFromApi(surahNumber),
+          getAudioForSurahFromApi(surahNumber, reciter),
+        ]);
+
+        if (audioSurah?.ayahs) {
+          playSurahWithFullScreen(arabicSurah, audioSurah.ayahs);
+        }
+      } catch (err) {
+        console.error("Error loading surah:", err);
+        setError(err instanceof Error ? err.message : "Failed to play surah");
+      }
+    },
+    [reciter, playSurahWithFullScreen],
+  );
+
   const handleToggleQueue = useCallback(
     async (surahNumber: number) => {
       if (inQueue(surahNumber)) {
@@ -341,6 +362,7 @@ export function usePodcastPresenter(): [
     },
     {
       handlePlayImmediately,
+      handlePlayWithFullScreen,
       handleToggleQueue,
       retryLoad,
     },
