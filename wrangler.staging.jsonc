@@ -1,0 +1,29 @@
+{
+  // Staging Worker — คนละตัวจาก production (wrangler.jsonc)
+  // ใช้กับ: npm run cf:deploy:staging
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "al-quran-dev",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "workers_dev": true,
+  "upload_source_maps": true,
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "routes": [
+    { "pattern": "al-quran-dev.easyai.site", "custom_domain": true }
+  ],
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 0.01
+    }
+  }
+}

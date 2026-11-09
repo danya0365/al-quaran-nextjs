@@ -1,0 +1,34 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "al-quran",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "workers_dev": true,
+  "upload_source_maps": true,
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 0.01
+    }
+  },
+  // assets, main, compatibility และ observability สืบทอดมาที่ staging
+  "env": {
+    "staging": {
+      "name": "al-quran-dev",
+      "workers_dev": true,
+      "routes": [
+        { "pattern": "al-quran-dev.easyai.site", "custom_domain": true }
+      ]
+    }
+  }
+}

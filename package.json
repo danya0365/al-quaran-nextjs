@@ -6,9 +6,13 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
+    "cf:build": "opennextjs-cloudflare build",
+    "cf:deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "cf:deploy:staging": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --config wrangler.staging.jsonc",
     "lint": "eslint"
   },
   "dependencies": {
+    "@opennextjs/cloudflare": "^1.20.1",
     "axios": "^1.12.2",
     "clsx": "^2.1.1",
     "localforage": "^1.10.0",
@@ -29,6 +33,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^4.159.0"
   }
 }
